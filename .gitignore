@@ -52,3 +52,7 @@ Desktop.ini
 
 # Project Specific Report
 startup_mvp_report.md
+
+# Word Documents
+*.docx
+~$*.docx

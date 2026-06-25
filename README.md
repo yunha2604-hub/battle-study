@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚔️ 스쿨배틀 (SchoolBattle Arena)
 
-## Getting Started
+> **공부를 게임처럼 — 학교를 대표해 전국 학생들과 맞붙는 실시간 퀴즈 배틀**
 
-First, run the development server:
+친구들과 컴퓨터 게임을 할 때는 밤을 새워서라도 등급을 올립니다.
+스쿨배틀은 그 에너지를 공부로 끌어옵니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 해결하려는 문제
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 대상 | 문제 |
+|---|---|
+| 👦 학생 | 혼자 하는 공부는 외롭고 지루하다. 하지만 친구들과 게임 할 때는 밤을 새운다. |
+| 👩‍🏫 교사 | 퀴즈 출제·채점·생기부 세특 작성이 쌓여 수업 준비할 시간이 없다. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 💡 솔루션
 
-To learn more about Next.js, take a look at the following resources:
+**학생용 모바일 앱** + **교사용 PC 웹**이 실시간으로 연동되는 교육 서비스.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 학생은 쉬는 시간에 타 학교 학생과 1:1 퀴즈 배틀 → 내 점수가 학교 순위에 실시간 반영
+- 선생님은 교과서 지문을 붙여넣으면 AI가 1초 만에 퀴즈 생성 → 평가 후 세특 초안 자동 출력
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📱 시제품 화면
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/01_landing.png" width="420"/><br/>
+      <b>아레나 입장 화면</b><br/>
+      닉네임 + 학교만 입력하면 1초 만에 배틀 시작
+    </td>
+    <td align="center">
+      <img src="screenshots/02_lobby.png" width="420"/><br/>
+      <b>전국 학교 랭킹 로비</b><br/>
+      실시간으로 업데이트되는 전국 학교 순위 보드
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/03_battle_arena.png" width="420"/><br/>
+      <b>1:1 배틀 아레나</b><br/>
+      10초 안에 정답을 맞히면 상대 점수를 깎는 실시간 대결
+    </td>
+    <td align="center">
+      <img src="screenshots/06_teacher_dashboard.png" width="420"/><br/>
+      <b>선생님 관리자 화면</b><br/>
+      교과서 지문 → AI 퀴즈 자동 생성 + 세특 초안 출력
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/04_strict_assessment.png" width="420"/><br/>
+      <b>수행평가 엄근진 모드</b><br/>
+      다른 창 열면 즉시 실격 — 부정행위 방지 전용 화면
+    </td>
+    <td align="center">
+      <img src="screenshots/05_team_battle.png" width="420"/><br/>
+      <b>단체 점수 줄다리기</b><br/>
+      반 전체가 동시에 풀며 점수를 겨루는 학교 대항전
+    </td>
+  </tr>
+</table>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ✨ 핵심 기능
+
+### 👦 학생용 앱
+| 기능 | 설명 |
+|---|---|
+| 실시간 1:1 배틀 | 실력이 비슷한 타 학교 학생과 즉시 매칭 |
+| 전국 학교 랭킹 | 내 점수가 학교 순위에 실시간 합산 → 소속감·성취감 |
+| 오답 던전 | 번개(입장권)가 떨어지면 과거 틀린 문제로 충전 → 자발적 복습 |
+| 등급 칭호 시스템 | [오답 자판기] → [생태계 교란종] 등 흥미로운 등급 칭호 |
+
+### 👩‍🏫 교사용 웹
+| 기능 | 설명 |
+|---|---|
+| AI 퀴즈 1초 생성 | 교과서 지문 붙여넣기 → AI가 오답 선지 3개 포함 퀴즈 즉시 생성 |
+| 수행평가 엄근진 모드 | PIN 코드로 학생 접속 → 게임 효과 OFF + 익명화 + 부정행위 감지 |
+| 세특 초안 자동 출력 | 학생별 반응 속도·오답 데이터 분석 → 생기부 붙여넣기용 문구 자동 생성 |
+
+---
+
+## 🆚 기존 서비스와의 차별점
+
+| 비교 | 기존 서비스 | 스쿨배틀 |
+|---|---|---|
+| 스마트 학습지 | 혼자 화면을 보며 학습 → 금방 지루해짐 | 친구들과 실시간 승부 → 자발적 몰입 |
+| 카훗(Kahoot) | 수업 시간에만 사용 → 수업 끝나면 참여 종료 | 방과 후에도 학생들이 자발적으로 접속 |
+| 일반 교육 앱 | 문제 출제·검수에 막대한 비용 | AI 자동 생성으로 문제 제작 비용 사실상 0원 |
+
+---
+
+## 🚀 앞으로의 계획
+
+청계중학교 → 지역 학교 대항전 → 전국 확장 순으로 키워나갑니다.
+참여하는 학교가 늘면 늘수록 전국 랭킹 대결이 더 치열해져,
+한 학교가 시작하면 경쟁 학교도 따라 참여하는 선순환이 만들어집니다.
+
+우리나라처럼 공부 경쟁이 치열한 일본·베트남·싱가포르 등
+아시아 시장으로도 확장하고 싶습니다.
+
+> 비싼 학원을 다니지 못하는 친구들도 스마트폰만 있으면
+> 전국 친구들과 경쟁하며 재미있게 공부할 수 있게 하는 것 —
+> 이것이 스쿨배틀의 궁극적인 꿈입니다.
+
+---
+
+*청계중학교 3학년 박윤하 · 2026 전국 중학생 창업아이디어 경진대회 출품작*
