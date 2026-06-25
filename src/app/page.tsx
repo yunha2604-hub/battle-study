@@ -10,7 +10,7 @@ import TeacherDashboard from "@/components/TeacherDashboard";
 
 export default function Home() {
   const [view, setView] = useState<"LOGIN" | "LOBBY" | "BATTLE" | "RESULT" | "CUSTOM_ROOM_WAITING" | "TEACHER_DASHBOARD">("LOGIN");
-  
+
   // User profile
   const [nickname, setNickname] = useState("");
   const [school, setSchool] = useState("");
