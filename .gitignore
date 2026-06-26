@@ -56,3 +56,6 @@ startup_mvp_report.md
 # Word Documents
 *.docx
 ~$*.docx
+
+# Claude Code
+.claude/
