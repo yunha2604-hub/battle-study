@@ -53,9 +53,9 @@ Desktop.ini
 # Project Specific Report
 startup_mvp_report.md
 
-# Word Documents
+# Word & Office Documents
 *.docx
-~$*.docx
+~$*
 
 # Claude Code
 .claude/
