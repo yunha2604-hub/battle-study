@@ -58,6 +58,17 @@
         <p class="text-xs text-slate-400">요구사항 · 기획의도 · UI/UX 비밀 · 심사위원 압박 Q&A 100% 방어</p>
       </div>
     </div>
+    <!-- Center Navigation Tabs -->
+    <nav class="hidden md:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+      <a href="index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 transition">
+        <i data-lucide="swords" class="w-3.5 h-3.5"></i>
+        <span>스쿨배틀 가이드</span>
+      </a>
+      <a href="interview.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700/60 flex items-center gap-1.5 transition">
+        <i data-lucide="mic" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>교사 인터뷰 가이드</span>
+      </a>
+    </nav>
     <div class="flex items-center gap-2">
       <!-- Practice Mode Toggle Button -->
       <button id="toggleBlurBtn" onclick="toggleStudyMode()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5 shadow-sm">
@@ -70,6 +81,16 @@
       </button>
     </div>
   </header>
+  <!-- Mobile Tab Switcher -->
+  <div class="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-center gap-2 no-print">
+    <a href="index.html" class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-center bg-indigo-600 text-white flex items-center justify-center gap-1.5">
+      <i data-lucide="swords" class="w-3.5 h-3.5"></i> 스쿨배틀 가이드
+    </a>
+    <a href="interview.html" class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold text-center bg-slate-800 text-slate-300 flex items-center justify-center gap-1.5">
+      <i data-lucide="mic" class="w-3.5 h-3.5 text-emerald-400"></i> 교사 인터뷰 가이드
+    </a>
+  </div>
+
 
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
@@ -106,6 +127,16 @@
             </div>
             <p class="leading-relaxed">어려운 기술 용어를 억지로 쓰지 않아도 돼요. 학생의 시선에서 왜 이렇게 만들었는지 당당하게 말하면 최고점입니다!</p>
           </div>
+        </div>
+
+        <div class="pt-3 mt-3 border-t border-slate-800/80">
+          <a href="interview.html" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-950/40 text-emerald-300 border border-emerald-800/50 hover:bg-emerald-900/40 transition">
+            <span class="flex items-center gap-2">
+              <i data-lucide="mic" class="w-4 h-4 text-emerald-400"></i>
+              교사 인터뷰 실전 가이드
+            </span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-400"></i>
+          </a>
         </div>
       </div>
     </aside>
