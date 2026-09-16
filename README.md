@@ -1,7 +1,8 @@
 # 스쿨배틀 (SchoolBattle Arena)
 
-> 📖 **[온라인 학습 뷰어 바로가기 (GitHub Pages)](https://yunha2604-hub.github.io/battle-study/)**  
-> 심사위원 질의응답 100% 방어 가이드 및 인터랙티브 암기 연습 뷰어
+> 📖 **온라인 학습 뷰어 (GitHub Pages)**  
+> • ⚔️ **[스쿨배틀 심사대비 완전정복 가이드](https://yunha2604-hub.github.io/battle-study/)** (질의응답 100% 방어 & 인터랙티브 암기 연습)  
+> • 🎤 **[교사 인터뷰 실전 가이드](https://yunha2604-hub.github.io/battle-study/interview.html)** (시연 동선, 질문 대본, 실시간 기록장, 추천서 연계)
 
 학교를 대표해 전국 학생들과 맞붙는 실시간 퀴즈 배틀 서비스입니다.
 
