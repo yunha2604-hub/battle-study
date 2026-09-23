@@ -32,6 +32,8 @@ interface ResultPageProps {
   answersLog: AnswersLogItem[];
   isFirstMatch?: boolean;
   onReturnToLobby: (newTier: string, newLp: number) => void;
+  isStrictAssessment?: boolean;
+  onGoToTeacherDashboard?: () => void;
 }
 
 const TIER_ORDER = ["Iron", "Bronze", "Silver", "Gold", "Diamond"];
@@ -44,7 +46,8 @@ const TIER_DETAILS: Record<string, { label: string; color: string; title: string
 };
 
 export default function ResultPage({ 
-  userProfile, opponent, userFinalHp, opponentFinalHp, answersLog, isFirstMatch, onReturnToLobby 
+  userProfile, opponent, userFinalHp, opponentFinalHp, answersLog, isFirstMatch, onReturnToLobby,
+  isStrictAssessment = false, onGoToTeacherDashboard
 }: ResultPageProps) {
   const isVictory = userFinalHp > opponentFinalHp;
   
@@ -58,7 +61,7 @@ export default function ResultPage({
   const [isPromoted, setIsPromoted] = useState(false);
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const [animatingLp, setAnimatingLp] = useState(true);
-  const [showKakaoModal, setShowKakaoModal] = useState(isFirstMatch || false);
+  const [showKakaoModal, setShowKakaoModal] = useState((isFirstMatch && !isStrictAssessment) || false);
   const [kakaoLinked, setKakaoLinked] = useState(false);
 
   // LP counting animation
@@ -202,7 +205,20 @@ export default function ResultPage({
           transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
           className="text-center relative"
         >
-          {isVictory ? (
+          {isStrictAssessment ? (
+            <div className="relative">
+              <div className="absolute inset-0 bg-indigo-500/10 blur-xl rounded-full scale-125" />
+              <div className="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                수학 수행평가 답안 제출 완료
+              </div>
+              <h1 className="text-4xl md:text-6xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-cyan-300">
+                AI 1차 자동 채점 완료
+              </h1>
+              <p className="text-xs md:text-sm font-extrabold text-indigo-300 mt-2">
+                답안이 안전하게 제출되었습니다. 담당 교사의 2차 최종 점수 확정 대기 중입니다.
+              </p>
+            </div>
+          ) : isVictory ? (
             <div className="relative">
               {/* Confetti Glow Background */}
               <div className="absolute inset-0 bg-cyan-400/10 blur-xl rounded-full scale-125" />
@@ -227,11 +243,22 @@ export default function ResultPage({
 
           {/* Stats Bar */}
           <div className="mt-8 inline-flex items-center gap-6 bg-slate-900/60 border border-slate-800 px-6 py-2.5 rounded-full text-xs font-semibold text-slate-400">
-            <span>정답 수: <strong className="text-white">{correctAnswersCount} / 3</strong></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-            <span>최종 HP: <strong className="text-white">{Math.max(0, userFinalHp)}%</strong></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-            <span>상대 최종 HP: <strong className="text-white">{Math.max(0, opponentFinalHp)}%</strong></span>
+            <span>정답 수: <strong className="text-white">{correctAnswersCount} / {answersLog.length || 3}</strong></span>
+            {isStrictAssessment ? (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <span>AI 1차 산출 점수: <strong className="text-emerald-400 font-mono text-sm">{Math.round((correctAnswersCount / (answersLog.length || 1)) * 100)}점</strong></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <span>상태: <strong className="text-amber-400">교사 2차 확정 대기</strong></span>
+              </>
+            ) : (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <span>최종 HP: <strong className="text-white">{Math.max(0, userFinalHp)}%</strong></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <span>상대 최종 HP: <strong className="text-white">{Math.max(0, opponentFinalHp)}%</strong></span>
+              </>
+            )}
           </div>
         </motion.div>
 
@@ -428,22 +455,40 @@ export default function ResultPage({
           </div>
         </motion.div>
 
-        {/* CTA Return Lobby Button */}
-        <motion.button
-          onClick={handleReturn}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className="relative w-full max-w-sm overflow-hidden rounded-2xl p-[1.5px] focus:outline-none cursor-pointer mt-4"
-        >
-          {/* Neon Border */}
-          <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-2xl" />
-          <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-2xl opacity-0 hover:opacity-100 transition-opacity blur-sm" />
+        {/* CTA Return Lobby / Teacher Dashboard Button */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mt-4">
+          {isStrictAssessment && onGoToTeacherDashboard && (
+            <button
+              onClick={onGoToTeacherDashboard}
+              className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs md:text-sm rounded-2xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>👩‍🏫 교사 대시보드에서 채점 결과 확인</span>
+            </button>
+          )}
 
-          {/* Inner Content */}
-          <div className="relative flex items-center justify-center gap-2 bg-slate-950 text-white font-bold rounded-[14px] py-4 hover:bg-slate-900 transition-colors">
-            <span>로비로 돌아가기</span>
-          </div>
-        </motion.button>
+          <motion.button
+            onClick={handleReturn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`w-full font-bold rounded-2xl py-4 transition-colors cursor-pointer text-xs md:text-sm ${
+              isStrictAssessment 
+                ? "bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white" 
+                : "relative overflow-hidden p-[1.5px]"
+            }`}
+          >
+            {isStrictAssessment ? (
+              <span>학생 로비로 복귀</span>
+            ) : (
+              <>
+                <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-2xl" />
+                <div className="relative flex items-center justify-center gap-2 bg-slate-950 text-white font-bold rounded-[14px] py-4 hover:bg-slate-900 transition-colors">
+                  <span>로비로 돌아가기</span>
+                </div>
+              </>
+            )}
+          </motion.button>
+        </div>
         
       </div>
 

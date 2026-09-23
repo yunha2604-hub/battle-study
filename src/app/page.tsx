@@ -6,7 +6,13 @@ import Lobby, { OpponentData } from "@/components/Lobby";
 import BattleArena from "@/components/BattleArena";
 import ResultPage from "@/components/ResultPage";
 import CustomRoomWaiting from "@/components/CustomRoomWaiting";
-import TeacherDashboard from "@/components/TeacherDashboard";
+import TeacherDashboard, { 
+  StudentAssessmentRow, 
+  GeneratedMathQuestion, 
+  INITIAL_STUDENTS, 
+  DEFAULT_MATH_QUESTIONS 
+} from "@/components/TeacherDashboard";
+import { Question } from "@/components/BattleArena";
 
 export default function Home() {
   const [view, setView] = useState<"LOGIN" | "LOBBY" | "BATTLE" | "RESULT" | "CUSTOM_ROOM_WAITING" | "TEACHER_DASHBOARD">("LOGIN");
@@ -30,6 +36,30 @@ export default function Home() {
   const [roomPin, setRoomPin] = useState("1A2B3C");
   const [isStrictAssessment, setIsStrictAssessment] = useState(false);
   const [isTeamBattle, setIsTeamBattle] = useState(false);
+
+  // --- End-to-End Shared Assessment State ---
+  const [assessmentCode, setAssessmentCode] = useState<string>("MTH-7429");
+  const [assessmentStatus, setAssessmentStatus] = useState<"READY" | "IN_PROGRESS" | "EXPIRED">("IN_PROGRESS");
+  const [studentAssessments, setStudentAssessments] = useState<StudentAssessmentRow[]>(INITIAL_STUDENTS);
+  const [mathQuestions, setMathQuestions] = useState<GeneratedMathQuestion[]>(DEFAULT_MATH_QUESTIONS);
+  const [isQuestionsConfirmed, setIsQuestionsConfirmed] = useState<boolean>(true);
+
+  // Convert teacher confirmed math questions to BattleArena question format
+  const customBattleQuestions: Question[] = mathQuestions.map((q) => {
+    const defaultOptions = q.options && q.options.length > 0
+      ? q.options
+      : [q.correctAnswer, "x = -3", "x = ±3", "x = 0"];
+    const ansIdx = defaultOptions.indexOf(q.correctAnswer) >= 0 ? defaultOptions.indexOf(q.correctAnswer) : 0;
+    return {
+      id: q.id,
+      category: `수학 (${q.standardCode})`,
+      question: q.question,
+      options: defaultOptions,
+      answerIndex: ansIdx,
+      explanation: q.solution,
+      timeLimit: 30
+    };
+  });
 
   const handleJoin = (nick: string, sch: string) => {
     setNickname(nick);
@@ -73,6 +103,20 @@ export default function Home() {
   };
 
   const handleEnterPin = (pin: string) => {
+    const cleanPin = pin.trim().toUpperCase();
+    const isTeacherCode = cleanPin === assessmentCode.toUpperCase() || 
+      cleanPin.replace("-", "") === assessmentCode.replace("-", "").toUpperCase();
+
+    if (isTeacherCode) {
+      if (assessmentStatus === "EXPIRED") {
+        alert("🛑 [시험 종료] 이 일회성 시험 코드는 시험이 종료되어 만료되었습니다. (재사용 불가)");
+        return;
+      }
+      alert(`📝 [수행평가 시험 접속]\n단원: I. 실수와 그 연산 (${mathQuestions.length}문항)\n코드: ${assessmentCode}\n수행평가 아레나로 이동합니다!`);
+      handleStartAssessmentMatch(true);
+      return;
+    }
+
     setRoomPin(pin);
     setIsTeamBattle(false);
     setView("CUSTOM_ROOM_WAITING");
@@ -122,6 +166,49 @@ export default function Home() {
     setUserFinalHp(userHp);
     setOpponentFinalHp(oppHp);
     setAnswersLog(log);
+
+    // If this was an assessment match, automatically add/update the student's submission in teacher's table!
+    if (isStrictAssessment) {
+      const studentName = nickname || "대치동불주먹";
+      const correctCount = log.filter((item: any) => item.isCorrect).length;
+      const totalCount = log.length || 1;
+      const calculatedAiScore = Math.round((correctCount / totalCount) * 100);
+      const currentTime = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+
+      setStudentAssessments((prev) => {
+        const existingIdx = prev.findIndex((s) => s.name === studentName);
+        const newRecord: StudentAssessmentRow = {
+          id: `std-sub-${Date.now()}`,
+          grade: 3,
+          classNum: 1,
+          studentNum: 7,
+          name: studentName,
+          submitted: true,
+          submittedAt: currentTime,
+          aiScore: calculatedAiScore,
+          teacherScore: null, // Pending teacher 2nd confirmation!
+          isConfirmed: false,
+          aiSummary: `객관식 정답률 ${calculatedAiScore}%. AI 1차 자동 채점 완료. 선생님 2차 최종 점수 확정 대기 중.`,
+          answers: log.map((item: any, idx: number) => ({
+            qNum: idx + 1,
+            title: item.question.category || `${idx + 1}번 문항`,
+            studentAnswer: item.question.options ? (item.question.options[item.selectedIndex] || "선택값") : "제출 답안",
+            correctAnswer: item.question.options ? (item.question.options[item.question.answerIndex] || "정답") : "정답",
+            pointsEarned: item.isCorrect ? Math.round(100 / totalCount) : 0,
+            maxPoints: Math.round(100 / totalCount),
+            aiAssessment: item.isCorrect ? "정답 (+만점 배점)" : "오답 (풀이과정 재검토 권장)"
+          }))
+        };
+
+        if (existingIdx >= 0) {
+          const updated = [...prev];
+          updated[existingIdx] = newRecord;
+          return updated;
+        }
+        return [newRecord, ...prev];
+      });
+    }
+
     setView("RESULT");
   };
 
@@ -172,6 +259,16 @@ export default function Home() {
         <TeacherDashboard
           onStartAssessmentMatch={handleStartAssessmentMatch}
           onExit={() => setView(nickname ? "LOBBY" : "LOGIN")}
+          roomCode={assessmentCode}
+          setRoomCode={setAssessmentCode}
+          codeStatus={assessmentStatus}
+          setCodeStatus={setAssessmentStatus}
+          students={studentAssessments}
+          setStudents={setStudentAssessments}
+          questions={mathQuestions}
+          setQuestions={setMathQuestions}
+          isQuestionsConfirmed={isQuestionsConfirmed}
+          setIsQuestionsConfirmed={setIsQuestionsConfirmed}
         />
       )}
       {view === "BATTLE" && opponent && selectedSubject && (
@@ -182,6 +279,7 @@ export default function Home() {
           onFinishMatch={handleFinishMatch}
           isStrictAssessment={isStrictAssessment}
           isTeamBattle={isTeamBattle}
+          customQuestions={isStrictAssessment ? customBattleQuestions : undefined}
         />
       )}
       {view === "RESULT" && opponent && (
@@ -193,6 +291,8 @@ export default function Home() {
           answersLog={answersLog}
           isFirstMatch={isFirstMatch}
           onReturnToLobby={handleReturnToLobby}
+          isStrictAssessment={isStrictAssessment}
+          onGoToTeacherDashboard={() => setView("TEACHER_DASHBOARD")}
         />
       )}
     </div>

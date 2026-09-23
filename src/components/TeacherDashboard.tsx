@@ -96,7 +96,7 @@ const MATH_CHAPTERS: MathChapter[] = [
 ];
 
 // Initial Generated Math Questions
-const DEFAULT_MATH_QUESTIONS: GeneratedMathQuestion[] = [
+export const DEFAULT_MATH_QUESTIONS: GeneratedMathQuestion[] = [
   {
     id: 1,
     question: "다음 중 √(-5)²의 올바른 양의 제곱근 값을 구하시오.",
@@ -132,7 +132,7 @@ const DEFAULT_MATH_QUESTIONS: GeneratedMathQuestion[] = [
 ];
 
 // Mock Student Assessment Rows (Class 1, 2, 3)
-const INITIAL_STUDENTS: StudentAssessmentRow[] = [
+export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
   {
     id: "std-1",
     grade: 3,
@@ -330,29 +330,68 @@ const INITIAL_STUDENTS: StudentAssessmentRow[] = [
   }
 ];
 
-interface TeacherDashboardProps {
+export interface TeacherDashboardProps {
   onStartAssessmentMatch: (isStrict: boolean) => void;
   onExit: () => void;
+  roomCode?: string;
+  setRoomCode?: (code: string) => void;
+  codeStatus?: "READY" | "IN_PROGRESS" | "EXPIRED";
+  setCodeStatus?: (status: "READY" | "IN_PROGRESS" | "EXPIRED") => void;
+  students?: StudentAssessmentRow[];
+  setStudents?: React.Dispatch<React.SetStateAction<StudentAssessmentRow[]>>;
+  questions?: GeneratedMathQuestion[];
+  setQuestions?: React.Dispatch<React.SetStateAction<GeneratedMathQuestion[]>>;
+  isQuestionsConfirmed?: boolean;
+  setIsQuestionsConfirmed?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function TeacherDashboard({ onStartAssessmentMatch, onExit }: TeacherDashboardProps) {
+export default function TeacherDashboard({ 
+  onStartAssessmentMatch, 
+  onExit,
+  roomCode: propRoomCode,
+  setRoomCode: propSetRoomCode,
+  codeStatus: propCodeStatus,
+  setCodeStatus: propSetCodeStatus,
+  students: propStudents,
+  setStudents: propSetStudents,
+  questions: propQuestions,
+  setQuestions: propSetQuestions,
+  isQuestionsConfirmed: propIsQuestionsConfirmed,
+  setIsQuestionsConfirmed: propSetIsQuestionsConfirmed
+}: TeacherDashboardProps) {
+  // Shared state with local fallback
+  const [internalQuestions, setInternalQuestions] = useState<GeneratedMathQuestion[]>(DEFAULT_MATH_QUESTIONS);
+  const questions = propQuestions ?? internalQuestions;
+  const setQuestions = propSetQuestions ?? setInternalQuestions;
+
+  const [internalIsQuestionsConfirmed, setInternalIsQuestionsConfirmed] = useState<boolean>(true);
+  const isQuestionsConfirmed = propIsQuestionsConfirmed ?? internalIsQuestionsConfirmed;
+  const setIsQuestionsConfirmed = propSetIsQuestionsConfirmed ?? setInternalIsQuestionsConfirmed;
+
+  const [internalRoomCode, setInternalRoomCode] = useState<string>("MTH-7429");
+  const roomCode = propRoomCode ?? internalRoomCode;
+  const setRoomCode = propSetRoomCode ?? setInternalRoomCode;
+
+  const [internalCodeStatus, setInternalCodeStatus] = useState<"READY" | "IN_PROGRESS" | "EXPIRED">("IN_PROGRESS");
+  const codeStatus = propCodeStatus ?? internalCodeStatus;
+  const setCodeStatus = propSetCodeStatus ?? setInternalCodeStatus;
+
+  const [internalStudents, setInternalStudents] = useState<StudentAssessmentRow[]>(INITIAL_STUDENTS);
+  const students = propStudents ?? internalStudents;
+  const setStudents = propSetStudents ?? setInternalStudents;
+
   // --- Step 1: AI Math Question Generator State ---
   const [selectedChapterId, setSelectedChapterId] = useState<string>("ch1");
   const [pageRange, setPageRange] = useState<string>("p.10 ~ p.25");
   const [questionCount, setQuestionCount] = useState<number>(3);
   const [difficulty, setDifficulty] = useState<"하" | "중" | "상">("중");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [questions, setQuestions] = useState<GeneratedMathQuestion[]>(DEFAULT_MATH_QUESTIONS);
-  const [isQuestionsConfirmed, setIsQuestionsConfirmed] = useState<boolean>(true);
 
   // --- Step 2: One-time Code (PIN) State ---
-  const [roomCode, setRoomCode] = useState<string>("MTH-7429");
-  const [codeStatus, setCodeStatus] = useState<"READY" | "IN_PROGRESS" | "EXPIRED">("IN_PROGRESS");
   const [submittedCount, setSubmittedCount] = useState<number>(10);
   const [totalStudentsCount] = useState<number>(11);
 
   // --- Step 3: Student Performance Assessment Table & Filters ---
-  const [students, setStudents] = useState<StudentAssessmentRow[]>(INITIAL_STUDENTS);
   const [filterClass, setFilterClass] = useState<string>("ALL");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");

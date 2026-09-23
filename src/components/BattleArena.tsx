@@ -133,13 +133,17 @@ interface BattleArenaProps {
   ) => void;
   isStrictAssessment?: boolean;
   isTeamBattle?: boolean;
+  customQuestions?: Question[];
 }
 
 export default function BattleArena({ 
   userProfile, opponent, subject, onFinishMatch, 
-  isStrictAssessment = false, isTeamBattle = false 
+  isStrictAssessment = false, isTeamBattle = false,
+  customQuestions
 }: BattleArenaProps) {
-  const subjectQuestions = SUBJECT_QUESTIONS[subject];
+  const subjectQuestions = customQuestions && customQuestions.length > 0 
+    ? customQuestions 
+    : SUBJECT_QUESTIONS[subject];
   const [currentRound, setCurrentRound] = useState(0);
   const [userHp, setUserHp] = useState(100);
   const [opponentHp, setOpponentHp] = useState(100);
