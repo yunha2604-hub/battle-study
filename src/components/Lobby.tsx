@@ -11,6 +11,7 @@ import PlayerAnalytics from "./PlayerAnalytics";
 import ShadowRaid from "./ShadowRaid";
 
 interface LobbyProps {
+  initialTab?: "ARENA" | "ANALYTICS" | "SHADOW_RAID";
   nickname: string;
   school: string;
   tier: string;
@@ -87,6 +88,7 @@ const INITIAL_RANKINGS = [
 ];
 
 export default function Lobby({ 
+  initialTab = "ARENA",
   nickname, school, tier, lp, energy, setTier, setLp, setEnergy, onStartMatch,
   onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom
 }: LobbyProps) {
@@ -95,7 +97,39 @@ export default function Lobby({
   const [matchTimer, setMatchTimer] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>(null);
-  const [lobbyTab, setLobbyTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">("ARENA");
+  const [lobbyTab, setLobbyTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setLobbyTab(initialTab);
+    }
+  }, [initialTab]);
+
+  // Quick navigation handlers for 4 student mode cards
+  const handleGoToBattle = () => {
+    setLobbyTab("ARENA");
+    if (!selectedSubject) {
+      setSelectedSubject("수학");
+    }
+    setTimeout(() => {
+      const el = document.getElementById("battle-arena-section");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+  };
+
+  const handleGoToLobby = () => {
+    setLobbyTab("ARENA");
+    setTimeout(() => {
+      const el = document.getElementById("school-ranking-section");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 100);
+  };
 
   // Custom Room PIN modal states
   const [showPinModal, setShowPinModal] = useState(false);
@@ -191,44 +225,55 @@ export default function Lobby({
         <div className="hidden md:flex items-center gap-1 bg-slate-950/80 border border-slate-850 p-1 rounded-xl">
           <button
             type="button"
-            onClick={() => setLobbyTab("ARENA")}
-            className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+            onClick={handleGoToLobby}
+            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
               lobbyTab === "ARENA"
                 ? "bg-slate-900 text-white shadow-sm"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            홈 / 매칭
+            <span>🏛️</span>
+            <span>메인 로비</span>
           </button>
           <button
             type="button"
-            onClick={() => setLobbyTab("ANALYTICS")}
-            className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
-              lobbyTab === "ANALYTICS"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-500 hover:text-slate-300"
-            }`}
+            onClick={handleGoToBattle}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-red-400"
           >
-            전적 분석 (OP.GG)
+            <span>⚔️</span>
+            <span>1:1 퀴즈 배틀</span>
           </button>
           <button
             type="button"
             onClick={() => setLobbyTab("SHADOW_RAID")}
-            className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
               lobbyTab === "SHADOW_RAID"
-                ? "bg-slate-900 text-white shadow-sm"
+                ? "bg-slate-900 text-emerald-400 shadow-sm"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            오답 던전 (Shadow Raid)
+            <span>👾</span>
+            <span>오답 던전</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setLobbyTab("ANALYTICS")}
+            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+              lobbyTab === "ANALYTICS"
+                ? "bg-slate-900 text-purple-400 shadow-sm"
+                : "text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            <span>📊</span>
+            <span>결과 & 분석</span>
           </button>
           {onGoToTeacherDashboard && (
             <button
               type="button"
               onClick={onGoToTeacherDashboard}
-              className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
+              className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
             >
-              👩‍🏫 교사 대시보드
+              👩‍🏫 교사
             </button>
           )}
         </div>
@@ -255,6 +300,180 @@ export default function Lobby({
           </button>
         </div>
       </header>
+
+      {/* 4-Card Student Navigation Hub */}
+      <div className="max-w-7xl mx-auto px-4 mt-6 w-full">
+        {/* Student Profile Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-lg shadow-md shadow-cyan-500/20 shrink-0">
+              🎒
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-800 text-cyan-300 font-extrabold text-[11px]">
+                  학생 모드
+                </span>
+                <span className="text-xs font-bold text-white">
+                  {nickname || "슈크림먹은빵"}
+                </span>
+                <span className="text-xs text-slate-400 font-medium">
+                  ({school || "청계중학교"})
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                  {tier} {lp} LP
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                4개 주요 기능 중 원하는 칸을 클릭하여 즉시 이동하세요.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-300">
+              현재 위치: <span className="text-cyan-400 font-black">{
+                lobbyTab === "ARENA" ? "🏛️ 메인 로비 (Lobby)" :
+                lobbyTab === "SHADOW_RAID" ? "👾 오답 던전 (Shadow Raid)" : "📊 배틀 결과 & 분석 (Result & Analytics)"
+              }</span>
+            </span>
+          </div>
+        </div>
+
+        {/* 4-Card Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: 메인 로비 (Lobby) */}
+          <motion.div
+            whileHover={{ y: -4, scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={handleGoToLobby}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+              lobbyTab === "ARENA"
+                ? "bg-slate-900/90 border-cyan-500/80 shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500/40"
+                : "bg-slate-900/40 border-slate-800 hover:border-cyan-500/40 hover:bg-slate-900/70"
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                <School className="w-5 h-5" />
+              </div>
+              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                lobbyTab === "ARENA"
+                  ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-300"
+                  : "bg-slate-800 border-slate-700 text-slate-400"
+              }`}>
+                {lobbyTab === "ARENA" ? "현재 위치" : "홈으로 이동"}
+              </span>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-sm font-black text-white flex items-center gap-1.5">
+                🏛️ 메인 로비 (Lobby)
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                실시간 학교 랭킹, 개인 티어 진행도, 커스텀 방 생성 및 PIN 코드 입장
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span className="text-[11px] font-bold text-cyan-400">랭킹 및 커스텀 룸</span>
+              <ChevronRight className="w-4 h-4 text-slate-500" />
+            </div>
+          </motion.div>
+
+          {/* Card 2: 1:1 실시간 퀴즈 배틀 (Battle Arena) */}
+          <motion.div
+            whileHover={{ y: -4, scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={handleGoToBattle}
+            className="p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between bg-slate-900/40 border-slate-800 hover:border-red-500/60 hover:bg-slate-900/70 group"
+          >
+            <div className="flex items-start justify-between">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform">
+                <Swords className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300">
+                실시간 대전
+              </span>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-sm font-black text-white flex items-center gap-1.5">
+                ⚔️ 1:1 실시간 퀴즈 배틀
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                국어 · 영어 · 수학 라이벌 학교 학생과 실시간 5문항 스피드 승부
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span className="text-[11px] font-bold text-red-400">매칭 시작하기</span>
+              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </motion.div>
+
+          {/* Card 3: 오답 던전 (Shadow Raid) */}
+          <motion.div
+            whileHover={{ y: -4, scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={() => setLobbyTab("SHADOW_RAID")}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+              lobbyTab === "SHADOW_RAID"
+                ? "bg-slate-900/90 border-emerald-500/80 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40"
+                : "bg-slate-900/40 border-slate-800 hover:border-emerald-500/60 hover:bg-slate-900/70"
+            } group`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300">
+                ⚡ 번개 충전
+              </span>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-sm font-black text-white flex items-center gap-1.5">
+                👾 오답 던전 (Shadow Raid)
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                배틀에서 틀린 문제 오답 몬스터 토벌! 오답 극복 시 배틀 번개 에너지 충전
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span className="text-[11px] font-bold text-emerald-400">던전 입장하기</span>
+              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </motion.div>
+
+          {/* Card 4: 배틀 결과 & 분석 (Result & Analytics) */}
+          <motion.div
+            whileHover={{ y: -4, scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={() => setLobbyTab("ANALYTICS")}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+              lobbyTab === "ANALYTICS"
+                ? "bg-slate-900/90 border-purple-500/80 shadow-lg shadow-purple-500/10 ring-1 ring-purple-500/40"
+                : "bg-slate-900/40 border-slate-800 hover:border-purple-500/60 hover:bg-slate-900/70"
+            } group`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                <BarChart2 className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300">
+                승률 60%
+              </span>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-sm font-black text-white flex items-center gap-1.5">
+                📊 배틀 결과 & 분석
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                최근 전적 기록, 5각 레이더 역량 분석(속도/어휘/문법), 취약점 리포트
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span className="text-[11px] font-bold text-purple-400">분석 리포트 보기</span>
+              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
 
       {lobbyTab === "ARENA" && (
         <>
@@ -526,7 +745,7 @@ export default function Lobby({
         <section className="lg:col-span-8 flex flex-col gap-6">
           
           {/* Main School Leaderboard */}
-          <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-900 rounded-3xl p-6 flex-1 flex flex-col">
+          <div id="school-ranking-section" className="bg-slate-900/40 backdrop-blur-xl border border-slate-900 rounded-3xl p-6 flex-1 flex flex-col scroll-mt-24">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-extrabold tracking-tight flex items-center gap-2">
@@ -639,7 +858,7 @@ export default function Lobby({
           </div>
 
           {/* Big Matchmaking Button */}
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+          <div id="battle-arena-section" className="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 scroll-mt-24">
             <div className="text-center md:text-left flex-1">
               <h3 className="text-lg font-black tracking-tight text-white flex items-center justify-center md:justify-start gap-2">
                 <Award className="w-5 h-5 text-cyan-400" />
@@ -732,11 +951,39 @@ export default function Lobby({
       )}
 
       {lobbyTab === "ANALYTICS" && (
-        <PlayerAnalytics />
+        <div className="max-w-7xl mx-auto px-4 mt-4 w-full">
+          <div className="mb-4 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleGoToLobby}
+              className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-xs font-bold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
+            >
+              <span>← 메인 로비로 돌아가기</span>
+            </button>
+            <span className="text-xs font-bold text-purple-400 bg-purple-950/40 border border-purple-800/60 px-3 py-1.5 rounded-xl">
+              📊 배틀 결과 & 분석 (Result & Analytics)
+            </span>
+          </div>
+          <PlayerAnalytics />
+        </div>
       )}
 
       {lobbyTab === "SHADOW_RAID" && (
-        <ShadowRaid energy={energy} setEnergy={setEnergy} />
+        <div className="max-w-7xl mx-auto px-4 mt-4 w-full">
+          <div className="mb-4 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleGoToLobby}
+              className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-xs font-bold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
+            >
+              <span>← 메인 로비로 돌아가기</span>
+            </button>
+            <span className="text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-xl">
+              👾 오답 던전 (Shadow Raid)
+            </span>
+          </div>
+          <ShadowRaid energy={energy} setEnergy={setEnergy} />
+        </div>
       )}
 
       {/* Matching Screen Overlay */}

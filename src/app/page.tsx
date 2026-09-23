@@ -212,6 +212,8 @@ export default function Home() {
     setView("RESULT");
   };
 
+  const [lobbyInitialTab, setLobbyInitialTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">("ARENA");
+
   const handleReturnToLobby = (newTier: string, newLp: number) => {
     setTier(newTier);
     setLp(newLp);
@@ -220,16 +222,51 @@ export default function Home() {
     setView("LOBBY");
   };
 
+  const handleStudentDirectEntry = (targetMenu: "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS") => {
+    setNickname("슈크림먹은빵");
+    setSchool("청계중학교");
+    setTier("Silver");
+    setLp(85);
+    setEnergy(3);
+    setIsFirstMatch(false);
+    setIsStrictAssessment(false);
+    setIsTeamBattle(false);
+
+    if (targetMenu === "BATTLE") {
+      const rivalSchool = "대청중학교";
+      const battleOpponent: OpponentData = {
+        nickname: "목동수학귀신",
+        school: rivalSchool,
+        tier: "Gold",
+        lp: 45
+      };
+      setOpponent(battleOpponent);
+      setSelectedSubject("수학");
+      setView("BATTLE");
+    } else if (targetMenu === "SHADOW_RAID") {
+      setLobbyInitialTab("SHADOW_RAID");
+      setView("LOBBY");
+    } else if (targetMenu === "ANALYTICS") {
+      setLobbyInitialTab("ANALYTICS");
+      setView("LOBBY");
+    } else {
+      setLobbyInitialTab("ARENA");
+      setView("LOBBY");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-between">
       {view === "LOGIN" && (
         <LandingPage 
           onJoin={handleJoin} 
           onGoToTeacherDashboard={() => setView("TEACHER_DASHBOARD")}
+          onStudentDirectEntry={handleStudentDirectEntry}
         />
       )}
       {view === "LOBBY" && (
         <Lobby
+          initialTab={lobbyInitialTab}
           nickname={nickname}
           school={school}
           tier={tier}
