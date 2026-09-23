@@ -112,7 +112,7 @@ export default function Home() {
       lp: 45
     };
     setOpponent(testOpponent);
-    setSelectedSubject("영어"); // Assessment runs English test by default
+    setSelectedSubject("수학"); // Assessment runs Math test for math assessment dashboard
     setIsStrictAssessment(isStrict);
     setIsTeamBattle(false);
     setView("BATTLE");

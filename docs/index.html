@@ -219,11 +219,11 @@
               </li>
               <li class="flex items-start gap-2">
                 <span class="text-sky-400 font-bold">•</span>
-                <span><strong>선생님의 현실적 3대 고통:</strong> ① 오답 선지 출제 노가다, ② 150~200명 채점 부담 및 학부모 민원, ③ 학기말 수백 명 생기부 '세특' 야근.</span>
+                <span><strong>선생님의 현실적 3대 고통:</strong> ① 수행평가 문항 출제 및 배점 노가다, ② 150~200명 채점 부담 및 학부모 채점 이의신청 민원, ③ 수업 시간 접속 통제 및 공정한 시험 관리.</span>
               </li>
               <li class="flex items-start gap-2">
                 <span class="text-sky-400 font-bold">•</span>
-                <span><strong>해결책:</strong> 교과서·웹 지문 1초 출제 + 기초 퀴즈 자동 채점 & 민원 방어 객관적 데이터 + NEIS 세특 자동 완성!</span>
+                <span><strong>해결책:</strong> 교과서 목차/페이지 기반 AI 수행평가 문항 출제 + 일회성 코드 시험 배포/만료 + AI 1차 자동 채점 & 교사 2차 점수 확정 + 학생 관리 테이블!</span>
               </li>
             </ul>
           </div>
@@ -267,7 +267,7 @@
                   <td class="p-3 font-bold text-slate-900">교사 혜택</td>
                   <td class="p-3">단순 점수 엑셀 다운로드</td>
                   <td class="p-3">없음</td>
-                  <td class="p-3 text-indigo-300 font-semibold bg-indigo-950/20">성취기준 연계 생기부 세특 문구 자동 완성</td>
+                  <td class="p-3 text-indigo-700 font-semibold bg-indigo-50">성취기준 연계 문항 출제 및 AI 1차 자동 채점 + 교사 2차 점수 확정</td>
                 </tr>
               </tbody>
             </table>
@@ -361,14 +361,14 @@
           <div class="bg-slate-50/80 border border-slate-200 rounded-xl p-5">
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-sky-400"></span> 5. 선생님 대시보드 (`TeacherDashboard.tsx`) — 선택적 수행평가 보조 도구
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span> 5. 선생님 대시보드 (`TeacherDashboard.tsx`) — 수학 수행평가 통합 관리 시스템
               </h3>
-              <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-1 rounded-full">AI 출제 & 생기부 세특</span>
+              <span class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full font-bold">수학 수행평가 관리 & 2단계 채점</span>
             </div>
-            <ul class="text-xs sm:text-sm text-slate-300 space-y-2">
-              <li>• <strong>열린 텍스트창(AI 1초 출제):</strong> 국어·영어는 교과서뿐 아니라 <strong>네이버 뉴스, 사설 칼럼 등 어떤 외부 웹 기사든 복붙 가능</strong>하며, 수학은 <strong>핵심 공식이나 대표 예제</strong>를 입력해 AI가 숫자와 조건을 바꾼 <strong>쌍둥이 변형 문제</strong>를 자동 생성합니다.</li>
-              <li>• <strong>수행평가 하이브리드 지원:</strong> 단어·맞춤법 등 개념 확인형은 <strong>0.1초 자동 채점</strong>으로 교사 부담 제로! 서술형 글쓰기는 글 쓰기 전 <strong>'1분 사전 독해 체크'</strong>로 활용해 팩트 이해도를 확인하고 학부모 민원 방어용 객관적 평가 데이터를 제공합니다.</li>
-              <li>• <strong>AI 세특 자동 완성:</strong> 최종 채점자는 법적으로 교사이며, 스쿨배틀은 학생의 퀴즈 데이터(정답률, 풀이속도)를 조합해 NEIS 생기부 세특 문구를 1초 만에 자동 작성해 드립니다.</li>
+            <ul class="text-xs sm:text-sm text-slate-700 space-y-2">
+              <li>• <strong>AI 수학 문항 출제 & 문제 확정:</strong> 교과서 단원(목차), 페이지, 문항 수, 난이도를 입력받아 AI가 성취기준 연계 객관식 및 서술형 문항을 자동 생성하며, 선생님이 문제를 최종 확정합니다.</li>
+              <li>• <strong>수업시간 일회성 시험 코드(PIN) 발급 & 만료 관리:</strong> 선생님이 출제 확정 후 학생들에게 일회성 핀코드를 공유해 시험을 시작하며, 시험이 종료되면 코드는 즉시 만료되어 영구 재사용이 불가합니다.</li>
+              <li>• <strong>학생 관리 테이블 & 2단계 평가(AI 1차 + 교사 2차 확정):</strong> 이름, 학년, 반, 번호별 검색/필터링이 완비된 테이블에서 학생 제출 답안에 대한 AI 1차 자동 채점 결과를 확인하고, 선생님이 최종 점수를 직접 조정/확정합니다.</li>
             </ul>
           </div>
         </div>
@@ -496,7 +496,7 @@
             </div>
             <div class="answer-box mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/70 p-4 rounded-xl text-sm sm:text-base text-slate-800 leading-relaxed space-y-2.5">
               <p class="answer-text">
-                "제가 학생이다 보니 혼자 문제 푸는 게 지루하다는 문제를 먼저 떠올렸습니다. 그런데 생각해보니 학생용 게임 앱만 만들면 학교에서는 '수업 시간에 핸드폰 끄라'고 하실 게 뻔했습니다. 학교 안에서 공식적으로 쓰이려면 선생님께도 퀴즈 출제와 세특 작성이라는 확실한 이득이 있어야 한다고 생각해서 두 문제를 하나로 묶었습니다."
+                "제가 학생이다 보니 혼자 문제 푸는 게 지루하다는 문제를 먼저 떠올렸습니다. 그런데 생각해보니 학생용 게임 앱만 만들면 학교에서는 '수업 시간에 핸드폰 끄라'고 하실 게 뻔했습니다. 학교 안에서 공식적으로 쓰이려면 선생님께도 수업 중 수행평가 출제와 일회성 코드 배포, AI 채점이라는 확실한 수업 도구가 되어야 한다고 생각해서 두 문제를 하나로 묶었습니다."
               </p>
               <p class="text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-lg leading-relaxed">
                 ⚠️ <strong>실수 주의:</strong> "둘 다 동시에 떠올랐어요"라고 하면 어른이 써준 것처럼 보입니다. 반드시 '학생 문제 먼저 ➔ 교사 채택 고민' 순서로 말하세요.
@@ -525,13 +525,13 @@
             <div class="flex items-start justify-between gap-3 cursor-pointer" onclick="toggleAnswer(this)">
               <h4 class="font-bold text-slate-900 text-sm sm:text-base flex items-start gap-2.5">
                 <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-extrabold text-xs shrink-0 mt-0.5">Q3.</span>
-                <span>세특(교과세부능력특기사항) 작성이 왜 선생님들한테 큰 부담인지 알고 있나요?</span>
+                <span>수행평가 출제와 채점 관리가 왜 선생님들한테 큰 부담인지 알고 있나요?</span>
               </h4>
               <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transform transition shrink-0"></i>
             </div>
             <div class="answer-box mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/70 p-4 rounded-xl text-sm sm:text-base text-slate-800 leading-relaxed space-y-2.5">
               <p class="answer-text">
-                "선생님들은 학기말이나 연말 마감 기한에 맞춰 반 학생 수십, 수백 명의 과목별 특성을 생활기록부에 일일이 서술형으로 써주셔야 합니다. 평소 학생들의 퀴즈 참여율이나 정답률 데이터가 없으면 기억에 의존해 써야 해서 엄청난 야근 업무가 된다고 들었습니다."
+                "선생님들은 학기마다 150~200명이 넘는 학생들의 수행평가를 직접 출제하고 채점하셔야 합니다. 특히 객관식뿐만 아니라 서술형 풀이과정 채점 시 교사 1명이 수많은 답안을 검토해야 하고, 채점 기준에 대한 학부모나 학생의 이의신청 민원 방어에 큰 시간과 에너지가 소모된다고 들었습니다. 스쿨배틀은 AI 1차 자동 채점으로 교사의 채점 노력을 덜고 객관적인 부분점수 근거를 제공하여, 교사가 2차 최종 평가자로서의 확인 및 점수 확정에만 집중할 수 있게 설계했습니다."
               </p>
             </div>
           </div>
@@ -678,7 +678,7 @@
             </div>
             <div class="answer-box mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/70 p-4 rounded-xl text-sm sm:text-base text-slate-800 leading-relaxed space-y-2.5">
               <p class="answer-text">
-                "기본적인 학생 배틀과 전국 랭킹은 완전 무료로 확산시키고, 학교나 교육청을 대상으로 AI 교과서 문제 출제와 NEIS 생기부 세특 자동 완성 엔진이 포함된 '선생님 B2B 프리미엄 기능'을 구독형(SaaS) 모델로 판매하는 방식을 생각했습니다."
+                "기본적인 학생 배틀과 전국 랭킹은 완전 무료로 확산시키고, 학교나 교육청을 대상으로 AI 교과서 문제 출제와 수업시간 일회성 코드 시험 배포, 2단계 수행평가 채점 관리 엔진이 포함된 '선생님 B2B 수행평가 관리 기능'을 구독형(SaaS) 모델로 판매하는 방식을 생각했습니다."
               </p>
             </div>
           </div>
@@ -710,7 +710,7 @@
             </div>
             <div class="answer-box mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/70 p-4 rounded-xl text-sm sm:text-base text-slate-800 leading-relaxed space-y-2.5">
               <p class="answer-text">
-                "교육부의 2022 개정 교육과정에서 과목별로 학생들이 꼭 달성해야 하는 학습 목표에 번호표를 붙여놓은 것입니다. 선생님들이 생활기록부 세특을 작성하실 때 이 코드를 기준으로 작성하십니다."
+                "교육부의 2022 개정 교육과정에서 과목별로 학생들이 꼭 달성해야 하는 학습 목표에 번호표를 붙여놓은 것입니다. 선생님들이 수행평가 문항을 출제하고 평가 기준을 수립하실 때 이 코드를 기준으로 공식 매핑하십니다."
               </p>
             </div>
           </div>
@@ -822,7 +822,7 @@
             </div>
             <div class="answer-box mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/70 p-4 rounded-xl text-sm sm:text-base text-slate-800 leading-relaxed space-y-2.5">
               <p class="answer-text">
-                "아닙니다! 스쿨배틀은 수행평가를 대체하거나 의무화하려는 것이 전혀 아닙니다. 법적으로 수행평가의 계획과 최종 평가는 전적으로 교과 선생님의 고유 권한입니다. 스쿨배틀은 선생님들이 수행평가를 운영하실 때 겪는 3대 고통(오답 선지 출제 노가다, 채점 부담 및 학부모 민원, 학기말 세특 작성 야근)을 완벽히 덜어드리는 <strong>'선택적 수행평가 보조 도구(Teacher Copilot)'</strong>로 설계되었습니다. 선생님이 필요할 때 언제든 자유롭게 꺼내 쓰실 수 있는 지원 도구입니다."
+                "아닙니다! 스쿨배틀은 수행평가를 대체하거나 의무화하려는 것이 전혀 아닙니다. 법적으로 수행평가의 계획과 최종 평가는 전적으로 교과 선생님의 고유 권한입니다. 스쿨배틀은 선생님들이 수행평가를 운영하실 때 겪는 3대 고통(문항 출제 및 배점 구성, 대규모 채점 부담 및 학부모 민원, 시험 시간 통제 부담)을 완벽히 덜어드리는 <strong>'선택적 수학 수행평가 관리 보조 도구(Teacher Copilot)'</strong>로 설계되었습니다. 선생님이 필요할 때 언제든 자유롭게 꺼내 쓰실 수 있는 지원 도구입니다."
               </p>
               <p class="text-[11px] text-sky-300 bg-sky-950/40 p-2.5 rounded-lg border border-sky-900/50">
                 💡 <strong>심사위원 방어 포인트:</strong> "제도를 강제하겠다"고 하면 심사위원이 반발합니다. "교사의 권한을 100% 존중하며 고통을 덜어주는 보조 도구"라고 선을 그어주는 것이 핵심입니다.
