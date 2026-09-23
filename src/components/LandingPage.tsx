@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, School, Search, Zap, User, Sparkles } from "lucide-react";
+import { Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, ChevronRight } from "lucide-react";
 
 interface LandingPageProps {
   onJoin: (nickname: string, school: string) => void;
@@ -66,23 +66,70 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard }: LandingP
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
-      {onGoToTeacherDashboard && (
-        <button
-          type="button"
-          onClick={onGoToTeacherDashboard}
-          className="absolute top-6 right-6 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-900/60 hover:bg-slate-900 border border-slate-800 rounded-xl transition-all cursor-pointer z-50 flex items-center gap-1.5"
-        >
-          <span>👩‍🏫 교사 대시보드 (Teacher Portal)</span>
-        </button>
-      )}
+    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 pt-16">
+      
+      {/* Top Global Navigation Bar (상단 메뉴 바) */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-slate-800 px-4 md:px-8 py-3 flex items-center justify-between shadow-lg">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20">
+            <Swords className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-black text-white text-base tracking-wide">스쿨배틀</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                MVP
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400 hidden sm:block">실시간 퀴즈 대전 & 수학 수행평가 관리</p>
+          </div>
+        </div>
+
+        {/* Center / Navigation Menu Items */}
+        <nav className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 p-1 rounded-2xl">
+          <button
+            type="button"
+            className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer"
+          >
+            <Swords className="w-3.5 h-3.5" />
+            <span>🎮 학생 아레나</span>
+          </button>
+
+          {onGoToTeacherDashboard && (
+            <button
+              type="button"
+              onClick={onGoToTeacherDashboard}
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+              <span>👩‍🏫 교사 대시보드</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            </button>
+          )}
+        </nav>
+
+        {/* Right CTA */}
+        {onGoToTeacherDashboard && (
+          <button
+            type="button"
+            onClick={onGoToTeacherDashboard}
+            className="hidden md:flex px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-600/25 transition-all cursor-pointer items-center gap-1.5 hover:scale-103"
+          >
+            <Calculator className="w-3.5 h-3.5" />
+            <span>교사용 대시보드 열기</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </header>
+
       {/* Background Particles / Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
       
       {/* Glow Effects */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Floating Sparkles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -109,35 +156,50 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard }: LandingP
       </div>
 
       {/* Main Container */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 w-full max-w-lg px-6 py-12 mx-4 bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl"
-      >
-        {/* Logo / Header */}
-        <div className="text-center mb-10">
-          <motion.div
-            initial={{ scale: 0.5, rotate: -15 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="inline-flex p-4 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-600 shadow-lg shadow-indigo-500/30 mb-4"
-          >
-            <Swords className="w-10 h-10 text-white" />
-          </motion.div>
-          <h1 className="text-4xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 drop-shadow-md font-sans">
-            스쿨배틀
-          </h1>
-          <p className="text-sm font-semibold tracking-widest text-cyan-400 mt-1 uppercase">
-            SchoolBattle Arena
-          </p>
-          <p className="text-slate-400 text-sm mt-3">
-            학교의 명예를 걸고 맞붙는 1대1 실시간 퀴즈 대전
-          </p>
-        </div>
+      <div className="flex-1 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative z-10 w-full max-w-lg px-6 py-8 mx-auto bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl space-y-6"
+        >
+          {/* Mode Switcher Tabs inside the Card */}
+          <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-950/80 border border-slate-800 rounded-2xl">
+            <button
+              type="button"
+              className="py-2.5 rounded-xl text-xs font-black bg-slate-800 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700/50"
+            >
+              <Swords className="w-3.5 h-3.5 text-cyan-400" />
+              <span>🎮 학생 모드 로그인</span>
+            </button>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+            {onGoToTeacherDashboard && (
+              <button
+                type="button"
+                onClick={onGoToTeacherDashboard}
+                className="py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+                <span>👩‍🏫 교사 모드 바로가기</span>
+              </button>
+            )}
+          </div>
+
+          {/* Logo / Header */}
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 drop-shadow-md font-sans">
+              스쿨배틀
+            </h1>
+            <p className="text-xs font-semibold tracking-widest text-cyan-400 mt-1 uppercase">
+              SchoolBattle Arena
+            </p>
+            <p className="text-slate-400 text-xs mt-2">
+              학교의 명예를 걸고 맞붙는 1대1 실시간 퀴즈 대전
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -236,5 +298,7 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard }: LandingP
         </form>
       </motion.div>
     </div>
+    </div>
   );
 }
+
