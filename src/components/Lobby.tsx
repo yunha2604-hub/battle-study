@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Swords, Trophy, User, School, Zap, Award, Target, Flame, 
@@ -92,6 +93,7 @@ export default function Lobby({
   nickname, school, tier, lp, energy, setTier, setLp, setEnergy, onStartMatch,
   onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom
 }: LobbyProps) {
+  const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
   const [matchingStep, setMatchingStep] = useState(0);
   const [matchTimer, setMatchTimer] = useState(0);
@@ -107,20 +109,12 @@ export default function Lobby({
 
   // Quick navigation handlers for 4 student mode cards
   const handleGoToBattle = () => {
-    setLobbyTab("ARENA");
-    if (!selectedSubject) {
-      setSelectedSubject("수학");
-    }
-    setTimeout(() => {
-      const el = document.getElementById("battle-arena-section");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 100);
+    router.push("/battle");
   };
 
   const handleGoToLobby = () => {
     setLobbyTab("ARENA");
+    router.push("/lobby");
     setTimeout(() => {
       const el = document.getElementById("school-ranking-section");
       if (el) {
@@ -128,7 +122,7 @@ export default function Lobby({
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-    }, 100);
+    }, 50);
   };
 
   // Custom Room PIN modal states
@@ -245,7 +239,10 @@ export default function Lobby({
           </button>
           <button
             type="button"
-            onClick={() => setLobbyTab("SHADOW_RAID")}
+            onClick={() => {
+              setLobbyTab("SHADOW_RAID");
+              router.push("/shadow-raid");
+            }}
             className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
               lobbyTab === "SHADOW_RAID"
                 ? "bg-slate-900 text-emerald-400 shadow-sm"
@@ -257,7 +254,10 @@ export default function Lobby({
           </button>
           <button
             type="button"
-            onClick={() => setLobbyTab("ANALYTICS")}
+            onClick={() => {
+              setLobbyTab("ANALYTICS");
+              router.push("/analytics");
+            }}
             className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
               lobbyTab === "ANALYTICS"
                 ? "bg-slate-900 text-purple-400 shadow-sm"
@@ -267,15 +267,16 @@ export default function Lobby({
             <span>📊</span>
             <span>결과 & 분석</span>
           </button>
-          {onGoToTeacherDashboard && (
-            <button
-              type="button"
-              onClick={onGoToTeacherDashboard}
-              className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
-            >
-              👩‍🏫 교사
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              if (onGoToTeacherDashboard) onGoToTeacherDashboard();
+              else router.push("/teacher");
+            }}
+            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
+          >
+            👩‍🏫 교사
+          </button>
         </div>
 
         {/* User Status Bar */}
@@ -411,7 +412,10 @@ export default function Lobby({
           <motion.div
             whileHover={{ y: -4, scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            onClick={() => setLobbyTab("SHADOW_RAID")}
+            onClick={() => {
+              setLobbyTab("SHADOW_RAID");
+              router.push("/shadow-raid");
+            }}
             className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
               lobbyTab === "SHADOW_RAID"
                 ? "bg-slate-900/90 border-emerald-500/80 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40"
@@ -444,7 +448,10 @@ export default function Lobby({
           <motion.div
             whileHover={{ y: -4, scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            onClick={() => setLobbyTab("ANALYTICS")}
+            onClick={() => {
+              setLobbyTab("ANALYTICS");
+              router.push("/analytics");
+            }}
             className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
               lobbyTab === "ANALYTICS"
                 ? "bg-slate-900/90 border-purple-500/80 shadow-lg shadow-purple-500/10 ring-1 ring-purple-500/40"
