@@ -152,9 +152,9 @@ export default function PlayerAnalytics() {
         <div>
           <h2 className="text-2xl md:text-3xl font-black tracking-tight flex items-center justify-center md:justify-start gap-2.5">
             <BarChart2 className="w-7 h-7 text-cyan-400" />
-            <span>플레이어 전적 & 역량 분석</span>
+            <span>나의 역량 분석</span>
             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-              OP.GG Style
+              6대 핵심 지표
             </span>
           </h2>
           <p className="text-xs md:text-sm text-slate-400 mt-1">

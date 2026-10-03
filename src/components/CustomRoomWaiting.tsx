@@ -22,11 +22,11 @@ interface PlayerSlot {
 }
 
 const MOCK_PLAYERS: PlayerSlot[] = [
-  { name: "대치동불주먹", school: "동탄고등학교", tier: "Silver [현지인]", isReady: true, isHost: true },
-  { name: "목동수학귀신", school: "반송고등학교", tier: "Gold [1인분 장인]", isReady: true, isHost: false },
-  { name: "청계중마스터", school: "동탄고등학교", tier: "Silver [현지인]", isReady: true, isHost: false },
-  { name: "분당오답폭격기", school: "반송고등학교", tier: "Bronze [오답 자판기]", isReady: false, isHost: false },
-  { name: "평촌공부귀신", school: "동탄고등학교", tier: "Gold [1인분 장인]", isReady: true, isHost: false }
+  { name: "대치동불주먹", school: "청계중학교", tier: "Silver [현지인]", isReady: true, isHost: true },
+  { name: "목동수학귀신", school: "휘문중학교", tier: "Gold [1인분 장인]", isReady: true, isHost: false },
+  { name: "청계중마스터", school: "청계중학교", tier: "Silver [현지인]", isReady: true, isHost: false },
+  { name: "대치동수학괴물", school: "휘문중학교", tier: "Bronze [오답 자판기]", isReady: false, isHost: false },
+  { name: "평촌공부귀신", school: "청계중학교", tier: "Gold [1인분 장인]", isReady: true, isHost: false }
 ];
 
 export default function CustomRoomWaiting({ 
@@ -97,7 +97,7 @@ export default function CustomRoomWaiting({
           <div className="space-y-6">
             <div className="text-center bg-purple-950/20 border border-purple-550/20 p-3 rounded-2xl">
               <p className="text-xs text-purple-300 font-extrabold">
-                📢 각 팀의 멤버가 푸는 퀴즈 결과에 따라 소속 학교의 합산 체력(Shared HP)이 연동됩니다!
+                📢 [2세트 학교 대항전] 1세트 3분 스피드 개념전(5문항) + 2세트 30분 종이와 연필 정통 수학전(5문항)의 5+5 챔피언십으로 진행됩니다!
               </p>
             </div>
 
@@ -112,8 +112,8 @@ export default function CustomRoomWaiting({
               }`}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
                   <div>
-                    <h3 className="text-sm font-black text-cyan-400">Team A (레드윙즈)</h3>
-                    <span className="text-[10px] text-slate-400 font-bold block mt-0.5">동탄고등학교 1학년 3반</span>
+                    <h3 className="text-sm font-black text-cyan-400">Team A (청계중 대표)</h3>
+                    <span className="text-[10px] text-slate-400 font-bold block mt-0.5">청계중학교 3학년 2반</span>
                   </div>
                   {userTeam === "A" ? (
                     <span className="text-[9px] font-black bg-cyan-950 text-cyan-400 px-2.5 py-1 rounded-lg border border-cyan-500/20">
@@ -158,8 +158,8 @@ export default function CustomRoomWaiting({
               }`}>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
                   <div>
-                    <h3 className="text-sm font-black text-purple-400">Team B (블루이글스)</h3>
-                    <span className="text-[10px] text-slate-400 font-bold block mt-0.5">반송고등학교 1학년 4반</span>
+                    <h3 className="text-sm font-black text-purple-400">Team B (휘문중 대표)</h3>
+                    <span className="text-[10px] text-slate-400 font-bold block mt-0.5">휘문중학교 3학년 4반</span>
                   </div>
                   {userTeam === "B" ? (
                     <span className="text-[9px] font-black bg-purple-950 text-purple-400 px-2.5 py-1 rounded-lg border border-purple-500/20">

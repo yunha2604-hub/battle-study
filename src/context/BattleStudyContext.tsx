@@ -246,15 +246,19 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
   };
 
   const handleStartCustomBattle = () => {
-    const rivalSchool = school === "동탄고등학교" ? "반송고등학교" : "동탄고등학교";
+    if (isTeamBattle) {
+      router.push("/deathmatch");
+      return;
+    }
+    const rivalSchool = school === "청계중학교" ? "휘문중학교" : "청계중학교";
     const customOpponent: OpponentData = {
-      nickname: "목동수학귀신",
+      nickname: "대치동수학괴물",
       school: rivalSchool,
       tier: "Gold",
       lp: 45
     };
     setOpponent(customOpponent);
-    setSelectedSubject(isTeamBattle ? "수학" : "영어");
+    setSelectedSubject("영어");
     setIsStrictAssessment(false);
     router.push("/battle");
   };

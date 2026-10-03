@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Swords, Zap, LogIn } from "lucide-react";
 
-export type NavTabType = "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS" | "TEACHER" | "LOGIN";
+export type NavTabType = "LOBBY" | "BATTLE" | "DEATHMATCH" | "SHADOW_RAID" | "ANALYTICS" | "TEACHER" | "LOGIN";
 
 export interface GlobalHeaderProps {
   activeTab?: NavTabType;
@@ -25,6 +25,7 @@ export default function GlobalHeader({
   // Auto-detect active tab from route if not explicitly provided
   const activeTab: NavTabType = propActiveTab || (() => {
     if (pathname === "/battle") return "BATTLE";
+    if (pathname === "/deathmatch") return "DEATHMATCH";
     if (pathname === "/shadow-raid") return "SHADOW_RAID";
     if (pathname === "/analytics") return "ANALYTICS";
     if (pathname === "/teacher") return "TEACHER";
@@ -95,6 +96,20 @@ export default function GlobalHeader({
           <span>1:1 퀴즈 배틀</span>
         </button>
 
+        {/* Tab 3: 학교 대항 데스매치 */}
+        <button
+          type="button"
+          onClick={() => router.push("/deathmatch")}
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "DEATHMATCH"
+              ? isLight ? "bg-white text-orange-600 shadow-sm border border-orange-200" : "bg-slate-900 text-orange-400 shadow-sm border border-orange-500/40"
+              : "text-slate-500 hover:text-orange-400"
+          }`}
+        >
+          <span>🔥</span>
+          <span>학교 대항</span>
+        </button>
+
         {/* Tab 3: 오답 던전 */}
         <button
           type="button"
@@ -109,7 +124,7 @@ export default function GlobalHeader({
           <span>오답 던전</span>
         </button>
 
-        {/* Tab 4: 결과 & 분석 */}
+        {/* Tab 5: 나의 역량 분석 */}
         <button
           type="button"
           onClick={() => router.push("/analytics")}
@@ -120,7 +135,7 @@ export default function GlobalHeader({
           }`}
         >
           <span>📊</span>
-          <span>결과 & 분석</span>
+          <span>나의 역량 분석</span>
         </button>
 
         {/* Tab 5: 교사 대시보드 */}

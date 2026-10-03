@@ -76,19 +76,23 @@ const TIER_DETAILS: Record<string, { label: string; color: string; bg: string; t
   },
 };
 
-const MOCK_SCHOOL_LEADERBOARD = [
-  { rank: 1, name: "동탄고등학교", lp: 15200, count: 142 },
-  { rank: 2, name: "반송고등학교", lp: 14850, count: 128 },
-  { rank: 3, name: "세마고등학교", lp: 12000, count: 95 }
-];
-
-const INITIAL_RANKINGS = [
-  { rank: 1, name: "대청중학교", lp: 48250, count: 124 },
-  { rank: 2, name: "청계중학교", lp: 45900, count: 98 },
+// 🏫 전국 중학교 랭킹 데이터 (청계중학교 1위 리그 챔피언)
+const MIDDLE_SCHOOL_LEADERBOARD = [
+  { rank: 1, name: "청계중학교", lp: 52400, count: 138 },
+  { rank: 2, name: "대청중학교", lp: 48250, count: 124 },
   { rank: 3, name: "휘문중학교", lp: 41100, count: 112 },
   { rank: 4, name: "신반포중학교", lp: 37400, count: 85 },
   { rank: 5, name: "도곡중학교", lp: 32900, count: 77 },
   { rank: 6, name: "역삼중학교", lp: 28550, count: 64 },
+];
+
+// 🎓 전국 고등학교 랭킹 데이터 (한국디지털미디어고 포함)
+const HIGH_SCHOOL_LEADERBOARD = [
+  { rank: 1, name: "한국디지털미디어고등학교 (디미고)", lp: 58200, count: 168 },
+  { rank: 2, name: "반송고등학교", lp: 54850, count: 142 },
+  { rank: 3, name: "선린인터넷고등학교", lp: 49200, count: 115 },
+  { rank: 4, name: "세마고등학교", lp: 45000, count: 95 },
+  { rank: 5, name: "경기과학고등학교", lp: 41800, count: 88 },
 ];
 
 export default function Lobby({ 
@@ -108,6 +112,10 @@ export default function Lobby({
     setLobbyTab(initialTab);
   }
   const [showBattleConfirm, setShowBattleConfirm] = useState(false);
+
+  // 실시간 전국 학교 랭킹 카테고리 (중학교 / 고등학교)
+  const isUserHighSchool = school ? school.includes("고등") : false;
+  const [rankingType, setRankingType] = useState<"MIDDLE" | "HIGH">(isUserHighSchool ? "HIGH" : "MIDDLE");
 
   // Quick navigation handlers for 4 student mode cards
   const handleGoToBattle = () => {
@@ -237,10 +245,10 @@ export default function Lobby({
                 <span className="text-xl shrink-0">🔥</span>
                 <div>
                   <h4 className="text-sm md:text-base font-black text-white">
-                    [주말 한정] 동탄고 vs 반송고 수학 1짱 데스매치!
+                    [주말 한정] 청계중 vs 휘문중 수학 1짱 데스매치!
                   </h4>
                   <p className="text-[11px] text-white/80 font-medium mt-0.5">
-                    우승 학교 아이패드 증정! (스폰서: OO학원)
+                    우승 학교 문화상품권 & 아이패드 증정! (스폰서: 에듀테크 스쿨존)
                   </p>
                 </div>
               </div>
@@ -448,35 +456,71 @@ export default function Lobby({
           
           {/* Main School Leaderboard */}
           <div id="school-ranking-section" className="bg-slate-900/40 backdrop-blur-xl border border-slate-900 rounded-3xl p-6 flex-1 flex flex-col scroll-mt-24">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
                 <h3 className="text-lg font-extrabold tracking-tight flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-yellow-400" />
-                  🏆 실시간 전국 학교 랭킹 (Real-time School Rankings)
+                  🏆 실시간 전국 학교 랭킹
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  학교별 참여 인원의 LP 누적 합산 순위입니다.
+                  학교별 참여 인원의 LP 누적 합산 순위입니다. (중등 / 고등 분리 집계)
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-bold text-slate-400">
-                <RefreshCw className="w-3.5 h-3.5" />
-                실시간 반영됨
+
+              {/* 중학교 / 고등학교 세그먼트 탭 & 실시간 뱃지 */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center p-1 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-inner">
+                  <button
+                    type="button"
+                    onClick={() => setRankingType("MIDDLE")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                      rankingType === "MIDDLE"
+                        ? "bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <span>🏫</span>
+                    중학교
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRankingType("HIGH")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                      rankingType === "HIGH"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <span>🎓</span>
+                    고등학교
+                  </button>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-bold text-slate-400">
+                  <RefreshCw className="w-3.5 h-3.5 text-cyan-400 animate-spin-reverse" />
+                  실시간
+                </div>
               </div>
             </div>
 
             {/* Leaderboard Cards / List */}
             <div className="space-y-3 flex-1">
-              {MOCK_SCHOOL_LEADERBOARD.map((ranking, index) => {
+              {(rankingType === "MIDDLE" ? MIDDLE_SCHOOL_LEADERBOARD : HIGH_SCHOOL_LEADERBOARD).map((ranking, index) => {
                 const isUserSchool = school === ranking.name;
                 const isPodium = index < 3;
                 
                 return (
                   <motion.div
                     key={ranking.name}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.04 }}
                     whileHover={{ x: 4, backgroundColor: "rgba(30, 41, 59, 0.4)" }}
                     className={`flex items-center justify-between px-4 py-3.5 rounded-2xl border transition-all ${
                       isUserSchool 
-                        ? "bg-cyan-950/20 border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.05)]" 
+                        ? rankingType === "MIDDLE"
+                          ? "bg-emerald-950/20 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.08)]"
+                          : "bg-cyan-950/20 border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.08)]" 
                         : isPodium
                           ? "bg-slate-950/40 border-slate-900"
                           : "bg-transparent border-transparent"
@@ -498,12 +542,28 @@ export default function Lobby({
                       </div>
 
                       <div>
-                        <span className="font-extrabold text-sm md:text-base text-slate-200">
-                          {ranking.name}
-                        </span>
-                        {isUserSchool && (
-                          <span className="ml-2 text-[9px] font-extrabold px-1.5 py-0.5 bg-cyan-500 text-slate-950 rounded uppercase tracking-wider">
-                            My School
+                        <div className="flex items-center gap-2">
+                          <span className="font-extrabold text-sm md:text-base text-slate-200">
+                            {ranking.name}
+                          </span>
+                          {isUserSchool && (
+                            <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                              rankingType === "MIDDLE"
+                                ? "bg-emerald-500 text-slate-950"
+                                : "bg-cyan-500 text-slate-950"
+                            }`}>
+                              My School
+                            </span>
+                          )}
+                        </div>
+                        {index === 0 && (
+                          <span className="text-[10px] text-yellow-400 font-bold block mt-0.5">
+                            👑 전국 1위 리그 챔피언 {isUserSchool ? "• 우리 학교가 압도적 1위 왕좌 수성 중! 🔥" : ""}
+                          </span>
+                        )}
+                        {isUserSchool && index === 1 && (
+                          <span className="text-[10px] text-emerald-400 font-bold block mt-0.5">
+                            🔥 1위와 단 {(rankingType === "MIDDLE" ? MIDDLE_SCHOOL_LEADERBOARD[0].lp - ranking.lp : HIGH_SCHOOL_LEADERBOARD[0].lp - ranking.lp).toLocaleString()} LP 차이! 역전 사정권
                           </span>
                         )}
                       </div>
@@ -517,7 +577,7 @@ export default function Lobby({
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-500 block font-sans">누적 LP</span>
-                        <span className="text-sm font-black text-cyan-400">
+                        <span className={`text-sm font-black ${rankingType === "MIDDLE" ? "text-emerald-400" : "text-cyan-400"}`}>
                           {ranking.lp.toLocaleString()} <span className="text-[10px] font-bold text-slate-400">LP</span>
                         </span>
                       </div>
@@ -526,19 +586,26 @@ export default function Lobby({
                 );
               })}
 
-              {/* Show user's school if not in the list (Simulated rank) */}
-              {!MOCK_SCHOOL_LEADERBOARD.some(r => r.name === school) && (
+              {/* Show user's school if not in the current tab list */}
+              {!(rankingType === "MIDDLE" ? MIDDLE_SCHOOL_LEADERBOARD : HIGH_SCHOOL_LEADERBOARD).some(r => r.name === school) && (
                 <div className="pt-2 border-t border-dashed border-slate-800/80">
-                  <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-cyan-950/20 border border-cyan-500/30">
+                  <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-950/40 border border-slate-800">
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 text-cyan-400 flex items-center justify-center font-bold text-xs font-mono">
-                        45
+                      <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs font-mono">
+                        {rankingType === "MIDDLE" ? "45" : "38"}
                       </div>
                       <div>
-                        <span className="font-extrabold text-sm text-slate-200">우리 학교: {school || "청계중학교"}</span>
-                        <span className="ml-2 text-[9px] font-extrabold px-1.5 py-0.5 bg-cyan-500 text-slate-950 rounded uppercase tracking-wider">
-                          45위
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-extrabold text-sm text-slate-200">우리 학교: {school || "청계중학교"}</span>
+                          <span className="text-[9px] font-extrabold px-1.5 py-0.5 bg-slate-800 text-slate-300 rounded uppercase tracking-wider">
+                            {rankingType === "MIDDLE" ? "45위" : "38위"}
+                          </span>
+                        </div>
+                        {((rankingType === "HIGH" && !isUserHighSchool) || (rankingType === "MIDDLE" && isUserHighSchool)) && (
+                          <span className="text-[10px] text-slate-500 block mt-0.5">
+                            💡 {isUserHighSchool ? "고등학교" : "중학교"} 탭에서 소속 학교 공식 순위를 확인하실 수 있습니다.
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-6 text-right font-mono">
@@ -663,7 +730,7 @@ export default function Lobby({
               <span>← 메인 로비로 돌아가기</span>
             </button>
             <span className="text-xs font-bold text-purple-400 bg-purple-950/40 border border-purple-800/60 px-3 py-1.5 rounded-xl">
-              📊 배틀 결과 & 분석 (Result & Analytics)
+              📊 나의 역량 분석 (Competency Analytics)
             </span>
           </div>
           <PlayerAnalytics />
@@ -853,13 +920,13 @@ export default function Lobby({
               className="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl relative"
             >
               <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest block mb-1">
-                게릴라 스폰서 대전
+                게릴라 스폰서 대항전
               </span>
               <h3 className="text-lg font-extrabold text-white mb-2 flex items-center gap-2">
-                🏆 동탄고 vs 반송고 수학 1짱 데스매치
+                🏆 청계중 vs 휘문중 수학 1짱 데스매치
               </h3>
               <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-                본 대전은 <strong>동탄고등학교</strong>와 <strong>반송고등학교</strong> 학생들을 위한 반 대항전 형태의 이벤트 룸입니다. 참가 시 소속 학교의 합산 체력(Shared HP)을 공유하여 실시간으로 경쟁하게 됩니다.
+                본 대전은 <strong>청계중학교</strong>와 <strong>휘문중학교</strong>의 학교 명예를 걸고 맞붙는 <strong>2세트 5+5 수학 토너먼트</strong>입니다.
               </p>
 
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 mb-4 space-y-2">
@@ -868,33 +935,54 @@ export default function Lobby({
                   <span className="text-slate-300">OO학원 (아이패드 5대 후원)</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-500">평가 과목</span>
-                  <span className="text-slate-350">수학 (수학 I 삼각함수 파트)</span>
-                </div>
-                <div className="flex justify-between text-xs font-bold">
                   <span className="text-slate-500">진행 방식</span>
-                  <span className="text-slate-350">5:5 실시간 공유 체력 배틀</span>
+                  <span className="text-cyan-400 font-extrabold">2세트 토너먼트 (총 10문항)</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-bold text-slate-400 pt-1 border-t border-slate-900">
+                  <span>제1세트</span>
+                  <span className="text-slate-200">3분 스피드 개념전 (5문항 / 셔플 방어막)</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-bold text-slate-400">
+                  <span>제2세트</span>
+                  <span className="text-slate-200">30분 종이와 연필 정통 수학전 (5문항 / 1:1 대칭 매칭)</span>
+                </div>
+                <div className="flex justify-between text-[10px] text-emerald-400 font-bold pt-1">
+                  <span>🛡️ 공정성 보장</span>
+                  <span>팀간 100% 동일 문제 • 팀내 문제/보기 상이</span>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEventModal(false)}
-                  className="flex-1 py-2.5 bg-slate-850 hover:bg-slate-800 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
-                >
-                  돌아가기
-                </button>
+              <div className="flex flex-col gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     setShowEventModal(false);
-                    onJoinEventRoom?.();
+                    router.push("/deathmatch");
                   }}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-red-500 to-purple-650 hover:opacity-90 rounded-xl text-xs font-black text-white transition-colors cursor-pointer"
+                  className="w-full py-3 bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 hover:opacity-90 rounded-xl text-xs font-black text-white transition-all cursor-pointer shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
                 >
-                  이벤트 룸 입장
+                  <Swords className="w-4 h-4" />
+                  <span>데스매치 아레나 즉시 출전 (5+5 매치)</span>
                 </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowEventModal(false)}
+                    className="flex-1 py-2 bg-slate-850 hover:bg-slate-800 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  >
+                    닫기
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEventModal(false);
+                      onJoinEventRoom?.();
+                    }}
+                    className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold text-cyan-300 transition-colors cursor-pointer"
+                  >
+                    대기실로 이동
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

@@ -353,10 +353,10 @@ export default function BattleArena({
     if (!isTeamBattle || matchEnding) return;
 
     const mockMessages = [
-      { message: "[동탄고_페이커]님이 공격했습니다! (Team B HP -8)", type: "success" as const, dmgB: 8, dmgA: 0 },
-      { message: "[반송고_킬러]님이 공격했습니다! (Team A HP -10)", type: "danger" as const, dmgB: 0, dmgA: 10 },
-      { message: "[동탄고_수학수호자]님이 콤보 정답으로 치명타를 입혔습니다! (Team B HP -15)", type: "success" as const, dmgB: 15, dmgA: 0 },
-      { message: "[반송고_수포자]님이 오답을 적어 Team A가 틈을 보였습니다! (Team B HP -6)", type: "success" as const, dmgB: 6, dmgA: 0 },
+      { message: "[청계중_페이커]님이 공격했습니다! (Team B HP -8)", type: "success" as const, dmgB: 8, dmgA: 0 },
+      { message: "[휘문중_킬러]님이 공격했습니다! (Team A HP -10)", type: "danger" as const, dmgB: 0, dmgA: 10 },
+      { message: "[청계중_수학수호자]님이 콤보 정답으로 치명타를 입혔습니다! (Team B HP -15)", type: "success" as const, dmgB: 15, dmgA: 0 },
+      { message: "[휘문중_수포자]님이 오답을 적어 Team A가 틈을 보였습니다! (Team B HP -6)", type: "success" as const, dmgB: 6, dmgA: 0 },
       { message: "[수학포기자]님이 오답을 선택하여 Team A HP가 손상되었습니다.. (Team A HP -12)", type: "danger" as const, dmgB: 0, dmgA: 12 }
     ];
 
@@ -490,10 +490,10 @@ export default function BattleArena({
             <div className="w-full flex flex-col gap-3">
               <div className="flex justify-between items-center px-1 font-bold text-xs md:text-sm">
                 <span className="text-cyan-400 flex items-center gap-1.5 font-sans">
-                  🔥 Team A (동탄고 1학년 3반) HP: {teamAHp}%
+                  🔥 Team A (청계중 3학년) HP: {teamAHp}%
                 </span>
                 <span className="text-purple-400 flex items-center gap-1.5 font-sans">
-                  😈 Team B (반송고 1학년 4반) HP: {teamBHp}%
+                  😈 Team B (휘문중 3학년) HP: {teamBHp}%
                 </span>
               </div>
               
