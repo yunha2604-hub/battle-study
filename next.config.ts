@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const nextConfig: NextConfig = {
-  async redirects() {
-    return [
-      { source: "/arena", destination: "/lobby", permanent: true },
-      { source: "/raid", destination: "/shadow-raid", permanent: true },
-      { source: "/dungeon", destination: "/shadow-raid", permanent: true },
-      { source: "/teacher-dashboard", destination: "/teacher", permanent: true },
-    ];
+  output: "export",
+  basePath: basePath,
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
   },
 };
 

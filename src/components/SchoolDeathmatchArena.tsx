@@ -328,7 +328,7 @@ export default function SchoolDeathmatchArena({
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Global Header */}
-      <GlobalHeader activeTab="BATTLE" />
+      <GlobalHeader activeTab="DEATHMATCH" />
 
       {/* Main Deathmatch Stage */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 md:py-6 flex flex-col gap-6 relative z-10">
