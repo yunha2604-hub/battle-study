@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Swords, Trophy, User, School, Zap, Award, Target, Flame, 
   ChevronRight, RefreshCw, BarChart2, ShieldAlert, Settings, Sparkles,
-  AlertTriangle
+  AlertTriangle, LogIn
 } from "lucide-react";
 import PlayerAnalytics from "./PlayerAnalytics";
 import ShadowRaid from "./ShadowRaid";
@@ -284,6 +284,14 @@ export default function Lobby({
           >
             👩‍🏫 교사
           </button>
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-cyan-400 hover:text-cyan-300 hover:bg-cyan-950/20 border border-cyan-900/30 flex items-center gap-1.5"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>로그인</span>
+          </button>
         </div>
 
         {/* User Status Bar */}
@@ -298,6 +306,16 @@ export default function Lobby({
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
             <span>4,821명 접속 중</span>
           </div>
+
+          <button 
+            type="button"
+            onClick={() => router.push("/login")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 border border-cyan-800 hover:border-cyan-600 text-xs font-bold text-cyan-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            title="로그인 / 계정 변경"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">로그인</span>
+          </button>
 
           <button 
             type="button"

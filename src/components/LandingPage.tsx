@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, ChevronRight, ChevronDown } from "lucide-react";
+import { Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
 
 interface LandingPageProps {
   onJoin: (nickname: string, school: string) => void;
@@ -31,6 +32,7 @@ const MIDDLE_SCHOOLS = [
 ];
 
 export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentDirectEntry }: LandingPageProps) {
+  const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [schoolInput, setSchoolInput] = useState("");
   const [filteredSchools, setFilteredSchools] = useState<string[]>([]);
@@ -75,13 +77,17 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
         {/* Left: Logo & Top-Left Student Mode Container with Sub-menus */}
         <div className="flex items-center gap-3 md:gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20">
+          <div 
+            onClick={() => router.push("/")}
+            className="flex items-center gap-3 cursor-pointer group"
+            title="메인 로비로 이동"
+          >
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <Swords className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-white text-base tracking-wide">스쿨배틀</span>
+                <span className="font-black text-white text-base tracking-wide group-hover:text-cyan-300 transition-colors">스쿨배틀</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   MVP
                 </span>
@@ -222,6 +228,15 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
 
         {/* Center / Navigation Menu Items */}
         <nav className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 p-1 rounded-2xl">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>🏛️</span>
+            <span>메인 로비</span>
+          </button>
+
           <button
             type="button"
             className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer"

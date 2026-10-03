@@ -2,18 +2,35 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import LandingPage from "@/components/LandingPage";
+import Lobby from "@/components/Lobby";
 import { useBattleStudy } from "@/context/BattleStudyContext";
 
 export default function Home() {
   const router = useRouter();
-  const { handleJoin, handleStudentDirectEntry } = useBattleStudy();
+  const {
+    nickname, school, tier, lp, energy,
+    setTier, setLp, setEnergy,
+    handleStartMatch, handleCreateRoom, handleEnterPin, handleJoinEventRoom,
+    openBattleConfirmModal
+  } = useBattleStudy();
 
   return (
-    <LandingPage 
-      onJoin={handleJoin} 
+    <Lobby
+      initialTab="ARENA"
+      nickname={nickname}
+      school={school}
+      tier={tier}
+      lp={lp}
+      energy={energy}
+      setTier={setTier}
+      setLp={setLp}
+      setEnergy={setEnergy}
+      onStartMatch={handleStartMatch}
+      onCreateRoom={handleCreateRoom}
+      onEnterPin={handleEnterPin}
       onGoToTeacherDashboard={() => router.push("/teacher")}
-      onStudentDirectEntry={handleStudentDirectEntry}
+      onJoinEventRoom={handleJoinEventRoom}
+      onOpenBattleConfirmModal={openBattleConfirmModal}
     />
   );
 }
