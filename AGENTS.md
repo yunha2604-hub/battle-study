@@ -85,7 +85,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
    │           └── 오답 던전 (ShadowRaid)                      │
    │                                                          │
    ├──── 자동 매칭 ────────▶ 배틀 아레나 (BattleArena) ◀───────┘
-   ├──── PIN 코드로 입장 ───▶ (일반 배틀 / 학교 대항전 / 수행평가 엄근진 모드)
+   ├──── PIN 코드로 입장 ───▶ (일반 배틀 / 학교 대항전 / 수행평가 모드)
    └──── 커스텀 방 만들기 ──▶ 결과 페이지 (ResultPage) ──▶ 로비 복귀
 ```
 
@@ -115,7 +115,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **2) 학교/반 대항전 모드 (`isTeamBattle`)**:
   - 팀 A vs 팀 B 단체 줄다리기 체력 게이지.
   - 화면 우하단 팀원들의 실시간 공격/오답 이벤트 토스트 알림.
-- **3) 수행평가 엄근진 모드 (`isStrictAssessment`)**:
+- **3) 수행평가 모드 (`isStrictAssessment`)**:
   - 학생이 교사용 일회성 시험 코드(PIN)를 입력해 입장했을 때 활성화.
   - 화려한 게임 효과/크리티컬 제거, **흰색 시험지 테마**로 전환.
   - 학생 닉네임 블라인드 익명화 (`Student A (본인)` / `Student B`).
@@ -174,7 +174,7 @@ d:\workspace\battle-study
 │   └── components/
 │       ├── LandingPage.tsx     # 온보딩 및 빠른 테스트 진입
 │       ├── Lobby.tsx           # 메인 로비 (ARENA, ANALYTICS, SHADOW_RAID)
-│       ├── BattleArena.tsx     # 배틀 아레나 (일반, 대항전, 엄근진 수행평가)
+│       ├── BattleArena.tsx     # 배틀 아레나 (일반, 대항전, 수행평가 수행평가)
 │       ├── ResultPage.tsx      # 배틀 결과, LP/티어 변동, AI 오답 복기
 │       ├── TeacherDashboard.tsx# [핵심] 수학 수행평가 관리 (AI 출제, PIN, 2단계 채점)
 │       ├── ShadowRaid.tsx      # 오답 던전 모듈
