@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, ChevronRight, ChevronDown, ArrowLeft } from "lucide-react";
+import { Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, ChevronRight, ChevronDown, ArrowLeft, LogIn } from "lucide-react";
 
 interface LandingPageProps {
   onJoin: (nickname: string, school: string) => void;
@@ -37,7 +37,6 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
   const [schoolInput, setSchoolInput] = useState("");
   const [filteredSchools, setFilteredSchools] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showStudentMenu, setShowStudentMenu] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -70,206 +69,102 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 pt-16">
+    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 font-sans">
       
-      {/* Top Global Navigation Bar (상단 메뉴 바) */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-slate-800 px-4 md:px-8 py-3 flex items-center justify-between shadow-lg">
-        {/* Left: Logo & Top-Left Student Mode Container with Sub-menus */}
-        <div className="flex items-center gap-3 md:gap-4">
-          {/* Logo */}
-          <div 
-            onClick={() => router.push("/")}
-            className="flex items-center gap-3 cursor-pointer group"
-            title="메인 로비로 이동"
-          >
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Swords className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-white text-base tracking-wide group-hover:text-cyan-300 transition-colors">스쿨배틀</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                  MVP
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-400 hidden lg:block">실시간 퀴즈 대전 & 수학 수행평가 관리</p>
-            </div>
+      {/* Header bar (동일한 공통 헤더) */}
+      <header className="border-b border-slate-900 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50 px-4 md:px-6 py-4 flex items-center justify-between gap-4">
+        <div 
+          onClick={() => router.push("/")}
+          className="flex items-center gap-3 shrink-0 cursor-pointer"
+        >
+          <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 text-white shadow-lg shadow-cyan-500/20">
+            <Swords className="w-5 h-5 md:w-6 md:h-6" />
           </div>
-
-          {/* Top Left: 학생 모드 칸 & 아래 서브 메뉴 */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowStudentMenu(!showStudentMenu)}
-              className="px-3.5 py-2 rounded-xl text-xs font-black bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/80 text-cyan-300 hover:text-white shadow-lg shadow-cyan-950/50 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xs">
-                🎒
-              </div>
-              <div className="text-left">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="font-extrabold text-white">학생 모드</span>
-                  <span className="text-[10px] text-cyan-400 font-semibold">(슈크림먹은빵 · 청계중)</span>
-                </div>
-              </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-cyan-400 transition-transform ${showStudentMenu ? "rotate-180" : ""}`} />
-            </button>
-
-            {/* Sub-menu Dropdown List (학생모드 아래 서브메뉴) */}
-            <AnimatePresence>
-              {showStudentMenu && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute top-full left-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-2xl border border-cyan-700/60 rounded-2xl shadow-2xl p-2 z-50 space-y-1.5"
-                >
-                  <div className="px-3 py-2 text-[10px] font-bold text-slate-400 border-b border-slate-800 flex items-center justify-between">
-                    <span className="text-cyan-400 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> 클릭 시 해당 메뉴로 즉시 입장
-                    </span>
-                    <span className="text-slate-400 font-mono">청계중 슈크림먹은빵</span>
-                  </div>
-
-                  {/* Sub-menu 1: 메인 로비 (Lobby) */}
-                  <button
-                    type="button"
-                    onClick={() => onStudentDirectEntry ? onStudentDirectEntry("LOBBY") : onJoin("슈크림먹은빵", "청계중학교")}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-cyan-500/30 transition-all flex items-center gap-3 group cursor-pointer"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shrink-0">
-                      <School className="w-4.5 h-4.5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-white group-hover:text-cyan-300">
-                          🏛️ 메인 로비 (Lobby)
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                        학교 랭킹, 개인 티어 진행도, 커스텀 룸
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Sub-menu 2: 1:1 실시간 퀴즈 배틀 (Battle Arena) */}
-                  <button
-                    type="button"
-                    onClick={() => onStudentDirectEntry ? onStudentDirectEntry("BATTLE") : onJoin("슈크림먹은빵", "청계중학교")}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-red-500/30 transition-all flex items-center gap-3 group cursor-pointer"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform shrink-0">
-                      <Swords className="w-4.5 h-4.5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-white group-hover:text-red-300">
-                          ⚔️ 1:1 실시간 퀴즈 배틀 (Battle Arena)
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                        라이벌 대청중과 즉시 1:1 실시간 배틀 시작
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Sub-menu 3: 오답 던전 (Shadow Raid) */}
-                  <button
-                    type="button"
-                    onClick={() => onStudentDirectEntry ? onStudentDirectEntry("SHADOW_RAID") : onJoin("슈크림먹은빵", "청계중학교")}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-emerald-500/30 transition-all flex items-center gap-3 group cursor-pointer"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
-                      <Zap className="w-4.5 h-4.5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-white group-hover:text-emerald-300">
-                          👾 오답 던전 (Shadow Raid)
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                        오답 몬스터 토벌 및 배틀 번개(+1 ⚡) 충전
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Sub-menu 4: 배틀 결과 & 분석 (Result & Analytics) */}
-                  <button
-                    type="button"
-                    onClick={() => onStudentDirectEntry ? onStudentDirectEntry("ANALYTICS") : onJoin("슈크림먹은빵", "청계중학교")}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-purple-500/30 transition-all flex items-center gap-3 group cursor-pointer"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform shrink-0">
-                      <Sparkles className="w-4.5 h-4.5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-white group-hover:text-purple-300">
-                          📊 배틀 결과 & 분석 (Result & Analytics)
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                        내 전적 기록, 승률 60%, 5각 역량 분석표
-                      </p>
-                    </div>
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div>
+            <h2 className="text-sm md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 font-sans">
+              스쿨배틀 아레나
+            </h2>
+            <p className="text-[9px] md:text-[10px] text-cyan-400 tracking-wider font-semibold uppercase">
+              Season 1: First Honor
+            </p>
           </div>
         </div>
 
-        {/* Center / Navigation Menu Items */}
-        <nav className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 p-1 rounded-2xl">
+        {/* Game Navigation Tabs */}
+        <div className="hidden md:flex items-center gap-1 bg-slate-950/80 border border-slate-850 p-1 rounded-xl">
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
           >
             <span>🏛️</span>
             <span>메인 로비</span>
           </button>
-
           <button
             type="button"
-            className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer"
+            onClick={() => router.push("/battle")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-red-400"
           >
-            <Swords className="w-3.5 h-3.5" />
-            <span>🎮 학생 아레나</span>
+            <span>⚔️</span>
+            <span>1:1 퀴즈 배틀</span>
           </button>
-
-          {onGoToTeacherDashboard && (
-            <button
-              type="button"
-              onClick={onGoToTeacherDashboard}
-              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <Calculator className="w-3.5 h-3.5 text-indigo-400" />
-              <span>👩‍🏫 교사 대시보드</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            </button>
-          )}
-        </nav>
-
-        {/* Right CTA */}
-        {onGoToTeacherDashboard && (
           <button
             type="button"
-            onClick={onGoToTeacherDashboard}
-            className="hidden md:flex px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-600/25 transition-all cursor-pointer items-center gap-1.5 hover:scale-103"
+            onClick={() => router.push("/shadow-raid")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
           >
-            <Calculator className="w-3.5 h-3.5" />
-            <span>교사용 대시보드 열기</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <span>👾</span>
+            <span>오답 던전</span>
           </button>
-        )}
+          <button
+            type="button"
+            onClick={() => router.push("/analytics")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
+          >
+            <span>📊</span>
+            <span>결과 & 분석</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (onGoToTeacherDashboard) onGoToTeacherDashboard();
+              else router.push("/teacher");
+            }}
+            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
+          >
+            👩‍🏫 교사
+          </button>
+          <button
+            type="button"
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 bg-slate-900 text-cyan-300 shadow-sm border border-cyan-500/40"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>로그인</span>
+          </button>
+        </div>
+
+        {/* User Status Bar */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Energy Bolt Badge */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-xs font-black text-yellow-400">
+            <Zap className="w-4 h-4 fill-yellow-400 animate-pulse" />
+            <span>⚡ 3 / 5</span>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-semibold text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span>4,821명 접속 중</span>
+          </div>
+
+          <button 
+            type="button"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950 border border-cyan-600 text-xs font-bold text-white transition-all shadow-sm"
+            title="현재 로그인 페이지"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">로그인</span>
+          </button>
+        </div>
       </header>
 
       {/* Background Particles / Grid */}
