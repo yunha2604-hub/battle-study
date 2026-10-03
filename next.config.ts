@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+// GitHub Pages 호스팅용 basePath: 개발(dev) 시에는 루트, 빌드(build/export) 시에는 /battle-study
+const isDev = process.env.NODE_ENV === "development";
+const basePath = isDev ? "" : "/battle-study";
 
 const nextConfig: NextConfig = {
   output: "export",
