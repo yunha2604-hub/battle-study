@@ -7,29 +7,14 @@ import {
   Sparkles, Flame, ShieldAlert, BookOpen, MessageSquare, Zap, Crown
 } from "lucide-react";
 import { OpponentData } from "./Lobby";
-
-interface Question {
-  id: number;
-  category: string;
-  question: string;
-  options: string[];
-  answerIndex: number;
-  explanation: string;
-}
-
-interface AnswersLogItem {
-  question: Question;
-  isCorrect: boolean;
-  selectedIndex: number;
-  timeTaken: number;
-}
+import { Question, AnswerLogItem } from "./BattleArena";
 
 interface ResultPageProps {
   userProfile: { nickname: string; school: string; tier: string; lp: number };
   opponent: OpponentData;
   userFinalHp: number;
   opponentFinalHp: number;
-  answersLog: AnswersLogItem[];
+  answersLog: AnswerLogItem[];
   isFirstMatch?: boolean;
   onReturnToLobby: (newTier: string, newLp: number) => void;
   isStrictAssessment?: boolean;

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { OpponentData } from "@/components/Lobby";
-import { Question } from "@/components/BattleArena";
+import { Question, AnswerLogItem } from "@/components/BattleArena";
 import { 
   StudentAssessmentRow, 
   GeneratedMathQuestion, 
@@ -34,8 +34,8 @@ interface BattleStudyContextType {
   setUserFinalHp: (hp: number) => void;
   opponentFinalHp: number;
   setOpponentFinalHp: (hp: number) => void;
-  answersLog: any[];
-  setAnswersLog: (log: any[]) => void;
+  answersLog: AnswerLogItem[];
+  setAnswersLog: (log: AnswerLogItem[]) => void;
   isFirstMatch: boolean;
   setIsFirstMatch: (b: boolean) => void;
   isStrictAssessment: boolean;
@@ -73,7 +73,7 @@ interface BattleStudyContextType {
   handleCreateRoom: () => void;
   handleJoinEventRoom: () => void;
   handleStartAssessmentMatch: (isStrict: boolean) => void;
-  handleFinishMatch: (userHp: number, oppHp: number, log: any[]) => void;
+  handleFinishMatch: (userHp: number, oppHp: number, log: AnswerLogItem[]) => void;
   handleReturnToLobby: (newTier: string, newLp: number) => void;
   handleEnterPin: (pin: string) => void;
 }
@@ -102,7 +102,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>("수학");
   const [userFinalHp, setUserFinalHp] = useState<number>(100);
   const [opponentFinalHp, setOpponentFinalHp] = useState<number>(100);
-  const [answersLog, setAnswersLog] = useState<any[]>([]);
+  const [answersLog, setAnswersLog] = useState<AnswerLogItem[]>([]);
   const [isFirstMatch, setIsFirstMatch] = useState<boolean>(false);
 
   // Custom Room & Assessment mode states
@@ -281,14 +281,14 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     router.push("/battle");
   };
 
-  const handleFinishMatch = (userHp: number, oppHp: number, log: any[]) => {
+  const handleFinishMatch = (userHp: number, oppHp: number, log: AnswerLogItem[]) => {
     setUserFinalHp(userHp);
     setOpponentFinalHp(oppHp);
     setAnswersLog(log);
 
     if (isStrictAssessment) {
       const studentName = nickname || "대치동불주먹";
-      const correctCount = log.filter((item: any) => item.isCorrect).length;
+      const correctCount = log.filter((item) => item.isCorrect).length;
       const totalCount = log.length || 1;
       const calculatedAiScore = Math.round((correctCount / totalCount) * 100);
       const currentTime = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
@@ -307,7 +307,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
           teacherScore: null,
           isConfirmed: false,
           aiSummary: `객관식 정답률 ${calculatedAiScore}%. AI 1차 자동 채점 완료. 선생님 2차 최종 점수 확정 대기 중.`,
-          answers: log.map((item: any, idx: number) => ({
+          answers: log.map((item, idx) => ({
             qNum: idx + 1,
             title: item.question.category || `${idx + 1}번 문항`,
             studentAnswer: item.question.options ? (item.question.options[item.selectedIndex] || "선택값") : "제출 답안",

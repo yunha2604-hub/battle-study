@@ -95,21 +95,37 @@ export default function ShadowRaid({ energy, setEnergy }: ShadowRaidProps) {
   const [battleResult, setBattleResult] = useState<"BATTLE" | "VICTORY" | "DEFEAT">("BATTLE");
   const [modalShake, setModalShake] = useState(false);
 
+  const handleTimeout = () => {
+    setIsLocked(true);
+    setModalShake(true);
+    setTimeout(() => {
+      setModalShake(false);
+      setBattleResult("DEFEAT");
+    }, 500);
+  };
+
+  const handleTimeoutRef = React.useRef(handleTimeout);
+  useEffect(() => {
+    handleTimeoutRef.current = handleTimeout;
+  });
+
   // Timer loop for revenge match modal
   useEffect(() => {
     if (!isModalOpen || isLocked || battleResult !== "BATTLE") return;
 
-    if (timeLeft <= 0) {
-      handleTimeout();
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setTimeLeft((prev) => prev - 1);
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleTimeoutRef.current();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [timeLeft, isModalOpen, isLocked, battleResult]);
+    return () => clearInterval(timer);
+  }, [isModalOpen, isLocked, battleResult]);
 
   const handleStartRevenge = (quest: Quest) => {
     setActiveQuest(quest);
@@ -145,15 +161,6 @@ export default function ShadowRaid({ energy, setEnergy }: ShadowRaidProps) {
         setBattleResult("DEFEAT");
       }, 500);
     }
-  };
-
-  const handleTimeout = () => {
-    setIsLocked(true);
-    setModalShake(true);
-    setTimeout(() => {
-      setModalShake(false);
-      setBattleResult("DEFEAT");
-    }, 500);
   };
 
   const getDifficultyColor = (diff: string) => {

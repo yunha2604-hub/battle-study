@@ -11,6 +11,7 @@ import {
 import PlayerAnalytics from "./PlayerAnalytics";
 import ShadowRaid from "./ShadowRaid";
 import BattleConfirmModal from "./BattleConfirmModal";
+import GlobalHeader from "./GlobalHeader";
 
 interface LobbyProps {
   initialTab?: "ARENA" | "ANALYTICS" | "SHADOW_RAID";
@@ -99,16 +100,14 @@ export default function Lobby({
   const [isMatching, setIsMatching] = useState(false);
   const [matchingStep, setMatchingStep] = useState(0);
   const [matchTimer, setMatchTimer] = useState(0);
-  const [showSettings, setShowSettings] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>(null);
   const [lobbyTab, setLobbyTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">(initialTab);
+  const [prevInitialTab, setPrevInitialTab] = useState(initialTab);
+  if (prevInitialTab !== initialTab) {
+    setPrevInitialTab(initialTab);
+    setLobbyTab(initialTab);
+  }
   const [showBattleConfirm, setShowBattleConfirm] = useState(false);
-
-  useEffect(() => {
-    if (initialTab) {
-      setLobbyTab(initialTab);
-    }
-  }, [initialTab]);
 
   // Quick navigation handlers for 4 student mode cards
   const handleGoToBattle = () => {
@@ -157,15 +156,20 @@ export default function Lobby({
     };
   };
 
+  const handleStartFindMatch = () => {
+    if (selectedSubject && energy > 0) {
+      setMatchTimer(0);
+      setMatchingStep(0);
+      setIsMatching(true);
+    }
+  };
+
   // Matchmaking simulation
   useEffect(() => {
     let timerInterval: NodeJS.Timeout;
     let statusInterval: NodeJS.Timeout;
 
     if (isMatching) {
-      setMatchTimer(0);
-      setMatchingStep(0);
-
       // Increment seconds
       timerInterval = setInterval(() => {
         setMatchTimer((prev) => prev + 1);
@@ -206,126 +210,15 @@ export default function Lobby({
       <div className="absolute top-0 right-0 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-900/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header bar */}
-      <header className="border-b border-slate-900 bg-slate-900/40 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 text-white shadow-lg shadow-cyan-500/20">
-            <Swords className="w-5 h-5 md:w-6 md:h-6" />
-          </div>
-          <div>
-            <h2 className="text-sm md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 font-sans">
-              스쿨배틀 아레나
-            </h2>
-            <p className="text-[9px] md:text-[10px] text-cyan-400 tracking-wider font-semibold uppercase">
-              Season 1: First Honor
-            </p>
-          </div>
-        </div>
-
-        {/* Game Navigation Tabs */}
-        <div className="hidden md:flex items-center gap-1 bg-slate-950/80 border border-slate-850 p-1 rounded-xl">
-          <button
-            type="button"
-            onClick={handleGoToLobby}
-            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-              lobbyTab === "ARENA"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <span>🏛️</span>
-            <span>메인 로비</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleGoToBattle}
-            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-red-400"
-          >
-            <span>⚔️</span>
-            <span>1:1 퀴즈 배틀</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setLobbyTab("SHADOW_RAID");
-              router.push("/shadow-raid");
-            }}
-            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-              lobbyTab === "SHADOW_RAID"
-                ? "bg-slate-900 text-emerald-400 shadow-sm"
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <span>👾</span>
-            <span>오답 던전</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setLobbyTab("ANALYTICS");
-              router.push("/analytics");
-            }}
-            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-              lobbyTab === "ANALYTICS"
-                ? "bg-slate-900 text-purple-400 shadow-sm"
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <span>📊</span>
-            <span>결과 & 분석</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (onGoToTeacherDashboard) onGoToTeacherDashboard();
-              else router.push("/teacher");
-            }}
-            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
-          >
-            👩‍🏫 교사
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/login")}
-            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-cyan-400 hover:text-cyan-300 hover:bg-cyan-950/20 border border-cyan-900/30 flex items-center gap-1.5"
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>로그인</span>
-          </button>
-        </div>
-
-        {/* User Status Bar */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Energy Bolt Badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-xs font-black text-yellow-400">
-            <Zap className="w-4 h-4 fill-yellow-400 animate-pulse" />
-            <span>⚡ {energy} / 5</span>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-semibold text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>4,821명 접속 중</span>
-          </div>
-
-          <button 
-            type="button"
-            onClick={() => router.push("/login")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 border border-cyan-800 hover:border-cyan-600 text-xs font-bold text-cyan-300 hover:text-white transition-all cursor-pointer shadow-sm"
-            title="로그인 / 계정 변경"
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">로그인</span>
-          </button>
-
-          <button 
-            type="button"
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
+      {/* Global Header */}
+      <GlobalHeader 
+        activeTab={
+          lobbyTab === "ARENA" ? "LOBBY" :
+          lobbyTab === "SHADOW_RAID" ? "SHADOW_RAID" : "ANALYTICS"
+        }
+        energy={energy}
+        onGoToTeacher={onGoToTeacherDashboard}
+      />
 
 
       {lobbyTab === "ARENA" && (
@@ -357,50 +250,6 @@ export default function Lobby({
               </span>
             </motion.div>
           </div>
-
-          {/* Settings Panel (Interactive Tier Switcher for reviewer verification) */}
-          <AnimatePresence>
-            {showSettings && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="bg-slate-900/80 border-b border-slate-800 px-6 py-4 relative z-20 flex flex-wrap items-center gap-4 text-sm"
-              >
-                <span className="font-bold text-cyan-400 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4" /> 티어 디자인 테스트 도구:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {Object.keys(TIER_DETAILS).map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setTier(t)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
-                        tier === t 
-                          ? "bg-slate-100 text-slate-950 border-white shadow-md shadow-white/10" 
-                          : "bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200"
-                      }`}
-                    >
-                      {TIER_DETAILS[t].label} {TIER_DETAILS[t].title}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2 ml-auto">
-                  <span className="text-xs text-slate-400 font-medium">LP 조정:</span>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={lp} 
-                    onChange={(e) => setLp(Number(e.target.value))}
-                    className="w-24 accent-cyan-400"
-                  />
-                  <span className="text-xs font-mono font-bold text-cyan-400">{lp} LP</span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           {/* Main Body Layout */}
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
@@ -745,7 +594,7 @@ export default function Lobby({
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 w-full md:w-auto">
               <motion.button
                 disabled={!selectedSubject || energy === 0}
-                onClick={() => selectedSubject && energy > 0 && setIsMatching(true)}
+                onClick={handleStartFindMatch}
                 whileHover={(selectedSubject && energy > 0) ? { scale: 1.02 } : {}}
                 whileTap={(selectedSubject && energy > 0) ? { scale: 0.98 } : {}}
                 className={`flex-1 lg:flex-initial relative px-8 py-5 rounded-2xl font-black text-base tracking-wider text-white shadow-xl overflow-hidden transition-all duration-300 min-w-[200px] ${
