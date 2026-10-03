@@ -10,7 +10,8 @@ export default function LobbyRoutePage() {
   const {
     nickname, school, tier, lp, energy,
     setTier, setLp, setEnergy,
-    handleStartMatch, handleCreateRoom, handleEnterPin, handleJoinEventRoom
+    handleStartMatch, handleCreateRoom, handleEnterPin, handleJoinEventRoom,
+    openBattleConfirmModal
   } = useBattleStudy();
 
   return (
@@ -29,6 +30,7 @@ export default function LobbyRoutePage() {
       onEnterPin={handleEnterPin}
       onGoToTeacherDashboard={() => router.push("/teacher")}
       onJoinEventRoom={handleJoinEventRoom}
+      onOpenBattleConfirmModal={openBattleConfirmModal}
     />
   );
 }

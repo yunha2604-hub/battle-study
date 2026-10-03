@@ -10,6 +10,7 @@ import {
   INITIAL_STUDENTS, 
   DEFAULT_MATH_QUESTIONS 
 } from "@/components/TeacherDashboard";
+import BattleConfirmModal from "@/components/BattleConfirmModal";
 
 interface BattleStudyContextType {
   // Student Profile
@@ -43,6 +44,13 @@ interface BattleStudyContextType {
   setIsTeamBattle: (b: boolean) => void;
   roomPin: string;
   setRoomPin: (pin: string) => void;
+
+  // Battle Confirmation Modal
+  showBattleConfirmModal: boolean;
+  setShowBattleConfirmModal: (show: boolean) => void;
+  openBattleConfirmModal: (subject?: "국어" | "영어" | "수학") => void;
+  closeBattleConfirmModal: () => void;
+  confirmAndStartBattle: (subject?: "국어" | "영어" | "수학") => void;
 
   // Shared Teacher / Assessment
   assessmentCode: string;
@@ -102,6 +110,31 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
   const [isStrictAssessment, setIsStrictAssessment] = useState<boolean>(false);
   const [isTeamBattle, setIsTeamBattle] = useState<boolean>(false);
 
+  // Battle Confirmation Modal State
+  const [showBattleConfirmModal, setShowBattleConfirmModal] = useState<boolean>(false);
+
+  const openBattleConfirmModal = (subject: "국어" | "영어" | "수학" = "수학") => {
+    setSelectedSubject(subject);
+    setShowBattleConfirmModal(true);
+  };
+
+  const closeBattleConfirmModal = () => {
+    setShowBattleConfirmModal(false);
+  };
+
+  const confirmAndStartBattle = (subject: "국어" | "영어" | "수학" = "수학") => {
+    setShowBattleConfirmModal(false);
+    setNickname("슈크림먹은빵");
+    setSchool("청계중학교");
+    setTier((prev) => prev || "Silver");
+    setOpponent(DEFAULT_OPPONENT);
+    setSelectedSubject(subject);
+    setEnergy((prev) => Math.max(0, prev - 1));
+    setIsStrictAssessment(false);
+    setIsTeamBattle(false);
+    router.push("/battle");
+  };
+
   // Shared Teacher / Assessment State
   const [assessmentCode, setAssessmentCode] = useState<string>("MTH-7429");
   const [assessmentStatus, setAssessmentStatus] = useState<"READY" | "IN_PROGRESS" | "EXPIRED">("IN_PROGRESS");
@@ -158,8 +191,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
 
     if (targetMenu === "BATTLE") {
       setOpponent(DEFAULT_OPPONENT);
-      setSelectedSubject("수학");
-      router.push("/battle");
+      openBattleConfirmModal("수학");
     } else if (targetMenu === "SHADOW_RAID") {
       router.push("/shadow-raid");
     } else if (targetMenu === "ANALYTICS") {
@@ -339,9 +371,24 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         handleFinishMatch,
         handleReturnToLobby,
         handleEnterPin,
+        showBattleConfirmModal,
+        setShowBattleConfirmModal,
+        openBattleConfirmModal,
+        closeBattleConfirmModal,
+        confirmAndStartBattle,
       }}
     >
       {children}
+      <BattleConfirmModal
+        isOpen={showBattleConfirmModal}
+        onClose={closeBattleConfirmModal}
+        onConfirm={confirmAndStartBattle}
+        nickname={nickname}
+        school={school}
+        tier={tier}
+        energy={energy}
+        initialSubject={selectedSubject || "수학"}
+      />
     </BattleStudyContext.Provider>
   );
 }

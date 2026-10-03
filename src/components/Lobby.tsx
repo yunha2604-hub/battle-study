@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import PlayerAnalytics from "./PlayerAnalytics";
 import ShadowRaid from "./ShadowRaid";
+import BattleConfirmModal from "./BattleConfirmModal";
 
 interface LobbyProps {
   initialTab?: "ARENA" | "ANALYTICS" | "SHADOW_RAID";
@@ -26,6 +27,7 @@ interface LobbyProps {
   onEnterPin: (pin: string) => void;
   onGoToTeacherDashboard?: () => void;
   onJoinEventRoom?: () => void;
+  onOpenBattleConfirmModal?: (subject?: "국어" | "영어" | "수학") => void;
 }
 
 export interface OpponentData {
@@ -91,7 +93,7 @@ const INITIAL_RANKINGS = [
 export default function Lobby({ 
   initialTab = "ARENA",
   nickname, school, tier, lp, energy, setTier, setLp, setEnergy, onStartMatch,
-  onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom
+  onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom, onOpenBattleConfirmModal
 }: LobbyProps) {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
@@ -100,6 +102,7 @@ export default function Lobby({
   const [showSettings, setShowSettings] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>(null);
   const [lobbyTab, setLobbyTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">(initialTab);
+  const [showBattleConfirm, setShowBattleConfirm] = useState(false);
 
   useEffect(() => {
     if (initialTab) {
@@ -109,7 +112,11 @@ export default function Lobby({
 
   // Quick navigation handlers for 4 student mode cards
   const handleGoToBattle = () => {
-    router.push("/battle");
+    if (onOpenBattleConfirmModal) {
+      onOpenBattleConfirmModal(selectedSubject || "수학");
+    } else {
+      setShowBattleConfirm(true);
+    }
   };
 
   const handleGoToLobby = () => {
@@ -1268,6 +1275,21 @@ export default function Lobby({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 1:1 Battle Confirmation Modal */}
+      <BattleConfirmModal
+        isOpen={showBattleConfirm}
+        onClose={() => setShowBattleConfirm(false)}
+        onConfirm={(subj) => {
+          setShowBattleConfirm(false);
+          onStartMatch(getOpponent(), subj);
+        }}
+        nickname={nickname}
+        school={school}
+        tier={tier}
+        energy={energy}
+        initialSubject={selectedSubject || "수학"}
+      />
     </div>
   );
 }
