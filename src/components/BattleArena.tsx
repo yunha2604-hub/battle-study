@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, Zap, Clock, ShieldAlert, CheckCircle, XCircle, Flame } from "lucide-react";
+import { Swords, Zap, Clock, ShieldAlert, CheckCircle, XCircle, Flame, LogIn } from "lucide-react";
 import { OpponentData } from "./Lobby";
 
 export interface Question {
@@ -141,6 +142,7 @@ export default function BattleArena({
   isStrictAssessment = false, isTeamBattle = false,
   customQuestions
 }: BattleArenaProps) {
+  const router = useRouter();
   const subjectQuestions = customQuestions && customQuestions.length > 0 
     ? customQuestions 
     : SUBJECT_QUESTIONS[subject];
@@ -376,6 +378,114 @@ export default function BattleArena({
     <div className={`min-h-screen flex flex-col justify-between font-sans select-none overflow-hidden relative ${
       isStrictAssessment ? "bg-slate-50 text-slate-800" : "bg-slate-950 text-slate-100"
     }`}>
+      {/* Header bar (동일한 공통 헤더) */}
+      <header className={`border-b backdrop-blur-md sticky top-0 z-50 px-4 md:px-6 py-4 flex items-center justify-between gap-4 ${
+        isStrictAssessment 
+          ? "border-slate-200 bg-white/90 text-slate-900" 
+          : "border-slate-900 bg-slate-900/40 text-slate-100"
+      }`}>
+        <div 
+          onClick={() => router.push("/")}
+          className="flex items-center gap-3 shrink-0 cursor-pointer"
+        >
+          <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 text-white shadow-lg shadow-cyan-500/20">
+            <Swords className="w-5 h-5 md:w-6 md:h-6" />
+          </div>
+          <div>
+            <h2 className={`text-sm md:text-xl font-bold bg-clip-text text-transparent ${
+              isStrictAssessment 
+                ? "bg-gradient-to-r from-slate-900 to-slate-600" 
+                : "bg-gradient-to-r from-white to-slate-400"
+            } font-sans`}>
+              스쿨배틀 아레나
+            </h2>
+            <p className="text-[9px] md:text-[10px] text-cyan-500 tracking-wider font-semibold uppercase">
+              Season 1: First Honor
+            </p>
+          </div>
+        </div>
+
+        {/* Game Navigation Tabs */}
+        <div className={`hidden md:flex items-center gap-1 border p-1 rounded-xl ${
+          isStrictAssessment ? "bg-slate-100 border-slate-200" : "bg-slate-950/80 border-slate-850"
+        }`}>
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
+          >
+            <span>🏛️</span>
+            <span>메인 로비</span>
+          </button>
+          <button
+            type="button"
+            className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shadow-sm border ${
+              isStrictAssessment 
+                ? "bg-white text-red-600 border-red-300" 
+                : "bg-slate-900 text-red-400 border-red-500/40"
+            }`}
+          >
+            <span>⚔️</span>
+            <span>1:1 퀴즈 배틀</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/shadow-raid")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
+          >
+            <span>👾</span>
+            <span>오답 던전</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/analytics")}
+            className="px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 text-slate-500 hover:text-slate-300"
+          >
+            <span>📊</span>
+            <span>결과 & 분석</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/teacher")}
+            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
+          >
+            👩‍🏫 교사
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer text-cyan-400 hover:text-cyan-300 hover:bg-cyan-950/20 border border-cyan-900/30 flex items-center gap-1.5"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>로그인</span>
+          </button>
+        </div>
+
+        {/* User Status Bar */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-xs font-black text-yellow-500">
+            <Zap className="w-4 h-4 fill-yellow-500 animate-pulse" />
+            <span>⚡ 3 / 5</span>
+          </div>
+
+          <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold text-emerald-400 ${
+            isStrictAssessment ? "bg-slate-100 border-slate-200" : "bg-slate-900/80 border-slate-800"
+          }`}>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span>4,821명 접속 중</span>
+          </div>
+
+          <button 
+            type="button"
+            onClick={() => router.push("/login")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 border border-cyan-800 hover:border-cyan-600 text-xs font-bold text-cyan-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            title="로그인 / 계정 변경"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">로그인</span>
+          </button>
+        </div>
+      </header>
       {/* Anti-cheat warning banner */}
       {isStrictAssessment && (
         <div className="w-full bg-red-600 text-white py-2.5 px-4 text-xs md:text-sm font-black text-center relative z-50 flex items-center justify-center gap-2 animate-pulse shadow-md border-b border-red-700 uppercase tracking-wide">
