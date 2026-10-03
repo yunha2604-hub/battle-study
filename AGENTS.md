@@ -126,7 +126,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - VICTORY / DEFEAT 연출, LP 변동 카운팅 애니메이션.
 - LP 100 돌파 시 전체 화면 티어 승격 연출 (`TIER PROMOTED!`).
 - 문항별 정답 복기 및 AI 튜터 해설 아코디언.
-- 카카오 계정 연동 팝업 (리텐션 장치).
+- 카카오 계정 연동 팝업 (재접속/재방문 유도 장치).
 
 ---
 
