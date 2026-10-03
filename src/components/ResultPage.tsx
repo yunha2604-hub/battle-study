@@ -311,7 +311,7 @@ export default function ResultPage({
           </div>
         </motion.div>
 
-        {/* AI Tutor Section: SchoolBattle AI Analysis Feedback */}
+        {/* AI Tutor Section: Battle Study AI Analysis Feedback */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -321,7 +321,7 @@ export default function ResultPage({
           <div>
             <h3 className="text-lg font-extrabold tracking-tight flex items-center gap-2">
               <BookOpen className="text-cyan-400 w-5 h-5" />
-              스쿨배틀 AI 오답 분석 피드백
+              배틀스터디 AI 오답 분석 피드백
             </h3>
             <p className="text-xs text-slate-500 mt-1">
               각 문제에 대한 AI 튜터의 맞춤형 분석 보고서입니다. 카드를 클릭해 상세 해설을 확인하세요.
@@ -419,7 +419,7 @@ export default function ResultPage({
                                 <Zap className="w-3.5 h-3.5 text-white fill-white" />
                               </div>
                               <span className="text-xs font-extrabold text-cyan-400 uppercase tracking-wider">
-                                SchoolBattle AI 튜터 피드백
+                                Battle Study AI 튜터 피드백
                               </span>
                             </div>
                             

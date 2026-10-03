@@ -45,7 +45,7 @@ export default function GlobalHeader({
       <div 
         onClick={() => router.push("/")}
         className="flex items-center gap-3 shrink-0 cursor-pointer group"
-        title="스쿨배틀 홈(메인 로비)으로 이동"
+        title="배틀스터디 홈(메인 로비)으로 이동"
       >
         <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 text-white shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
           <Swords className="w-5 h-5 md:w-6 md:h-6" />
@@ -56,7 +56,7 @@ export default function GlobalHeader({
               ? "bg-gradient-to-r from-slate-900 to-slate-600"
               : "bg-gradient-to-r from-white to-slate-400"
           } font-sans group-hover:text-cyan-400 transition-colors`}>
-            스쿨배틀 아레나
+            배틀스터디 아레나
           </h2>
           <p className="text-[9px] md:text-[10px] text-cyan-400 tracking-wider font-semibold uppercase">
             Season 1: First Honor

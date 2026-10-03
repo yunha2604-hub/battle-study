@@ -135,10 +135,10 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
           {/* Logo / Header */}
           <div className="text-center">
             <h1 className="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 drop-shadow-md font-sans">
-              스쿨배틀
+              배틀스터디
             </h1>
             <p className="text-xs font-semibold tracking-widest text-cyan-400 mt-1 uppercase">
-              SchoolBattle Arena
+              Battle Study Arena
             </p>
             <p className="text-slate-400 text-xs mt-2">
               학교의 명예를 걸고 맞붙는 1대1 실시간 퀴즈 대전

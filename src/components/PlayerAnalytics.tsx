@@ -684,7 +684,7 @@ export default function PlayerAnalytics() {
                 <Zap className="w-4 h-4 text-purple-400 fill-purple-400/20" />
               </div>
               <span className="text-xs font-black text-purple-300 tracking-wider uppercase">
-                스쿨배틀 AI 분석 코치 지능형 피드백
+                배틀스터디 AI 분석 코치 지능형 피드백
               </span>
             </div>
 

@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# ⚔️ 스쿨배틀 (SchoolBattle Arena) 프로젝트 가이드 & 에이전트 지침서
+# ⚔️ 배틀스터디 (Battle Study Arena) 프로젝트 가이드 & 에이전트 지침서
 
 > **새로운 대화 세션에 참여하는 모든 AI 에이전트는 본 문서를 최우선 기준으로 삼고 프로젝트를 이해하고 작업해야 합니다.**
 
@@ -16,7 +16,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 📌 1. 프로젝트 정체성 및 기획 배경
 
-- **서비스명**: 스쿨배틀 (SchoolBattle Arena)
+- **서비스명**: 배틀스터디 (Battle Study Arena)
 - **개발자/기획자**: 박윤하 (청계중학교 3학년)
 - **목적**:
   1. **한국디지털미디어고등학교(디미고) e-비즈니스과 특별전형** 필수 제출 서류(실적설명서, 교사추천서) 및 심층면접 질의응답 대비.

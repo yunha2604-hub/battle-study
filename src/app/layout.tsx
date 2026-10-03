@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "스쿨배틀 (SchoolBattle Arena) - 실시간 퀴즈 배틀 & 수학 수행평가 관리",
+  title: "배틀스터디 (Battle Study) - 실시간 퀴즈 배틀 & 수학 수행평가 관리",
   description: "학교의 명예를 걸고 맞붙는 1대1 실시간 퀴즈 배틀 및 2022 개정 교육과정 연계 수학 수행평가 관리 시스템",
 };
 
