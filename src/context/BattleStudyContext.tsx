@@ -74,6 +74,10 @@ interface BattleStudyContextType {
   handleJoinEventRoom: () => void;
   handleStartAssessmentMatch: (isStrict: boolean) => void;
   handleFinishMatch: (userHp: number, oppHp: number, log: AnswerLogItem[]) => void;
+  handleFinishAssessmentTest: (
+    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number }[],
+    totalScore: number
+  ) => void;
   handleReturnToLobby: (newTier: string, newLp: number) => void;
   handleEnterPin: (pin: string) => void;
 }
@@ -231,8 +235,8 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         alert("🛑 [시험 종료] 이 일회성 시험 코드는 시험이 종료되어 만료되었습니다. (재사용 불가)");
         return;
       }
-      alert(`📝 [수행평가 시험 접속]\n단원: I. 실수와 그 연산 (${mathQuestions.length}문항)\n코드: ${assessmentCode}\n수행평가 아레나로 이동합니다!`);
-      handleStartAssessmentMatch(true);
+      alert(`📝 [수행평가 시험 접속]\n단원: I. 실수와 그 연산 (${mathQuestions.length}문항)\n코드: ${assessmentCode}\n수행평가 시험실로 이동합니다!`);
+      router.push("/assessment-test");
       return;
     }
 
@@ -266,19 +270,49 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     router.push("/custom-room");
   };
 
-  const handleStartAssessmentMatch = (isStrict: boolean) => {
-    const rivalSchool = school === "청계중학교" ? "대청중학교" : "청계중학교";
-    const testOpponent: OpponentData = {
-      nickname: "목동수학귀신",
-      school: rivalSchool,
-      tier: "Gold",
-      lp: 45
-    };
-    setOpponent(testOpponent);
-    setSelectedSubject("수학");
-    setIsStrictAssessment(isStrict);
-    setIsTeamBattle(false);
-    router.push("/battle");
+  const handleStartAssessmentMatch = (_isStrict: boolean) => {
+    router.push("/assessment-test");
+  };
+
+  const handleFinishAssessmentTest = (
+    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number }[],
+    totalScore: number
+  ) => {
+    const studentName = "김민수";
+    const currentTime = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+
+    setStudentAssessments((prev) => {
+      const existingIdx = prev.findIndex((s) => s.name === studentName);
+      const newRecord: StudentAssessmentRow = {
+        id: `std-test-${Date.now()}`,
+        grade: 3,
+        classNum: 1,
+        studentNum: 1,
+        name: studentName,
+        submitted: true,
+        submittedAt: currentTime,
+        aiScore: totalScore,
+        teacherScore: null,
+        isConfirmed: false,
+        aiSummary: `객관식 정답률 ${totalScore}%. AI 1차 자동 채점 완료. 선생님 2차 최종 점수 확정 대기 중.`,
+        answers: answersLog.map((item) => ({
+          qNum: item.qNum,
+          title: item.question.question.substring(0, 30) + "...",
+          studentAnswer: item.studentAnswer,
+          correctAnswer: item.question.correctAnswer,
+          pointsEarned: item.pointsEarned,
+          maxPoints: item.question.points,
+          aiAssessment: item.isCorrect ? "정답 (+만점 배점)" : "오답 (풀이과정 재검토 권장)"
+        }))
+      };
+
+      if (existingIdx >= 0) {
+        const updated = [...prev];
+        updated[existingIdx] = newRecord;
+        return updated;
+      }
+      return [newRecord, ...prev];
+    });
   };
 
   const handleFinishMatch = (userHp: number, oppHp: number, log: AnswerLogItem[]) => {
@@ -369,6 +403,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         handleJoinEventRoom,
         handleStartAssessmentMatch,
         handleFinishMatch,
+        handleFinishAssessmentTest,
         handleReturnToLobby,
         handleEnterPin,
         showBattleConfirmModal,
