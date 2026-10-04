@@ -391,6 +391,17 @@ export default function Lobby({
                 현재 <strong className="text-orange-400">3연승</strong> 달리는 중! 다음 승리 시 보너스 LP
               </span>
             </div>
+            {/* Analytics Entry Button */}
+            <button
+              onClick={() => {
+                router.push("/analytics");
+              }}
+              className="w-full mt-4 py-3 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 hover:border-cyan-500/50 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-300 hover:text-cyan-400 transition-all group shadow-lg cursor-pointer"
+            >
+              <BarChart2 className="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform" />
+              <span>나의 6대 학업 역량 상세 분석 보기</span>
+              <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            </button>
           </div>
 
           {/* Daily Bounty UI Widget */}
@@ -448,6 +459,19 @@ export default function Lobby({
                 </div>
               </div>
             </div>
+
+            {/* Shadow Raid Entry Button */}
+            <button
+              onClick={() => {
+                router.push("/shadow-raid");
+              }}
+              className="w-full mt-5 py-3.5 bg-gradient-to-r from-emerald-900/60 to-teal-900/60 hover:from-emerald-800/80 hover:to-teal-800/80 border border-emerald-500/30 hover:border-emerald-400/60 rounded-2xl flex items-center justify-center gap-2 text-sm font-black text-emerald-300 hover:text-emerald-200 transition-all group shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] relative overflow-hidden cursor-pointer"
+            >
+              <div className="absolute inset-0 bg-emerald-400/10 blur-xl group-hover:opacity-100 opacity-0 transition-opacity" />
+              <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400 group-hover:scale-110 transition-transform" />
+              <span className="relative z-10">오답 던전 입장 (번개 충전)</span>
+              <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all relative z-10" />
+            </button>
           </div>
         </section>
 
