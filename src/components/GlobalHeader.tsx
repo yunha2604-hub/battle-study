@@ -29,7 +29,7 @@ export default function GlobalHeader({
     if (pathname === "/shadow-raid") return "SHADOW_RAID";
     if (pathname === "/analytics") return "ANALYTICS";
     if (pathname === "/teacher") return "TEACHER";
-    if (pathname === "/login") return "LOGIN";
+    if (pathname === "/") return "LOGIN";
     return "LOBBY";
   })();
 
@@ -43,7 +43,7 @@ export default function GlobalHeader({
     }`}>
       {/* Brand Logo */}
       <div 
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/lobby")}
         className="flex items-center gap-3 shrink-0 cursor-pointer group"
         title="배틀스터디 홈(메인 로비)으로 이동"
       >
@@ -71,7 +71,7 @@ export default function GlobalHeader({
         {/* Tab 1: 메인 로비 */}
         <button
           type="button"
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/lobby")}
           className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
             activeTab === "LOBBY"
               ? isLight ? "bg-white text-slate-900 shadow-sm" : "bg-slate-900 text-white shadow-sm"
@@ -158,7 +158,7 @@ export default function GlobalHeader({
         {/* Tab 6: 로그인 */}
         <button
           type="button"
-          onClick={() => router.push("/login")}
+          onClick={() => router.push("/")}
           className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
             activeTab === "LOGIN"
               ? isLight ? "bg-white text-cyan-600 shadow-sm border border-cyan-300" : "bg-slate-900 text-cyan-300 shadow-sm border border-cyan-500/40"
@@ -191,7 +191,7 @@ export default function GlobalHeader({
         {/* Direct Login Button (Visible on mobile & desktop) */}
         <button 
           type="button"
-          onClick={() => router.push("/login")}
+          onClick={() => router.push("/")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm ${
             activeTab === "LOGIN"
               ? "bg-cyan-900 border-cyan-500 text-white"
