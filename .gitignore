@@ -59,3 +59,8 @@ startup_mvp_report.md
 
 # Claude Code
 .claude/
+
+# Temporary Documents
+/docs/temp/
+recent_run.json
+

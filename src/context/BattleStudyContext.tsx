@@ -236,7 +236,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         return;
       }
       alert(`📝 [수행평가 시험 접속]\n단원: I. 실수와 그 연산 (${mathQuestions.length}문항)\n코드: ${assessmentCode}\n수행평가 시험실로 이동합니다!`);
-      router.push("/assessment-test");
+      router.push("/assessment-test?from=student");
       return;
     }
 

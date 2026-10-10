@@ -10,7 +10,7 @@ import {
   ChevronRight, Award, FileCheck2, XCircle, HelpCircle,
   Swords, Zap, LogIn
 } from "lucide-react";
-import GlobalHeader from "./GlobalHeader";
+import EduHeader from "./EduHeader";
 
 // Purity compliant random PIN generator
 function generateRandomTeacherPin(): string {
@@ -396,6 +396,14 @@ export default function TeacherDashboard({
   const [questionCount, setQuestionCount] = useState<number>(3);
   const [difficulty, setDifficulty] = useState<"하" | "중" | "상">("중");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  
+  // 선생님 AI 직접 요구 프롬프트 및 AI 1차 채점 평가요소 상태
+  const [teacherAiPrompt, setTeacherAiPrompt] = useState<string>(
+    "서술형 문항은 실생활 문제(예: 놀이공원 요금, 스포츠 경기 등)와 연계하고, 함정 보기 1개를 포함하여 출제해줘."
+  );
+  const [assessmentRubricCriteria, setAssessmentRubricCriteria] = useState<string>(
+    "1번(30점): 정답 일치 여부 / 2번(35점): 계산 부호 실수 시 부분점수 15점 / 3번(35점): 완전제곱식 전개 식 세우기 20점, 최종 중근 표기 15점"
+  );
 
   // --- Step 2: One-time Code (PIN) State ---
   const [submittedCount, setSubmittedCount] = useState<number>(10);
@@ -409,9 +417,22 @@ export default function TeacherDashboard({
 
   // --- Step 4: Teacher 2nd Evaluation Modal State ---
   const [selectedStudentForReview, setSelectedStudentForReview] = useState<StudentAssessmentRow | null>(null);
+  const [tempAnswers, setTempAnswers] = useState<QuestionAnswerDetail[]>([]);
   const [tempTeacherScore, setTempTeacherScore] = useState<number>(85);
   const [tempFeedback, setTempFeedback] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // --- Step 1 Inline Question Edit State ---
+  const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
+  const [editFormData, setEditFormData] = useState<{
+    question: string;
+    type: "객관식" | "서술형 풀이";
+    options: string[];
+    correctAnswer: string;
+    solution: string;
+    points: number;
+    difficulty: "하" | "중" | "상";
+  } | null>(null);
 
   const selectedChapter = useMemo(() => {
     return MATH_CHAPTERS.find(c => c.id === selectedChapterId) || MATH_CHAPTERS[0];
@@ -460,13 +481,59 @@ export default function TeacherDashboard({
       ];
       setQuestions(newQuests.slice(0, questionCount));
       setIsQuestionsConfirmed(false);
+      setEditingQuestionId(null);
+      setEditFormData(null);
       showToast("✨ AI가 수학 수행평가 문항을 자동 출제했습니다! 문항을 확인하고 확정해주세요.");
     }, 1200);
   };
 
   const handleConfirmQuestions = () => {
     setIsQuestionsConfirmed(true);
+    setEditingQuestionId(null);
+    setEditFormData(null);
     showToast("✅ 수학 수행평가 문항이 최종 확정되었습니다! 이제 일회성 코드를 발급할 수 있습니다.");
+  };
+
+  // Inline Question Edit Handlers
+  const handleStartEditQuestion = (q: GeneratedMathQuestion) => {
+    setEditingQuestionId(q.id);
+    setEditFormData({
+      question: q.question,
+      type: q.type,
+      options: q.options ? [...q.options] : ["", "", "", ""],
+      correctAnswer: q.correctAnswer,
+      solution: q.solution,
+      points: q.points,
+      difficulty: q.difficulty
+    });
+  };
+
+  const handleCancelEditQuestion = () => {
+    setEditingQuestionId(null);
+    setEditFormData(null);
+  };
+
+  const handleSaveEditQuestion = (qId: number) => {
+    if (!editFormData) return;
+    setQuestions(prev => prev.map(q => {
+      if (q.id === qId) {
+        return {
+          ...q,
+          question: editFormData.question.trim() || q.question,
+          type: editFormData.type,
+          options: editFormData.type === "객관식" ? editFormData.options : undefined,
+          correctAnswer: editFormData.correctAnswer.trim() || q.correctAnswer,
+          solution: editFormData.solution.trim() || q.solution,
+          points: Number(editFormData.points) || q.points,
+          difficulty: editFormData.difficulty
+        };
+      }
+      return q;
+    }));
+    setIsQuestionsConfirmed(false);
+    setEditingQuestionId(null);
+    setEditFormData(null);
+    showToast(`✏️ ${qId}번 문항이 성공적으로 수정되었습니다! 내용 확인 후 최종 확정해주세요.`);
   };
 
   // Generate New One-time Code
@@ -530,8 +597,43 @@ export default function TeacherDashboard({
   // Open 2nd Evaluation Modal
   const handleOpenReviewModal = (student: StudentAssessmentRow) => {
     setSelectedStudentForReview(student);
-    setTempTeacherScore(student.teacherScore ?? student.aiScore);
+    const initialAnswers = student.answers.map(a => ({ ...a }));
+    setTempAnswers(initialAnswers);
+    const calculatedTotal = initialAnswers.reduce((sum, a) => sum + a.pointsEarned, 0);
+    setTempTeacherScore(student.teacherScore ?? calculatedTotal);
     setTempFeedback(student.teacherFeedback ?? "");
+  };
+
+  // Step 4: Per-Question Score Adjustment with Real-time Total Sum (Requirement 1 - Option 2)
+  const handleUpdateQuestionScore = (qNum: number, delta: number) => {
+    setTempAnswers(prev => {
+      const next = prev.map(ans => {
+        if (ans.qNum === qNum) {
+          const newPoints = Math.min(ans.maxPoints, Math.max(0, ans.pointsEarned + delta));
+          return { ...ans, pointsEarned: newPoints };
+        }
+        return ans;
+      });
+      const newTotal = next.reduce((sum, a) => sum + a.pointsEarned, 0);
+      setTempTeacherScore(newTotal);
+      return next;
+    });
+  };
+
+  const handleSetQuestionScoreDirect = (qNum: number, valueStr: string) => {
+    const val = parseInt(valueStr) || 0;
+    setTempAnswers(prev => {
+      const next = prev.map(ans => {
+        if (ans.qNum === qNum) {
+          const newPoints = Math.min(ans.maxPoints, Math.max(0, val));
+          return { ...ans, pointsEarned: newPoints };
+        }
+        return ans;
+      });
+      const newTotal = next.reduce((sum, a) => sum + a.pointsEarned, 0);
+      setTempTeacherScore(newTotal);
+      return next;
+    });
   };
 
   // Confirm Teacher 2nd Evaluation Score
@@ -542,6 +644,7 @@ export default function TeacherDashboard({
       if (s.id === selectedStudentForReview.id) {
         return {
           ...s,
+          answers: tempAnswers,
           teacherScore: tempTeacherScore,
           isConfirmed: true,
           teacherFeedback: tempFeedback.trim() || undefined
@@ -550,7 +653,7 @@ export default function TeacherDashboard({
       return s;
     }));
 
-    showToast(`🎯 [${selectedStudentForReview.name}] 학생의 2차 평가 점수(${tempTeacherScore}점)가 최종 확정되었습니다.`);
+    showToast(`🎯 [${selectedStudentForReview.name}] 학생의 문항별 재조정 평가(총점 ${tempTeacherScore}점)가 최종 확정되었습니다.`);
     setSelectedStudentForReview(null);
   };
 
@@ -565,8 +668,8 @@ export default function TeacherDashboard({
   return (
     <div className="min-h-screen bg-slate-950 font-sans flex flex-col justify-between">
       
-      {/* Global Header */}
-      <GlobalHeader activeTab="TEACHER" onGoToTeacher={() => {}} />
+      {/* 배틀스터디 에듀 전용 상단 헤더 (다이렉트 시연 내비게이션 포함) */}
+      <EduHeader activeTab="TEACHER" schoolName="청계중학교" />
 
       <div className="flex-1 bg-slate-100 text-slate-900 p-4 md:p-8 flex flex-col justify-between">
       
@@ -760,6 +863,64 @@ export default function TeacherDashboard({
               <span className="truncate">{selectedChapter.achievementStandard}</span>
             </div>
 
+            {/* 1) AI 출제 직접 요구 프롬프트 입력창 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>AI 출제 추가 요구사항 (선생님 프롬프트)</span>
+                </label>
+                <span className="text-[10px] text-indigo-600 font-bold">✨ 자유 서술형 지시 가능</span>
+              </div>
+              <textarea
+                value={teacherAiPrompt}
+                onChange={(e) => setTeacherAiPrompt(e.target.value)}
+                rows={2}
+                placeholder="예: 서술형 문항은 실생활 문제(예: 놀이공원 요금 등)와 연계하고, 함정 보기 1개를 포함하여 출제해줘."
+                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium resize-none shadow-inner"
+              />
+              {/* 추천 프롬프트 태그 칩 */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                <span className="text-[10px] text-slate-400 font-bold">추천 태그:</span>
+                {[
+                  "실생활 활용 문제 연계",
+                  "자주 틀리는 함정 보기 포함",
+                  "서술형 풀이 3단계 명시",
+                  "계산 과정 부분점수 배점"
+                ].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => setTeacherAiPrompt(prev => prev ? `${prev} [${tag}]` : `[${tag}]`)}
+                    className="px-2 py-0.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-md text-[10px] font-bold text-slate-600 hover:text-indigo-600 transition-colors cursor-pointer"
+                  >
+                    + {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2) AI 1차 자동 채점 기준 및 평가요소(루브릭) 기입란 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>AI 1차 채점 평가요소 및 채점 루브릭 (기준표)</span>
+                </label>
+                <span className="text-[10px] text-emerald-600 font-bold">📋 0.1초 1차 자동 채점 기준</span>
+              </div>
+              <textarea
+                value={assessmentRubricCriteria}
+                onChange={(e) => setAssessmentRubricCriteria(e.target.value)}
+                rows={2}
+                placeholder="예: 1번(30점): 정답 일치 여부 / 2번(35점): 부호 실수 시 감점 20점 / 3번(35점): 완전제곱식 전개 20점, 최종 중근 15점"
+                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-medium resize-none shadow-inner"
+              />
+              <p className="text-[10px] text-slate-500 leading-tight">
+                * 학생 답안 제출 시 AI가 상기 루브릭을 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
+              </p>
+            </div>
+
             {/* AI Generate Button */}
             <div className="flex gap-2">
               <button
@@ -792,53 +953,200 @@ export default function TeacherDashboard({
                 <span className="text-[11px] text-slate-500 font-semibold">총 배점: 100점 만점</span>
               </div>
 
-              <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
-                {questions.map((q, idx) => (
-                  <div key={q.id} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-black">
-                          {idx + 1}번 문항
-                        </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">
-                          {q.type}
-                        </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">
-                          배점 {q.points}점
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-semibold text-slate-400">
-                        난이도: {q.difficulty}
-                      </span>
-                    </div>
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                {questions.map((q, idx) => {
+                  const isEditingThis = editingQuestionId === q.id;
 
-                    <p className="text-xs md:text-sm font-bold text-slate-900 leading-relaxed">
-                      {q.question}
-                    </p>
-
-                    {q.options && (
-                      <div className="grid grid-cols-2 gap-2 pt-1">
-                        {q.options.map((opt, optIdx) => (
-                          <div 
-                            key={optIdx} 
-                            className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium ${
-                              opt === q.correctAnswer 
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold" 
-                                : "bg-white border-slate-200 text-slate-600"
-                            }`}
-                          >
-                            {optIdx + 1}. {opt}
+                  if (isEditingThis && editFormData) {
+                    return (
+                      <div key={q.id} className="p-4 bg-indigo-50/70 border-2 border-indigo-400 rounded-2xl space-y-3 shadow-md">
+                        <div className="flex items-center justify-between gap-2 border-b border-indigo-200 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-md bg-indigo-700 text-white text-[10px] font-black">
+                              {idx + 1}번 문항 직접 수정 중
+                            </span>
+                            <span className="text-[10px] font-bold text-indigo-700">인라인 편집 모드</span>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={handleCancelEditQuestion}
+                              className="px-2.5 py-1 text-xs font-bold text-slate-500 hover:text-slate-800 bg-white border border-slate-300 rounded-lg cursor-pointer"
+                            >
+                              취소
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSaveEditQuestion(q.id)}
+                              className="px-3 py-1 text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm cursor-pointer flex items-center gap-1"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>수정 완료</span>
+                            </button>
+                          </div>
+                        </div>
 
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-0.5">
-                      <div><strong className="text-slate-800">정답:</strong> {q.correctAnswer}</div>
-                      <div><strong className="text-slate-800">채점 기준/해설:</strong> {q.solution}</div>
+                        {/* Type, Points, Difficulty Edit */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">문항 유형</label>
+                            <select
+                              value={editFormData.type}
+                              onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value as "객관식" | "서술형 풀이" })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800"
+                            >
+                              <option value="객관식">객관식</option>
+                              <option value="서술형 풀이">서술형 풀이</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">배점 (점수)</label>
+                            <input
+                              type="number"
+                              min={5}
+                              max={100}
+                              value={editFormData.points}
+                              onChange={(e) => setEditFormData({ ...editFormData, points: parseInt(e.target.value) || 0 })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">난이도</label>
+                            <select
+                              value={editFormData.difficulty}
+                              onChange={(e) => setEditFormData({ ...editFormData, difficulty: e.target.value as "하" | "중" | "상" })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-800"
+                            >
+                              <option value="하">하</option>
+                              <option value="중">중</option>
+                              <option value="상">상</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Question Text */}
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-600 block mb-1">문제 지문</label>
+                          <textarea
+                            rows={2}
+                            value={editFormData.question}
+                            onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
+                            className="w-full bg-white border border-indigo-200 rounded-lg p-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-500"
+                            placeholder="문제를 입력하세요"
+                          />
+                        </div>
+
+                        {/* Multiple Choice Options (If applicable) */}
+                        {editFormData.type === "객관식" && (
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">보기 옵션 (1~4번)</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {editFormData.options.map((opt, optIdx) => (
+                                <div key={optIdx} className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2 py-1">
+                                  <span className="text-[10px] font-black text-slate-400">{optIdx + 1}.</span>
+                                  <input
+                                    type="text"
+                                    value={opt}
+                                    onChange={(e) => {
+                                      const nextOpts = [...editFormData.options];
+                                      nextOpts[optIdx] = e.target.value;
+                                      setEditFormData({ ...editFormData, options: nextOpts });
+                                    }}
+                                    className="w-full text-xs font-medium text-slate-800 focus:outline-none bg-transparent"
+                                    placeholder={`보기 ${optIdx + 1}`}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Correct Answer & Solution */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">정답</label>
+                            <input
+                              type="text"
+                              value={editFormData.correctAnswer}
+                              onChange={(e) => setEditFormData({ ...editFormData, correctAnswer: e.target.value })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-900"
+                              placeholder="정답 내용"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">채점 기준 및 해설</label>
+                            <input
+                              type="text"
+                              value={editFormData.solution}
+                              onChange={(e) => setEditFormData({ ...editFormData, solution: e.target.value })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2 py-1.5 text-xs text-slate-700"
+                              placeholder="채점 기준 / 모범 해설"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={q.id} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 hover:border-slate-300 transition-colors">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-black">
+                            {idx + 1}번 문항
+                          </span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">
+                            {q.type}
+                          </span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">
+                            배점 {q.points}점
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-semibold text-slate-400">
+                            난이도: {q.difficulty}
+                          </span>
+                          {/* 3번 요구사항: 문항 옆 펜 버튼으로 인라인 직접 수정 */}
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditQuestion(q)}
+                            title="문항 직접 수정"
+                            className="p-1 rounded-lg bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 hover:border-indigo-300 transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold px-2 py-0.5"
+                          >
+                            <Edit3 className="w-3 h-3 text-indigo-500" />
+                            <span>문항 수정</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <p className="text-xs md:text-sm font-bold text-slate-900 leading-relaxed">
+                        {q.question}
+                      </p>
+
+                      {q.options && (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          {q.options.map((opt, optIdx) => (
+                            <div 
+                              key={optIdx} 
+                              className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium ${
+                                opt === q.correctAnswer 
+                                  ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold" 
+                                  : "bg-white border-slate-200 text-slate-600"
+                              }`}
+                            >
+                              {optIdx + 1}. {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-0.5">
+                        <div><strong className="text-slate-800">정답:</strong> {q.correctAnswer}</div>
+                        <div><strong className="text-slate-800">채점 기준/해설:</strong> {q.solution}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Confirm Questions Button */}
@@ -1217,48 +1525,90 @@ export default function TeacherDashboard({
                 </p>
               </div>
 
-              {/* Detailed Question Answers & AI Check */}
+              {/* Detailed Question Answers & AI Check with Individual Score Adjustments */}
               <div className="space-y-3">
-                <h4 className="text-xs font-extrabold text-slate-700">문항별 학생 답안 및 AI 세부 판정</h4>
-                <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
-                  {selectedStudentForReview.answers.map((ans) => (
-                    <div key={ans.qNum} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-extrabold text-slate-700">문항별 학생 답안 및 부분점수 조정</h4>
+                  <span className="text-[11px] text-indigo-600 font-bold">
+                    💡 각 문항의 점수를 조정하면 총점이 실시간으로 자동 합산됩니다
+                  </span>
+                </div>
+                
+                <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                  {tempAnswers.map((ans) => (
+                    <div key={ans.qNum} className="p-3.5 bg-white border border-slate-200 rounded-2xl text-xs space-y-2 shadow-xs">
                       <div className="flex items-center justify-between font-bold text-slate-900">
-                        <span>{ans.qNum}번. {ans.title}</span>
-                        <span className="font-mono text-indigo-600 font-black">
-                          {ans.pointsEarned} / {ans.maxPoints}점
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-black">
+                            {ans.qNum}번
+                          </span>
+                          <span className="text-xs font-bold text-slate-800">{ans.title}</span>
+                        </div>
+
+                        {/* Individual Question Score Stepper / Direct Input */}
+                        <div className="flex items-center gap-1.5 bg-indigo-50/80 px-2 py-1 rounded-xl border border-indigo-200">
+                          <span className="text-[10px] font-black text-indigo-700 mr-1">점수 조정:</span>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateQuestionScore(ans.qNum, -1)}
+                            className="w-6 h-6 rounded-md bg-white border border-indigo-200 font-black text-slate-700 hover:bg-indigo-100 flex items-center justify-center cursor-pointer text-xs"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min={0}
+                            max={ans.maxPoints}
+                            value={ans.pointsEarned}
+                            onChange={(e) => handleSetQuestionScoreDirect(ans.qNum, e.target.value)}
+                            className="w-10 text-center font-mono font-black text-xs bg-white border border-indigo-300 rounded-md py-0.5 text-indigo-900 focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateQuestionScore(ans.qNum, 1)}
+                            className="w-6 h-6 rounded-md bg-white border border-indigo-200 font-black text-slate-700 hover:bg-indigo-100 flex items-center justify-center cursor-pointer text-xs"
+                          >
+                            +
+                          </button>
+                          <span className="text-[11px] font-bold text-slate-500">
+                            / {ans.maxPoints}점
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-[11px] text-slate-600 flex items-center gap-3">
-                        <span><strong>학생 답안:</strong> {ans.studentAnswer}</span>
-                        <span><strong>정답:</strong> {ans.correctAnswer}</span>
+
+                      <div className="text-[11px] text-slate-600 flex items-center gap-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <span><strong className="text-slate-800">학생 답안:</strong> {ans.studentAnswer}</span>
+                        <span className="text-slate-300">|</span>
+                        <span><strong className="text-emerald-700">정답:</strong> {ans.correctAnswer}</span>
                       </div>
-                      <div className="text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-150">
-                        <strong>AI 판정:</strong> {ans.aiAssessment}
+
+                      <div className="text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-150">
+                        <strong className="text-indigo-700">AI 세부 판정:</strong> {ans.aiAssessment}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Teacher 2nd Adjustment Controls */}
+              {/* Teacher 2nd Adjustment Controls (Real-time auto-summed total) */}
               <div className="bg-indigo-50/60 border border-indigo-200 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-xs font-extrabold text-indigo-950 flex items-center gap-1.5">
                       <Edit3 className="w-4 h-4 text-indigo-600" />
-                      선생님 최종 점수 조정 (2차 평가자)
+                      선생님 최종 확정 점수 (문항별 합산)
                     </h4>
                     <p className="text-[11px] text-indigo-800 mt-0.5">
-                      AI 1차 채점 점수를 확인한 후, 풀이과정 및 성취도를 고려하여 점수를 확정해주세요.
+                      위 문항별 부분점수를 조정한 결과가 실시간으로 총점에 자동 합산 반영되었습니다.
                     </p>
                   </div>
 
-                  {/* Score Stepper */}
+                  {/* Total Score Display / Fine Adjustment */}
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setTempTeacherScore(prev => Math.max(0, prev - 1))}
                       className="w-8 h-8 rounded-lg bg-white border border-indigo-200 font-black text-slate-800 hover:bg-indigo-100 cursor-pointer flex items-center justify-center"
+                      title="총점 1점 감점"
                     >
                       -
                     </button>
@@ -1273,10 +1623,11 @@ export default function TeacherDashboard({
                     <button
                       onClick={() => setTempTeacherScore(prev => Math.min(100, prev + 1))}
                       className="w-8 h-8 rounded-lg bg-white border border-indigo-200 font-black text-slate-800 hover:bg-indigo-100 cursor-pointer flex items-center justify-center"
+                      title="총점 1점 가산"
                     >
                       +
                     </button>
-                    <span className="text-xs font-bold text-indigo-900">점</span>
+                    <span className="text-xs font-bold text-indigo-900">점 / 100점</span>
                   </div>
                 </div>
 

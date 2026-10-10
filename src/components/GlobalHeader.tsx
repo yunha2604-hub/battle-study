@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Swords, Zap, LogIn } from "lucide-react";
 
-export type NavTabType = "LOBBY" | "BATTLE" | "DEATHMATCH" | "SHADOW_RAID" | "ANALYTICS" | "TEACHER" | "LOGIN";
+export type NavTabType = "LOBBY" | "BATTLE" | "DEATHMATCH" | "SHADOW_RAID" | "ANALYTICS" | "ASSESSMENT" | "TEACHER" | "LOGIN";
 
 export interface GlobalHeaderProps {
   activeTab?: NavTabType;
@@ -28,6 +28,7 @@ export default function GlobalHeader({
     if (pathname === "/deathmatch") return "DEATHMATCH";
     if (pathname === "/shadow-raid") return "SHADOW_RAID";
     if (pathname === "/analytics") return "ANALYTICS";
+    if (pathname === "/assessment-test") return "ASSESSMENT";
     if (pathname === "/teacher") return "TEACHER";
     if (pathname === "/") return "LOGIN";
     return "LOBBY";
@@ -138,24 +139,8 @@ export default function GlobalHeader({
           <span>나의 역량 분석</span>
         </button>
 
-        {/* Tab 5: 교사 대시보드 */}
-        <button
-          type="button"
-          onClick={() => {
-            if (onGoToTeacher) onGoToTeacher();
-            else router.push("/teacher");
-          }}
-          className={`px-3 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-            activeTab === "TEACHER"
-              ? isLight ? "bg-white text-purple-700 shadow-sm border border-purple-300" : "bg-slate-900 text-purple-400 shadow-sm border border-purple-500/40"
-              : "text-purple-400 hover:text-purple-300 hover:bg-purple-950/20 border border-purple-900/30"
-          }`}
-        >
-          <span>👩‍🏫</span>
-          <span>교사</span>
-        </button>
 
-        {/* Tab 6: 로그인 */}
+        {/* Tab 5: 로그인 */}
         <button
           type="button"
           onClick={() => router.push("/")}

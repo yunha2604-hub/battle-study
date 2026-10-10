@@ -127,6 +127,9 @@ export default function SchoolDeathmatchArena({
 }: SchoolDeathmatchArenaProps) {
   const router = useRouter();
 
+  // Match start confirmation gate (요구사항 1번)
+  const [isMatchStarted, setIsMatchStarted] = useState(false);
+
   // Match Set State: 1 = Set 1 (3분 스피드전), 2 = Set 2 (30분 정통 수학전), 3 = 최종 결과
   const [currentSet, setCurrentSet] = useState<1 | 2 | 3>(1);
 
@@ -163,7 +166,7 @@ export default function SchoolDeathmatchArena({
 
   // Set 1 Countdown Timer
   useEffect(() => {
-    if (currentSet !== 1) return;
+    if (!isMatchStarted || currentSet !== 1) return;
     const timer = setInterval(() => {
       setSet1Timer((prev) => {
         if (prev <= 1) {
@@ -180,7 +183,7 @@ export default function SchoolDeathmatchArena({
 
   // Set 2 Countdown Timer
   useEffect(() => {
-    if (currentSet !== 2) return;
+    if (!isMatchStarted || currentSet !== 2) return;
     const timer = setInterval(() => {
       setSet2Timer((prev) => {
         if (prev <= 1) {
@@ -196,7 +199,7 @@ export default function SchoolDeathmatchArena({
 
   // Background Teammate Combat Simulator
   useEffect(() => {
-    if (currentSet === 3) return;
+    if (!isMatchStarted || currentSet === 3) return;
 
     let logCounter = 100;
     const set1TeammateLogs = [
@@ -323,6 +326,70 @@ export default function SchoolDeathmatchArena({
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none overflow-x-hidden relative">
+      {/* 1번 요구사항: 학교 대항전 시작 전 확인 모달 */}
+      <AnimatePresence>
+        {!isMatchStarted && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl text-center space-y-6 text-white relative"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-500 to-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-500/20">
+                <Flame className="w-8 h-8" />
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-950 text-orange-400 border border-orange-800 tracking-wider uppercase">
+                  학교 대항전 데스매치
+                </span>
+                <h3 className="text-xl md:text-2xl font-black text-white mt-1">
+                  학교 대항전에 출전하시겠습니까?
+                </h3>
+                <p className="text-xs text-slate-400">
+                  학교의 명예를 걸고 맞붙는 <strong>실시간 단체전 데스매치</strong>입니다.
+                </p>
+              </div>
+
+              {/* Matchup Preview */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between text-xs">
+                <div className="text-left">
+                  <span className="text-[10px] text-emerald-400 block font-black">TEAM A</span>
+                  <strong className="text-white text-sm">{userSchool || "청계중학교"}</strong>
+                  <span className="text-[11px] text-slate-400 block">{userNickname} (본인)</span>
+                </div>
+                <div className="text-base font-black text-slate-600 px-3">VS</div>
+                <div className="text-right">
+                  <span className="text-[10px] text-orange-400 block font-black">TEAM B</span>
+                  <strong className="text-white text-sm">휘문중학교</strong>
+                  <span className="text-[11px] text-slate-400 block">5인 팀원 라이벌</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => router.push("/lobby")}
+                  className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  ← 로비로 돌아가기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMatchStarted(true)}
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-red-500/25 flex items-center justify-center gap-1.5"
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>대항전 시작하기</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Background Ambience */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />

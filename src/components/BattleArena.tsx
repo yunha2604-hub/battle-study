@@ -160,6 +160,9 @@ export default function BattleArena({
   const [userHp, setUserHp] = useState(100);
   const [opponentHp, setOpponentHp] = useState(100);
   
+  // Game start confirmation gate (요구사항 1번)
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  
   // Quiz tracking
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [isLocked, setIsLocked] = useState(false);
@@ -308,7 +311,7 @@ export default function BattleArena({
 
   // Main countdown timer loop
   useEffect(() => {
-    if (isLocked || matchEnding) return;
+    if (!isGameStarted || isLocked || matchEnding) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -322,11 +325,11 @@ export default function BattleArena({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isLocked, matchEnding]);
+  }, [isGameStarted, isLocked, matchEnding]);
 
   // Psychological Pressure Simulator (only active in regular matches)
   useEffect(() => {
-    if (isLocked || matchEnding || !currentQuestion || isTeamBattle) return;
+    if (!isGameStarted || isLocked || matchEnding || !currentQuestion || isTeamBattle) return;
     const timeLimit = currentQuestion.timeLimit;
     if (timeLimit <= 15) return;
 
@@ -361,7 +364,7 @@ export default function BattleArena({
     ];
 
     const eventInterval = setInterval(() => {
-      if (isLocked) return;
+      if (!isGameStarted || isLocked) return;
       const idx = Math.floor(Math.random() * mockMessages.length);
       const chosen = mockMessages[idx];
 
@@ -394,6 +397,70 @@ export default function BattleArena({
     <div className={`min-h-screen flex flex-col justify-between font-sans select-none overflow-hidden relative ${
       isStrictAssessment ? "bg-slate-50 text-slate-800" : "bg-slate-950 text-slate-100"
     }`}>
+      {/* 1번 요구사항: 1:1 퀴즈배틀 시작 전 확인 모달 */}
+      <AnimatePresence>
+        {!isGameStarted && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl text-center space-y-6 text-white relative"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20">
+                <Swords className="w-8 h-8" />
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-950 text-cyan-400 border border-cyan-800 tracking-wider uppercase">
+                  1:1 실시간 퀴즈 배틀
+                </span>
+                <h3 className="text-xl md:text-2xl font-black text-white mt-1">
+                  배틀을 시작하시겠습니까?
+                </h3>
+                <p className="text-xs text-slate-400">
+                  선택 과목: <strong className="text-cyan-400">{subject}</strong> • 총 문항: <strong className="text-white">{subjectQuestions.length}문항</strong>
+                </p>
+              </div>
+
+              {/* Matchup Preview */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between text-xs">
+                <div className="text-left">
+                  <span className="text-[10px] text-slate-500 block font-semibold">내 프로필</span>
+                  <strong className="text-white text-sm">{displayUserNickname}</strong>
+                  <span className="text-[11px] text-cyan-400 block">{userProfile.school}</span>
+                </div>
+                <div className="text-base font-black text-slate-600 px-3">VS</div>
+                <div className="text-right">
+                  <span className="text-[10px] text-slate-500 block font-semibold">라이벌 상대</span>
+                  <strong className="text-white text-sm">{displayOpponentNickname}</strong>
+                  <span className="text-[11px] text-purple-400 block">{opponent.school}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => router.push("/lobby")}
+                  className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  ← 로비로 돌아가기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsGameStarted(true)}
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-1.5"
+                >
+                  <Swords className="w-3.5 h-3.5" />
+                  <span>배틀 시작하기</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Global Header */}
       <GlobalHeader activeTab="BATTLE" theme={isStrictAssessment ? "light" : "dark"} />
       {/* Anti-cheat warning banner */}
