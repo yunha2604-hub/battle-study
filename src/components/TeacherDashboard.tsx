@@ -470,10 +470,12 @@ export default function TeacherDashboard({
         },
         {
           id: 3,
-          question: `[서술형] ${chapter.name}의 성취기준(${chapter.code})에 기반하여 문제의 풀이과정과 답을 단계별로 서술하시오.`,
+          question: `[서술형] ${chapter.name}의 성취기준(${chapter.code})에 기반하여 문제의 풀이과정과 답을 단계별로 서술하시오.${teacherAiPrompt.trim() ? ` (선생님 요청: ${teacherAiPrompt.trim()})` : ""}`,
           type: "서술형 풀이",
           correctAnswer: "단계별 풀이 및 최종값 유도",
-          solution: "조건에 맞춘 식 수립(15점) + 계산 과정의 정확성(10점) + 최종 해 도출(10점)",
+          solution: assessmentRubricCriteria.trim() 
+            ? `교사 입력 루브릭 반영 채점 기준: ${assessmentRubricCriteria.trim()}`
+            : "조건에 맞춘 식 수립(15점) + 계산 과정의 정확성(10점) + 최종 해 도출(10점)",
           points: 35,
           difficulty: difficulty,
           standardCode: chapter.code
