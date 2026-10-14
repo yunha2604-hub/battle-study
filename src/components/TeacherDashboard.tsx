@@ -8,7 +8,7 @@ import {
   AlertTriangle, Users, Filter, Search, RotateCcw, 
   Edit3, ShieldCheck, ArrowRight, BookOpen, 
   ChevronRight, Award, FileCheck2, XCircle, HelpCircle,
-  Swords, Zap, LogIn
+  Swords, Zap, LogIn, QrCode, Monitor, Maximize2
 } from "lucide-react";
 import EduHeader from "./EduHeader";
 
@@ -405,9 +405,10 @@ export default function TeacherDashboard({
     "1번(30점): 정답 일치 여부 / 2번(35점): 계산 부호 실수 시 부분점수 15점 / 3번(35점): 완전제곱식 전개 식 세우기 20점, 최종 중근 표기 15점"
   );
 
-  // --- Step 2: One-time Code (PIN) State ---
+  // --- Step 2: One-time Code (PIN) State & Projector View ---
   const [submittedCount, setSubmittedCount] = useState<number>(10);
   const [totalStudentsCount] = useState<number>(11);
+  const [showProjectorModal, setShowProjectorModal] = useState<boolean>(false);
 
   // --- Step 3: Student Performance Assessment Table & Filters ---
   const [filterClass, setFilterClass] = useState<string>("ALL");
@@ -1270,6 +1271,16 @@ export default function TeacherDashboard({
                   <span>시험 종료 & 코드 만료</span>
                 </button>
               </div>
+
+              {/* 🖥️ 빔프로젝터 / 칠판 전체화면 투사 버튼 */}
+              <button
+                type="button"
+                onClick={() => setShowProjectorModal(true)}
+                className="w-full py-3 px-4 bg-gradient-to-r from-indigo-900 to-slate-900 hover:from-indigo-800 hover:to-slate-800 border border-indigo-500/40 text-indigo-200 hover:text-white rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md"
+              >
+                <Monitor className="w-4 h-4 text-cyan-400" />
+                <span>🖥️ 교실 칠판 / 빔프로젝터 전체화면 투사 모드 (대형 QR 포함)</span>
+              </button>
             </div>
 
             {/* Guide alert box */}
@@ -1662,6 +1673,97 @@ export default function TeacherDashboard({
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>최종 점수 확정 및 저장</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* 🖥️ 교실 빔프로젝터 / 칠판 전체화면 투사 모달 */}
+        {showProjectorModal && (
+          <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 md:p-8">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-4xl bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-8 md:p-12 text-center text-white space-y-8 shadow-2xl relative overflow-hidden"
+            >
+              {/* Top Banner */}
+              <div className="flex items-center justify-between border-b border-slate-800 pb-6">
+                <div className="flex items-center gap-3 text-left">
+                  <div className="p-3 bg-indigo-600 text-white rounded-2xl shadow-lg">
+                    <Monitor className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/20 px-2.5 py-0.5 rounded-full border border-indigo-500/30">
+                      교실 프로젝터 / 칠판 투사 전용 화면
+                    </span>
+                    <h2 className="text-2xl md:text-3xl font-black text-white mt-1">
+                      청계중 3학년 수학 수행평가 입장 안내
+                    </h2>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowProjectorModal(false)}
+                  className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-lg cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Main PIN & QR 2-Column Split */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-2">
+                {/* Left: Large PIN Code */}
+                <div className="p-8 bg-slate-950/80 border border-indigo-500/30 rounded-3xl space-y-4 shadow-inner">
+                  <span className="text-sm font-bold text-slate-400 block tracking-wider uppercase">
+                    수업시간 1회성 시험 PIN
+                  </span>
+                  <div className="font-mono text-5xl md:text-6xl font-black tracking-widest text-indigo-400 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]">
+                    {roomCode}
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-extrabold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span>실시간 학생 응시 가능 상태</span>
+                  </div>
+                </div>
+
+                {/* Right: QR Code Visual */}
+                <div className="p-8 bg-white text-slate-950 rounded-3xl space-y-4 shadow-xl flex flex-col items-center justify-center">
+                  <div className="w-48 h-48 bg-slate-100 border-4 border-slate-900 rounded-2xl flex flex-col items-center justify-center p-3 relative">
+                    <QrCode className="w-36 h-36 text-slate-900" />
+                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 mt-1">
+                      스캔 즉시 학생 시험지 진입
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-700">
+                    스마트폰 카메라로 비추면 바로 응시 페이지로 이동합니다.
+                  </p>
+                </div>
+              </div>
+
+              {/* Instructions & Security Lock Notice */}
+              <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl text-left text-xs space-y-1.5 text-slate-300">
+                <div className="flex items-center gap-2 text-cyan-400 font-bold">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>보안 및 공정성 수칙 (Session Lock)</span>
+                </div>
+                <p className="text-slate-400 leading-relaxed text-[11px]">
+                  • 학생은 본인의 [반 / 출석번호 / 이름]을 입력해야 하며, 1인 1기기 세션 락(Session Lock)이 발급되어 대리 응시 및 다중 로그인이 전면 차단됩니다.<br />
+                  • 시험 도중 브라우저 화면 이탈 또는 탭 전환 감지 시 0점 경고 및 자동 제출 처리됩니다.
+                </p>
+              </div>
+
+              {/* Live Real-Time Counter */}
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-2 border-t border-slate-800">
+                <span>실시간 응시 현황: <strong className="text-white font-mono text-sm">{students.filter(s => s.submitted).length} / {students.length}명</strong> 제출 완료</span>
+                <button
+                  type="button"
+                  onClick={() => setShowProjectorModal(false)}
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl text-xs cursor-pointer shadow-md"
+                >
+                  프로젝터 모드 닫기
                 </button>
               </div>
             </motion.div>

@@ -180,7 +180,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     setSelectedSubject("영어");
     setIsStrictAssessment(false);
     setIsTeamBattle(false);
-    router.push("/battle");
+    router.push("/lobby");
   };
 
   const handleStudentDirectEntry = (targetMenu: "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS") => {
