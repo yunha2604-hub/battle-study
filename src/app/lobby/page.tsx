@@ -11,7 +11,8 @@ export default function LobbyRoutePage() {
     nickname, school, tier, lp, energy,
     setTier, setLp, setEnergy,
     handleStartMatch, handleCreateRoom, handleEnterPin, handleJoinEventRoom,
-    openBattleConfirmModal
+    openBattleConfirmModal,
+    isSchoolVerified, setIsSchoolVerified
   } = useBattleStudy();
 
   return (
@@ -31,6 +32,8 @@ export default function LobbyRoutePage() {
       onGoToTeacherDashboard={() => router.push("/teacher")}
       onJoinEventRoom={handleJoinEventRoom}
       onOpenBattleConfirmModal={openBattleConfirmModal}
+      isSchoolVerified={isSchoolVerified}
+      onVerifySchool={() => setIsSchoolVerified(true)}
     />
   );
 }

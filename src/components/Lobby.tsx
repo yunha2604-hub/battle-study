@@ -6,12 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Swords, Trophy, User, School, Zap, Award, Target, Flame, 
   ChevronRight, RefreshCw, BarChart2, ShieldAlert, Settings, Sparkles,
-  AlertTriangle, LogIn
+  AlertTriangle, LogIn, ShieldCheck
 } from "lucide-react";
 import PlayerAnalytics from "./PlayerAnalytics";
 import ShadowRaid from "./ShadowRaid";
 import BattleConfirmModal from "./BattleConfirmModal";
 import GlobalHeader from "./GlobalHeader";
+import SchoolVerificationModal from "./SchoolVerificationModal";
 
 interface LobbyProps {
   initialTab?: "ARENA" | "ANALYTICS" | "SHADOW_RAID";
@@ -29,6 +30,8 @@ interface LobbyProps {
   onGoToTeacherDashboard?: () => void;
   onJoinEventRoom?: () => void;
   onOpenBattleConfirmModal?: (subject?: "국어" | "영어" | "수학") => void;
+  isSchoolVerified?: boolean;
+  onVerifySchool?: () => void;
 }
 
 export interface OpponentData {
@@ -98,13 +101,15 @@ const HIGH_SCHOOL_LEADERBOARD = [
 export default function Lobby({ 
   initialTab = "ARENA",
   nickname, school, tier, lp, energy, setTier, setLp, setEnergy, onStartMatch,
-  onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom, onOpenBattleConfirmModal
+  onCreateRoom, onEnterPin, onGoToTeacherDashboard, onJoinEventRoom, onOpenBattleConfirmModal,
+  isSchoolVerified = false, onVerifySchool
 }: LobbyProps) {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
   const [matchingStep, setMatchingStep] = useState(0);
   const [matchTimer, setMatchTimer] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>(null);
+  const [showSchoolModal, setShowSchoolModal] = useState(false);
   const [lobbyTab, setLobbyTab] = useState<"ARENA" | "ANALYTICS" | "SHADOW_RAID">(initialTab);
   const [prevInitialTab, setPrevInitialTab] = useState(initialTab);
   if (prevInitialTab !== initialTab) {
@@ -294,9 +299,27 @@ export default function Lobby({
                 )}
               </div>
               <div>
-                <span className="text-[10px] font-bold px-2 py-0.5 bg-black/40 text-cyan-300 rounded-md border border-cyan-500/20">
-                  {school}
-                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-black/40 text-cyan-300 rounded-md border border-cyan-500/20">
+                    {school}
+                  </span>
+                  {isSchoolVerified ? (
+                    <span className="text-[9px] font-black px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30 flex items-center gap-0.5 shadow-sm">
+                      <ShieldCheck className="w-2.5 h-2.5" />
+                      공식 인증
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowSchoolModal(true)}
+                      className="text-[9px] font-black px-1.5 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded border border-amber-500/40 flex items-center gap-0.5 cursor-pointer transition-colors"
+                      title="학교 인증을 완료해야 학교 랭킹에 점수가 반영됩니다"
+                    >
+                      <AlertTriangle className="w-2.5 h-2.5" />
+                      미인증 (인증하기)
+                    </button>
+                  )}
+                </div>
                 <h3 className="text-xl font-extrabold tracking-tight mt-1 text-white">
                   {nickname}
                 </h3>
@@ -571,13 +594,25 @@ export default function Lobby({
                             {ranking.name}
                           </span>
                           {isUserSchool && (
-                            <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                              rankingType === "MIDDLE"
-                                ? "bg-emerald-500 text-slate-950"
-                                : "bg-cyan-500 text-slate-950"
-                            }`}>
-                              My School
-                            </span>
+                            <div className="flex items-center gap-1 flex-wrap">
+                              <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                                rankingType === "MIDDLE"
+                                  ? "bg-emerald-500 text-slate-950"
+                                  : "bg-cyan-500 text-slate-950"
+                              }`}>
+                                My School
+                              </span>
+                              {!isSchoolVerified ? (
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                  ⚠️ 미인증 (점수 미합산)
+                                </span>
+                              ) : (
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-0.5">
+                                  <ShieldCheck className="w-2.5 h-2.5" />
+                                  공식 인증
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
                         {index === 0 && (
@@ -1089,6 +1124,17 @@ export default function Lobby({
         tier={tier}
         energy={energy}
         initialSubject={selectedSubject || "수학"}
+      />
+
+      {/* School Verification Modal */}
+      <SchoolVerificationModal
+        isOpen={showSchoolModal}
+        onClose={() => setShowSchoolModal(false)}
+        school={school}
+        nickname={nickname}
+        onVerified={() => {
+          if (onVerifySchool) onVerifySchool();
+        }}
       />
     </div>
   );

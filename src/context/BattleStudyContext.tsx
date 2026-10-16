@@ -24,6 +24,8 @@ interface BattleStudyContextType {
   setLp: (lp: number) => void;
   energy: number;
   setEnergy: React.Dispatch<React.SetStateAction<number>>;
+  isSchoolVerified: boolean;
+  setIsSchoolVerified: React.Dispatch<React.SetStateAction<boolean>>;
 
   // Match & Battle
   opponent: OpponentData | null;
@@ -66,7 +68,7 @@ interface BattleStudyContextType {
   customBattleQuestions: Question[];
 
   // Navigation & Action Handlers
-  handleJoin: (nick: string, sch: string) => void;
+  handleJoin: (nick: string, sch: string, verified?: boolean) => void;
   handleStudentDirectEntry: (targetMenu: "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS") => void;
   handleStartMatch: (opponentData: OpponentData, subject: "국어" | "영어" | "수학") => void;
   handleStartCustomBattle: () => void;
@@ -100,6 +102,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
   const [tier, setTier] = useState<string>("Silver");
   const [lp, setLp] = useState<number>(85);
   const [energy, setEnergy] = useState<number>(3);
+  const [isSchoolVerified, setIsSchoolVerified] = useState<boolean>(false);
 
   // Match State
   const [opponent, setOpponent] = useState<OpponentData | null>(DEFAULT_OPPONENT);
@@ -163,9 +166,10 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     };
   });
 
-  const handleJoin = (nick: string, sch: string) => {
+  const handleJoin = (nick: string, sch: string, verified: boolean = false) => {
     setNickname(nick);
     setSchool(sch);
+    setIsSchoolVerified(verified);
     setIsFirstMatch(true);
 
     const rivalSchool = sch === "청계중학교" ? "대청중학교" : "청계중학교";
@@ -180,7 +184,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     setSelectedSubject("영어");
     setIsStrictAssessment(false);
     setIsTeamBattle(false);
-    router.push("/lobby");
+    router.push("/battle");
   };
 
   const handleStudentDirectEntry = (targetMenu: "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS") => {
@@ -298,7 +302,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         aiScore: totalScore,
         teacherScore: null,
         isConfirmed: false,
-        aiSummary: `객관식 정답률 ${totalScore}%. AI 1차 자동 채점 완료. 선생님 2차 최종 점수 확정 대기 중.`,
+        aiSummary: `객관식 정답률 ${totalScore}%. 1차 자동 채점 완료. 교사 2차 최종 점수 확정 대기 중.`,
         answers: answersLog.map((item) => ({
           qNum: item.qNum,
           title: item.question.question.substring(0, 30) + "...",
@@ -306,7 +310,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
           correctAnswer: item.question.correctAnswer,
           pointsEarned: item.pointsEarned,
           maxPoints: item.question.points,
-          aiAssessment: item.isCorrect ? "정답 (+만점 배점)" : "오답 (풀이과정 재검토 권장)"
+          aiAssessment: item.isCorrect ? "정답 (+만점)" : "오답 (풀이 재검토)"
         }))
       };
 
@@ -344,7 +348,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
           aiScore: calculatedAiScore,
           teacherScore: null,
           isConfirmed: false,
-          aiSummary: `객관식 정답률 ${calculatedAiScore}%. AI 1차 자동 채점 완료. 선생님 2차 최종 점수 확정 대기 중.`,
+          aiSummary: `객관식 정답률 ${calculatedAiScore}%. 1차 자동 채점 완료. 교사 2차 최종 점수 확정 대기 중.`,
           answers: log.map((item, idx) => ({
             qNum: idx + 1,
             title: item.question.category || `${idx + 1}번 문항`,
@@ -352,7 +356,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
             correctAnswer: item.question.options ? (item.question.options[item.question.answerIndex] || "정답") : "정답",
             pointsEarned: item.isCorrect ? Math.round(100 / totalCount) : 0,
             maxPoints: Math.round(100 / totalCount),
-            aiAssessment: item.isCorrect ? "정답 (+만점 배점)" : "오답 (풀이과정 재검토 권장)"
+            aiAssessment: item.isCorrect ? "정답 (+만점)" : "오답 (풀이 재검토)"
           }))
         };
 
@@ -384,6 +388,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
         tier, setTier,
         lp, setLp,
         energy, setEnergy,
+        isSchoolVerified, setIsSchoolVerified,
         opponent, setOpponent,
         selectedSubject, setSelectedSubject,
         userFinalHp, setUserFinalHp,

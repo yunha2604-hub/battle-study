@@ -13,7 +13,8 @@ export default function ResultRoutePage() {
     userFinalHp, opponentFinalHp,
     answersLog, isFirstMatch,
     handleReturnToLobby,
-    isStrictAssessment
+    isStrictAssessment,
+    isSchoolVerified, setIsSchoolVerified
   } = useBattleStudy();
 
   const activeOpponent = opponent || {
@@ -34,6 +35,8 @@ export default function ResultRoutePage() {
       onReturnToLobby={handleReturnToLobby}
       isStrictAssessment={isStrictAssessment}
       onGoToTeacherDashboard={() => router.push("/teacher")}
+      isSchoolVerified={isSchoolVerified}
+      onVerifySchool={() => setIsSchoolVerified(true)}
     />
   );
 }

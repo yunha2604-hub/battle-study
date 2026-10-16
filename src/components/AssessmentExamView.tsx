@@ -211,7 +211,7 @@ export default function AssessmentExamView({
             />
             {/* MVP Simulation Badge */}
             <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-800 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>
                 <strong>MVP 데모 모드:</strong> 코드를 직접 쓰거나 아무 말이나 입력해도 즉시 시험에 응시할 수 있습니다.
               </span>
@@ -326,7 +326,7 @@ export default function AssessmentExamView({
                   className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                   title="시뮬레이션용 모의 답안 자동 채우기"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <RotateCcw className="w-3.5 h-3.5 text-indigo-600" />
                   <span className="hidden sm:inline">모의 답안 자동완성</span>
                 </button>
               </>

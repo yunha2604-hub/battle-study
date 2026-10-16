@@ -7,13 +7,20 @@ import { useBattleStudy } from "@/context/BattleStudyContext";
 
 export default function Home() {
   const router = useRouter();
-  const { handleJoin, handleStudentDirectEntry } = useBattleStudy();
+  const { 
+    handleJoin, 
+    handleStudentDirectEntry,
+    isSchoolVerified,
+    setIsSchoolVerified
+  } = useBattleStudy();
 
   return (
     <LandingPage 
       onJoin={handleJoin} 
       onGoToTeacherDashboard={() => router.push("/teacher")}
       onStudentDirectEntry={handleStudentDirectEntry}
+      isSchoolVerified={isSchoolVerified}
+      onVerifySchool={() => setIsSchoolVerified(true)}
     />
   );
 }

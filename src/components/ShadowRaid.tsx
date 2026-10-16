@@ -406,11 +406,11 @@ export default function ShadowRaid({ energy, setEnergy }: ShadowRaidProps) {
                     </div>
                   </div>
 
-                  {/* AI Tutor Trap Analysis */}
+                  {/* Trap Analysis */}
                   <div className="p-4 bg-red-950/30 border border-red-500/30 rounded-2xl space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-red-400 text-xs font-black">
-                      <Sparkles className="w-3.5 h-3.5 text-red-400" />
-                      <span>AI 맞춤형 오개념 처방 해설 (함정 포인트)</span>
+                    <div className="flex items-center gap-1.5 text-amber-400 text-xs font-black">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                      <span>오답 원인 분석 (빈출 함정 포인트)</span>
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
                       {activeQuest.aiTutorTrapAnalysis}
@@ -420,7 +420,7 @@ export default function ShadowRaid({ energy, setEnergy }: ShadowRaidProps) {
                     </p>
                   </div>
 
-                  {/* 📝 <나의 풀이노트> 칸 (요구사항 필수 반영) */}
+                  {/* 📝 <나의 풀이노트> 칸 (오답 극복 전략) */}
                   <div className="p-4 bg-slate-950 border border-indigo-500/40 rounded-2xl space-y-2.5">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-black text-indigo-300 flex items-center gap-1.5">
@@ -430,10 +430,10 @@ export default function ShadowRaid({ energy, setEnergy }: ShadowRaidProps) {
                       <button
                         type="button"
                         onClick={() => setCurrentNote(activeQuest.recommendedNote)}
-                        className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/20 px-2 py-1 rounded-lg border border-indigo-500/30 cursor-pointer transition-colors"
+                        className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30 cursor-pointer transition-colors"
                       >
-                        <Sparkles className="w-3 h-3" />
-                        <span>AI 추천 핵심 요약 붙여넣기</span>
+                        <FileText className="w-3 h-3" />
+                        <span>핵심 공식·요약 불러오기</span>
                       </button>
                     </div>
 

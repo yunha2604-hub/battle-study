@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Calculator, Home, LogOut } from "lucide-react";
+import { EduLogo } from "./BrandLogo";
 
 export type EduNavTabType = "STUDENT" | "EXAM" | "TEACHER";
 
@@ -27,17 +28,15 @@ export default function EduHeader({
           className="flex items-center gap-3 shrink-0 cursor-pointer group"
           title="배틀스터디 에듀 홈으로 이동"
         >
-          <div className="p-2 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30 group-hover:scale-105 transition-transform">
-            <Building2 className="w-5 h-5 md:w-6 md:h-6" />
-          </div>
+          <EduLogo size="sm" showText={false} />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-black bg-blue-500/20 text-blue-300 border border-blue-500/30">
                 공교육 모드
               </span>
               <span className="text-[11px] text-slate-400 font-semibold">{schoolName} 3학년 수학과</span>
             </div>
-            <h1 className="text-sm md:text-lg font-black text-white group-hover:text-indigo-300 transition-colors">
+            <h1 className="text-sm md:text-lg font-black text-white group-hover:text-blue-300 transition-colors">
               배틀스터디 에듀
             </h1>
           </div>

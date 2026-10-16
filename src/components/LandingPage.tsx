@@ -7,14 +7,18 @@ import {
   Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, 
   ChevronRight, ChevronDown, ArrowLeft, LogIn, Building2,
   ShieldCheck, MapPin, Compass, AlertTriangle, Users, CheckCircle2, 
-  Lock, Copy, Check, Radio, Clock, ShieldAlert, Sparkle
+  Lock, Copy, Check, Radio, Clock, ShieldAlert, Sparkle, MessageSquare
 } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
+import { ArenaLogo, EduLogo } from "./BrandLogo";
+import SchoolVerificationModal from "./SchoolVerificationModal";
 
 interface LandingPageProps {
-  onJoin: (nickname: string, school: string) => void;
+  onJoin: (nickname: string, school: string, verified?: boolean) => void;
   onGoToTeacherDashboard?: () => void;
   onStudentDirectEntry?: (targetMenu: "LOBBY" | "BATTLE" | "SHADOW_RAID" | "ANALYTICS") => void;
+  isSchoolVerified?: boolean;
+  onVerifySchool?: () => void;
 }
 
 const MIDDLE_SCHOOLS = [
@@ -59,7 +63,13 @@ const MOCK_EDU_STUDENTS: MockStudent[] = [
   { school: "청계중학교", grade: 3, classNum: 3, studentNum: 3, name: "송지우" },
 ];
 
-export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentDirectEntry }: LandingPageProps) {
+export default function LandingPage({ 
+  onJoin, 
+  onGoToTeacherDashboard, 
+  onStudentDirectEntry,
+  isSchoolVerified = false,
+  onVerifySchool
+}: LandingPageProps) {
   const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [schoolInput, setSchoolInput] = useState("");
@@ -101,54 +111,22 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
     }
   };
 
-  // ==========================================
-  // 🛡️ 학교 인증 온보딩 모달 (카카오 로그인 및 Route A / Route B)
-  // ==========================================
+  // 🛡️ 학교 공식 인증 모달 (카카오 로그인 시 미인증자 대상 호출)
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verifyStep, setVerifyStep] = useState<1 | 2 | 3 | 4>(1); // 1: CI인증, 2: 학교선택, 3: 분기(A/B), 4: 90일Lock
-  const [verifyNickname, setVerifyNickname] = useState("대치동불주먹");
-  const [verifySchool, setVerifySchool] = useState("청계중학교");
-  const [verifyRoute, setVerifyRoute] = useState<"A" | "B">("A"); // Route A: GPS, Route B: 친구 2명 보증
-  
-  // Route A (GPS) 상태
-  const [gpsSimState, setGpsSimState] = useState<"IDLE" | "SCANNING" | "SUCCESS" | "MOCK_DETECTED" | "OUT_OF_RANGE">("IDLE");
-  const [gpsDistance, setGpsDistance] = useState(35); // meters
-  
-  // Route B (친구 2명 보증) 상태
-  const [friend1Accepted, setFriend1Accepted] = useState(false);
-  const [friend2Accepted, setFriend2Accepted] = useState(false);
-  const [isCopiedLink, setIsCopiedLink] = useState(false);
 
-  // 핸들러: 카카오 인증 모달 열기
-  const handleOpenKakaoVerification = () => {
-    setShowVerificationModal(true);
-    setVerifyStep(1);
-    setGpsSimState("IDLE");
-    setFriend1Accepted(false);
-    setFriend2Accepted(false);
-    setIsCopiedLink(false);
+  // 카카오 로그인 핸들러: 인증 완료 여부에 따라 로비 직행 vs 인증 모달 분기
+  const handleKakaoLogin = () => {
+    if (isSchoolVerified) {
+      router.push("/lobby");
+    } else {
+      setShowVerificationModal(true);
+    }
   };
 
-  // 핸들러: GPS 스캔 시뮬레이션
-  const handleStartGpsScan = (scenario: "NORMAL" | "MOCK" | "OUT_OF_RANGE" = "NORMAL") => {
-    setGpsSimState("SCANNING");
-    setTimeout(() => {
-      if (scenario === "MOCK") {
-        setGpsSimState("MOCK_DETECTED");
-      } else if (scenario === "OUT_OF_RANGE") {
-        setGpsDistance(420);
-        setGpsSimState("OUT_OF_RANGE");
-      } else {
-        setGpsDistance(35);
-        setGpsSimState("SUCCESS");
-      }
-    }, 1100);
-  };
-
-  // 핸들러: 최종 학교 확정 및 아레나 입장
-  const handleCompleteVerification = () => {
-    setShowVerificationModal(false);
-    onJoin(verifyNickname.trim() || "학생", verifySchool);
+  // (시연용) 기인증 계정으로 로비 직행
+  const handleKakaoDirectVerifiedLogin = () => {
+    if (onVerifySchool) onVerifySchool();
+    router.push("/lobby");
   };
 
   const filteredSchools = useMemo(() => {
@@ -180,7 +158,11 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
     <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 font-sans">
       
       {/* Global Header */}
-      <GlobalHeader activeTab="LOGIN" onGoToTeacher={onGoToTeacherDashboard} />
+      <GlobalHeader 
+        activeTab="LOGIN" 
+        onGoToTeacher={onGoToTeacherDashboard} 
+        onOpenEduModal={() => setShowEduModal(true)} 
+      />
 
       {/* Background Particles / Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
@@ -190,49 +172,7 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Floating Sparkles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            y: [0, -20, 0],
-            opacity: [0.4, 0.8, 0.4],
-          }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 left-1/4 text-cyan-400"
-        >
-          <Sparkles className="w-5 h-5" />
-        </motion.div>
-        <motion.div
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.3, 0.7, 0.3],
-          }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-1/3 right-1/4 text-purple-400"
-        >
-          <Sparkles className="w-6 h-6" />
-        </motion.div>
-      </div>
 
-      {/* 🏛️ 좌측 상단: 배틀스터디 에듀 (공교육 모드) 독립 진입 버튼 */}
-      <div className="absolute top-20 left-4 md:left-8 z-30">
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          type="button"
-          onClick={() => setShowEduModal(true)}
-          className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-indigo-500/50 hover:border-indigo-400 text-indigo-300 hover:text-white text-xs font-black shadow-xl shadow-indigo-950/40 backdrop-blur-md cursor-pointer transition-all group"
-        >
-          <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30 group-hover:bg-indigo-500 transition-colors">
-            <Building2 className="w-4 h-4" />
-          </div>
-          <div className="text-left">
-            <span className="block text-[10px] text-indigo-400 font-bold tracking-wider uppercase">학교 학사 / 수행평가</span>
-            <span className="block text-sm font-black text-white">🏛️ 배틀스터디 에듀</span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-indigo-400 group-hover:translate-x-1 transition-transform ml-1" />
-        </motion.button>
-      </div>
 
       {/* Main Container: 배틀스터디 아레나 공식 학교 인증 & 진입 온보딩 */}
       <div className="flex-1 flex items-center justify-center p-4">
@@ -243,483 +183,159 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
           className="relative z-10 w-full max-w-xl px-6 py-8 mx-auto bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl space-y-6"
         >
           {/* Logo / Header (배틀스터디 아레나 게임 전용) */}
-          <div className="text-center pt-1">
+          <div className="text-center pt-1 flex flex-col items-center">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold mb-3">
               <Swords className="w-3.5 h-3.5" />
               <span>실시간 1:1 퀴즈 배틀 아레나</span>
             </div>
-            <h1 className="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 drop-shadow-md font-sans">
-              배틀스터디 아레나
-            </h1>
-            <p className="text-xs font-semibold tracking-widest text-cyan-400 mt-1 uppercase">
-              Battle Study Arena
-            </p>
-            <p className="text-slate-400 text-xs mt-2">
+            <ArenaLogo size="lg" showText={true} />
+            <p className="text-slate-400 text-xs mt-3">
               학교의 명예를 걸고 맞붙는 1대1 실시간 퀴즈 대전
             </p>
           </div>
 
-          {/* Stepper Indicator (1. 본인인증 ➔ 2. 학교선택 ➔ 3. 인증분기 ➔ 4. 소속 Lock) */}
-          <div className="grid grid-cols-4 gap-1.5 text-center text-[11px] font-black pt-1">
-            {[
-              { num: 1, label: "본인인증" },
-              { num: 2, label: "학교선택" },
-              { num: 3, label: "인증분기" },
-              { num: 4, label: "소속 Lock" },
-            ].map((s) => (
-              <div
-                key={s.num}
-                className={`py-2 px-1 rounded-xl border transition-all ${
-                  verifyStep === s.num
-                    ? "bg-cyan-500/20 border-cyan-500 text-cyan-300 font-extrabold shadow-sm shadow-cyan-500/20"
-                    : verifyStep > s.num
-                    ? "bg-slate-800/80 border-slate-700 text-emerald-400"
-                    : "bg-slate-950/60 border-slate-800 text-slate-500"
-                }`}
-              >
-                <span>{verifyStep > s.num ? "✓" : `${s.num}.`} {s.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* STEP 1: 카카오 간편 로그인/가입 (1인 1계정 CI 검증) */}
-          {verifyStep === 1 && (
-            <div className="space-y-4 pt-1">
-              <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl space-y-2 text-left">
-                <div className="flex items-center gap-2 text-yellow-400 text-xs font-black">
-                  <ShieldCheck className="w-4 h-4 text-yellow-400" />
-                  <span>카카오 본인인증(CI) 연동 및 1인 1계정 체계</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  전화번호 및 카카오 CI 연동을 통해 중복 가입 및 어뷰징을 원천 차단합니다.
-                </p>
-                <div className="text-[11px] font-mono text-slate-400 bg-black/40 p-2 rounded-lg border border-yellow-500/20">
-                  • 연계 식별 CI: <span className="text-yellow-300">8a9f4c***2b19e</span> (유효)<br />
-                  • 휴대전화: <span className="text-yellow-300">010-****-5821</span> (인증 완료)
-                </div>
-              </div>
-
-              <div className="text-left space-y-1.5">
-                <label className="block text-xs font-bold text-slate-300">
-                  아레나에서 사용할 닉네임
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    type="text"
-                    value={verifyNickname}
-                    onChange={(e) => setVerifyNickname(e.target.value)}
-                    placeholder="예: 대치동불주먹"
-                    maxLength={12}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-cyan-500 font-bold text-sm"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setVerifyStep(2)}
-                className="w-full flex items-center justify-center gap-2 bg-[#FEE500] hover:bg-[#FDD800] text-black font-extrabold rounded-xl py-3.5 transition-all cursor-pointer shadow-lg shadow-yellow-500/20 group hover:scale-[1.01]"
-              >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 3c-5.5 0-10 3.5-10 7.8 0 2.8 1.8 5.2 4.4 6.5l-1.1 4c-.1.3.2.6.5.4l4.8-3.2c.4.1.9.1 1.4.1 5.5 0 10-3.5 10-7.8S17.5 3 12 3z"/></svg>
-                <span>카카오 계정으로 계속하기</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-
-          {/* STEP 2: 학교 검색 및 선택 (목표 소속 학교 지정) */}
-          {verifyStep === 2 && (
-            <div className="space-y-4 pt-1 text-left">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-300">
-                  목표 소속 중학교 선택
-                </label>
-                <div className="relative">
-                  <School className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <select
-                    value={verifySchool}
-                    onChange={(e) => setVerifySchool(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-cyan-500 font-bold text-sm cursor-pointer"
-                  >
-                    {MIDDLE_SCHOOLS.map((sch) => (
-                      <option key={sch} value={sch} className="bg-slate-900 text-white">
-                        {sch}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-indigo-950/40 border border-indigo-500/30 rounded-2xl text-xs text-indigo-300 space-y-1">
-                <p className="font-bold flex items-center gap-1.5 text-indigo-200">
-                  <Lock className="w-3.5 h-3.5" /> 90일 소속 학교 고정 (Anti-Abuse 정책)
-                </p>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  인증 통과 시 90일간 타 학교로 이적이 불가하며, 개인 랭킹 점수가 <strong>[{verifySchool}]</strong>의 공식 학교 대항전 포인트로 누적됩니다.
-                </p>
-              </div>
-
-              <div className="flex gap-2.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setVerifyStep(1)}
-                  className="w-1/3 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer text-center"
-                >
-                  이전
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setVerifyStep(3)}
-                  className="w-2/3 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black rounded-xl text-xs transition-all shadow-md shadow-cyan-600/30 flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <span>다음: 학교 인증 방식 선택</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                    {/* 1초 무마찰 빠른 체험 폼 */}
+          <form onSubmit={handleSubmit} className="space-y-4 text-left">
+            {/* 닉네임 입력 */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">
+                아레나에서 사용할 닉네임
+              </label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="text"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  placeholder="닉네임 입력 (예: 대치동불주먹)"
+                  maxLength={10}
+                  className="w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
               </div>
             </div>
-          )}
 
-          {/* STEP 3: 인증 방식 분기 (<Route A: GPS> vs <Route B: 친구 2명 보증>) */}
-          {verifyStep === 3 && (
-            <div className="space-y-4 pt-1 text-left">
-              {/* Route Selector Tabs */}
-              <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setVerifyRoute("A");
-                    setGpsSimState("IDLE");
+            {/* 소속 학교 검색 및 선택 */}
+            <div className="space-y-1.5 relative">
+              <label className="block text-xs font-bold text-slate-300">
+                소속 중학교 선택
+              </label>
+              <div className="relative">
+                <School className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="text"
+                  value={schoolInput}
+                  onChange={(e) => {
+                    setSchoolInput(e.target.value);
+                    setShowDropdown(true);
                   }}
-                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
-                    verifyRoute === "A"
-                      ? "bg-gradient-to-r from-cyan-900/80 to-blue-900/80 border border-cyan-500/60 text-white shadow-md"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-black flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-cyan-400" /> Route A
-                    </span>
-                    <span className="text-[9px] bg-cyan-500/30 text-cyan-300 font-bold px-1.5 py-0.5 rounded">
-                      현장 즉시인증
-                    </span>
-                  </div>
-                  <p className="text-[11px] font-bold text-slate-200">GPS 현장 인증</p>
-                  <p className="text-[10px] text-cyan-300/80 mt-0.5">반경 150m · 보증권 2회 부여</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setVerifyRoute("B")}
-                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
-                    verifyRoute === "B"
-                      ? "bg-gradient-to-r from-purple-900/80 to-indigo-900/80 border border-purple-500/60 text-white shadow-md"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-black flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-purple-400" /> Route B
-                    </span>
-                    <span className="text-[9px] bg-purple-500/30 text-purple-300 font-bold px-1.5 py-0.5 rounded">
-                      원격 보증
-                    </span>
-                  </div>
-                  <p className="text-[11px] font-bold text-slate-200">친구 2명 보증</p>
-                  <p className="text-[10px] text-purple-300/80 mt-0.5">재학생 추천 · 보증권 유보</p>
-                </button>
+                  onFocus={() => setShowDropdown(true)}
+                  placeholder="학교 이름 검색 (예: 청계중학교)"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
               </div>
 
-              {/* ROUTE A: GPS 현장 인증 화면 */}
-              {verifyRoute === "A" && (
-                <div className="p-4 bg-slate-950 border border-cyan-500/20 rounded-2xl space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <Compass className="w-4 h-4 text-cyan-400 animate-spin" />
-                      <span>[{verifySchool}] 정문 반경 150m 측정</span>
-                    </span>
-                    <span className="text-[10px] text-cyan-400 font-mono">GPS Engine</span>
-                  </div>
-
-                  {/* 시연 인터랙션 버튼 세트 */}
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] text-slate-400 font-bold block">
-                      🎮 시연/심사용 GPS 시나리오 테스트:
-                    </span>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleStartGpsScan("NORMAL")}
-                        className="py-1.5 px-2 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-lg text-[10px] font-bold text-emerald-300 transition-colors cursor-pointer text-center"
-                      >
-                        1. 정상 통과 (35m)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleStartGpsScan("MOCK")}
-                        className="py-1.5 px-2 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 rounded-lg text-[10px] font-bold text-rose-300 transition-colors cursor-pointer text-center"
-                      >
-                        2. Mock GPS 감지
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleStartGpsScan("OUT_OF_RANGE")}
-                        className="py-1.5 px-2 bg-amber-950/80 hover:bg-amber-900 border border-amber-500/40 rounded-lg text-[10px] font-bold text-amber-300 transition-colors cursor-pointer text-center"
-                      >
-                        3. 150m 초과 (420m)
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* GPS 시뮬레이션 상태 디스플레이 */}
-                  {gpsSimState === "SCANNING" && (
-                    <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-2">
-                      <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
-                      <p className="text-xs text-cyan-300 font-bold">위성 삼각측량 및 모의 위치(Mock) 무결성 검사 중...</p>
-                    </div>
-                  )}
-
-                  {gpsSimState === "SUCCESS" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 bg-emerald-500/10 border border-emerald-500/40 rounded-xl space-y-1"
-                    >
-                      <div className="flex items-center gap-2 text-emerald-400 text-xs font-black">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>학교 현장 반경 35m 이내 감지 (검증 통과)</span>
-                      </div>
-                      <p className="text-[11px] text-slate-300 leading-relaxed">
-                        • Mock GPS 미감지 (정상 단말기)<br />
-                        • 특권: <strong>풀 권한 + 타인 보증 자격(2회 Voucher)</strong> 부여!
-                      </p>
-                    </motion.div>
-                  )}
-
-                  {gpsSimState === "MOCK_DETECTED" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 bg-rose-500/15 border border-rose-500/50 rounded-xl space-y-1.5"
-                    >
-                      <div className="flex items-center gap-2 text-rose-400 text-xs font-black">
-                        <ShieldAlert className="w-4 h-4" />
-                        <span>경고: Mock GPS(가짜 모의 위치 앱) 감지됨</span>
-                      </div>
-                      <p className="text-[11px] text-rose-200 leading-relaxed">
-                        비정상 모의 위치 앱이 감지되어 현장 인증이 차단되었습니다. 허위 인증 시도는 영구 제재 대상입니다.
-                      </p>
-                    </motion.div>
-                  )}
-
-                  {gpsSimState === "OUT_OF_RANGE" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 bg-amber-500/15 border border-amber-500/50 rounded-xl space-y-2"
-                    >
-                      <div className="flex items-center gap-2 text-amber-400 text-xs font-black">
-                        <AlertTriangle className="w-4 h-4" />
-                        <span>인증 실패: 학교 반경 150m 외부 (현재 420m)</span>
-                      </div>
-                      <p className="text-[11px] text-amber-200 leading-relaxed">
-                        현재 학교 현장에 위치하지 않습니다. 원격 인증을 위해 <strong>[Route B: 친구 2명 보증]</strong>으로 전환하세요.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setVerifyRoute("B")}
-                        className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-black transition-colors cursor-pointer"
-                      >
-                        👉 Route B (친구 2명 보증)로 전환하기
-                      </button>
-                    </motion.div>
-                  )}
-
-                  {gpsSimState === "IDLE" && (
+              {/* 학교 자동완성 드롭다운 */}
+              {showDropdown && filteredSchools.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-48 overflow-y-auto">
+                  {filteredSchools.map((s) => (
                     <button
-                      type="button"
-                      onClick={() => handleStartGpsScan("NORMAL")}
-                      className="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-cyan-600/30 cursor-pointer"
-                    >
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>현재 위치로 학교 현장 GPS 측정 시작</span>
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* ROUTE B: 친구 2명 보증 화면 */}
-              {verifyRoute === "B" && (
-                <div className="p-4 bg-slate-950 border border-purple-500/20 rounded-2xl space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <Users className="w-4 h-4 text-purple-400" />
-                      <span>재학생 2명 보증 네트워크 (신뢰 기반)</span>
-                    </span>
-                    <span className="text-[10px] text-purple-400 font-bold">2인 서명 필수</span>
-                  </div>
-
-                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-mono text-slate-400 truncate">
-                      https://battle.study/verify?ref=chk_7429
-                    </span>
-                    <button
+                      key={s}
                       type="button"
                       onClick={() => {
-                        setIsCopiedLink(true);
-                        setTimeout(() => setIsCopiedLink(false), 2000);
+                        setSchoolInput(s);
+                        setShowDropdown(false);
                       }}
-                      className="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold rounded-lg shrink-0 flex items-center gap-1 cursor-pointer"
+                      className="w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors flex items-center justify-between cursor-pointer"
                     >
-                      {isCopiedLink ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      <span>{isCopiedLink ? "복사됨!" : "링크 복사"}</span>
+                      <span>{s}</span>
+                      {s === "청계중학교" && (
+                        <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-500/30">
+                          기본 학교
+                        </span>
+                      )}
                     </button>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
-                      friend1Accepted ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300" : "bg-slate-900 border-slate-800 text-slate-400"
-                    }`}>
-                      <div className="text-xs font-bold">
-                        <span>친구 1: 김민수 (청계중 3학년 기인증자)</span>
-                        <span className="block text-[10px] text-slate-400">보증 쿼터 잔여 2회 확인</span>
-                      </div>
-                      {friend1Accepted ? (
-                        <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> 수락 완료
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setFriend1Accepted(true)}
-                          className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black rounded-lg cursor-pointer"
-                        >
-                          수락 시뮬레이션
-                        </button>
-                      )}
-                    </div>
-
-                    <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
-                      friend2Accepted ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300" : "bg-slate-900 border-slate-800 text-slate-400"
-                    }`}>
-                      <div className="text-xs font-bold">
-                        <span>친구 2: 이서연 (청계중 3학년 기인증자)</span>
-                        <span className="block text-[10px] text-slate-400">친구 1과 다른 사용자 확인</span>
-                      </div>
-                      {friend2Accepted ? (
-                        <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> 수락 완료
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setFriend2Accepted(true)}
-                          className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black rounded-lg cursor-pointer"
-                        >
-                          수락 시뮬레이션
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {friend1Accepted && friend2Accepted && (
-                    <div className="p-2.5 bg-purple-500/10 border border-purple-500/30 rounded-xl text-[11px] text-purple-300">
-                      ✨ <strong>보증 검증 완료</strong>: 풀 권한이 부여됩니다. (어뷰징 방지 보안 정책상 <strong>타인 보증 자격은 유보</strong>됩니다.)
-                    </div>
-                  )}
+                  ))}
                 </div>
               )}
-
-              {/* Step 3 Navigation */}
-              <div className="flex gap-2.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setVerifyStep(2)}
-                  className="w-1/3 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer text-center"
-                >
-                  이전
-                </button>
-                <button
-                  type="button"
-                  disabled={
-                    verifyRoute === "A"
-                      ? gpsSimState !== "SUCCESS"
-                      : !(friend1Accepted && friend2Accepted)
-                  }
-                  onClick={() => setVerifyStep(4)}
-                  className="w-2/3 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 text-white font-black rounded-xl text-xs transition-all shadow-md shadow-emerald-600/30 flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <span>검증 완료: 소속 확정 (Lock)</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
             </div>
-          )}
 
-          {/* STEP 4: 소속 학교 확정 (Lock) 완료 카드 */}
-          {verifyStep === 4 && (
-            <div className="space-y-4 pt-1">
-              <div className="p-5 bg-gradient-to-b from-indigo-950/70 via-slate-900 to-slate-950 border-2 border-indigo-500/40 rounded-3xl text-center space-y-3 shadow-xl">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-600/30 border border-indigo-400/50 text-indigo-300 flex items-center justify-center mx-auto shadow-inner">
-                  <Lock className="w-7 h-7" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/20 px-2 py-0.5 rounded-full border border-indigo-500/30">
-                    Official Student Verification
-                  </span>
-                  <h4 className="text-xl font-black text-white mt-1.5">
-                    [{verifySchool}] 소속 확정 완료
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-1">
-                    닉네임: <strong className="text-cyan-400 font-bold">{verifyNickname}</strong> • 90일 소속 락 적용
-                  </p>
-                </div>
-
-                <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 text-left text-xs space-y-1.5">
-                  <div className="flex justify-between text-slate-300">
-                    <span>인증 방식:</span>
-                    <strong className="text-white font-bold">
-                      {verifyRoute === "A" ? "Route A (GPS 현장 35m 인증)" : "Route B (친구 2명 보증)"}
-                    </strong>
-                  </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span>소속 락(Lock) 기간:</span>
-                    <strong className="text-amber-400 font-mono font-bold">2026.04.13 ~ 2026.07.12 (90일)</strong>
-                  </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span>학교 대항전 참여 자격:</span>
-                    <strong className="text-emerald-400 font-bold">정식 국가공인 자격 부여 ✓</strong>
-                  </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span>타인 보증 권한(Voucher):</span>
-                    <strong className={verifyRoute === "A" ? "text-cyan-400 font-bold" : "text-slate-500 font-bold"}>
-                      {verifyRoute === "A" ? "2회 부여 (GPS 인증자 특권)" : "유보 (부정 방지 정책)"}
-                    </strong>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleCompleteVerification}
-                className="w-full py-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black rounded-2xl text-sm transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer group"
-              >
-                <span>배틀스터디 아레나 메인 로비 입장하기</span>
-                <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 group-hover:animate-bounce" />
-              </button>
+            {/* 빠른 학교 선택 칩 */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[10px] text-slate-500 font-bold">인기 학교:</span>
+              {["청계중학교", "휘문중학교", "대청중학교"].map((sch) => (
+                <button
+                  key={sch}
+                  type="button"
+                  onClick={() => {
+                    setSchoolInput(sch);
+                    setShowDropdown(false);
+                  }}
+                  className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
+                    schoolInput === sch
+                      ? "bg-cyan-500/20 border-cyan-500 text-cyan-300"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {sch}
+                </button>
+              ))}
             </div>
-          )}
 
-          {/* Quick Direct Bypass for Demo Judge (심사위원 빠른 체험) */}
-          <div className="pt-2 border-t border-slate-800/60 text-center">
+            {/* 에러 메시지 */}
+            {error && (
+              <p className="text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl py-2 px-3 text-center">
+                {error}
+              </p>
+            )}
+
+            {/* 1초 빠른 배틀 시작 메인 버튼 */}
+            <button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black rounded-2xl text-sm transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer group hover:scale-[1.01] active:scale-[0.99]"
+            >
+              <Swords className="w-4 h-4 text-cyan-300 group-hover:rotate-12 transition-transform" />
+              <span>⚔️ 1초 만에 퀴즈 배틀 시작하기</span>
+            </button>
+          </form>
+
+          {/* 구분선 */}
+          <div className="relative flex items-center justify-center my-3">
+            <div className="border-t border-slate-800 w-full" />
+            <span className="bg-slate-900 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider relative">
+              또는
+            </span>
+          </div>
+
+          {/* 카카오 계정 로그인 & 분기 영역 */}
+          <div className="space-y-2.5">
             <button
               type="button"
-              onClick={() => onJoin("대치동불주먹", "청계중학교")}
-              className="text-[11px] text-slate-500 hover:text-slate-300 font-bold underline transition-colors cursor-pointer"
+              onClick={handleKakaoLogin}
+              className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#FEE500] hover:bg-[#FEE500]/90 text-[#191919] font-black text-sm rounded-2xl shadow-lg shadow-yellow-500/10 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99]"
             >
-              ⏱️ 심사위원 1초 빠른 체험 (청계중 대치동불주먹으로 바로 입장)
+              <MessageSquare className="w-4 h-4 fill-current shrink-0" />
+              <span>카카오 계정으로 계속하기</span>
             </button>
+
+            {/* 시연 편의 링크 */}
+            <div className="flex items-center justify-center gap-3 pt-1 text-[11px]">
+              <button
+                type="button"
+                onClick={handleKakaoDirectVerifiedLogin}
+                className="text-slate-400 hover:text-cyan-400 font-bold transition-colors cursor-pointer flex items-center gap-1"
+                title="인증 완료 상태로 로비로 바로 이동합니다"
+              >
+                <span>🛡️ (시연용) 기인증 계정으로 로비 직행</span>
+              </button>
+              <span className="text-slate-700">•</span>
+              <button
+                type="button"
+                onClick={() => onJoin("대치동불주먹", "청계중학교")}
+                className="text-slate-500 hover:text-slate-300 font-bold transition-colors cursor-pointer"
+              >
+                ⏱️ 게스트 빠른 배틀
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -736,24 +352,7 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-                    <Building2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                        공교육 전용
-                      </span>
-                      <h3 className="text-lg font-black text-white">
-                        배틀스터디 에듀
-                      </h3>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      학교 학사 연계 및 수학 수행평가 관리 시스템
-                    </p>
-                  </div>
-                </div>
+                <EduLogo size="md" showText={true} />
                 <button
                   type="button"
                   onClick={() => setShowEduModal(false)}
@@ -980,6 +579,18 @@ export default function LandingPage({ onJoin, onGoToTeacherDashboard, onStudentD
           </div>
         )}
       </AnimatePresence>
+      {/* 🛡️ 학교 공식 인증 모달 (카카오 로그인 시 미인증자 대상 호출) */}
+      <SchoolVerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        school={schoolInput || "청계중학교"}
+        nickname={nickname || "대치동불주먹"}
+        onVerified={() => {
+          setShowVerificationModal(false);
+          if (onVerifySchool) onVerifySchool();
+          router.push("/lobby");
+        }}
+      />
     </div>
   );
 }

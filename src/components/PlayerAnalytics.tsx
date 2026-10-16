@@ -193,7 +193,7 @@ export default function PlayerAnalytics() {
             {/* School Percentile Badge */}
             <div className="text-right">
               <div className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-purple-500/20 border border-purple-400/40 text-purple-300 font-black text-xs">
-                <Sparkles className="w-3 h-3 text-purple-300" />
+                <Award className="w-3.5 h-3.5 text-purple-300" />
                 <span>교내 최상위 1등급</span>
               </div>
             </div>
@@ -681,10 +681,10 @@ export default function PlayerAnalytics() {
             
             <div className="flex items-center gap-2.5 mb-2.5 relative z-10">
               <div className="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center">
-                <Zap className="w-4 h-4 text-purple-400 fill-purple-400/20" />
+                <Target className="w-4 h-4 text-purple-400" />
               </div>
               <span className="text-xs font-black text-purple-300 tracking-wider uppercase">
-                배틀스터디 AI 분석 코치 지능형 피드백
+                플레이어 성향 및 약점 보완 리포트
               </span>
             </div>
 

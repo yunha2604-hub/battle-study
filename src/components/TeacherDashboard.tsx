@@ -870,10 +870,10 @@ export default function TeacherDashboard({
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>AI 출제 추가 요구사항 (선생님 프롬프트)</span>
+                  <Calculator className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>출제 조건 및 추가 요구사항</span>
                 </label>
-                <span className="text-[10px] text-indigo-600 font-bold">✨ 자유 서술형 지시 가능</span>
+                <span className="text-[10px] text-indigo-600 font-bold">자유 서술형 요구사항 기입 가능</span>
               </div>
               <textarea
                 value={teacherAiPrompt}
@@ -908,9 +908,9 @@ export default function TeacherDashboard({
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>AI 1차 채점 평가요소 및 채점 루브릭 (기준표)</span>
+                  <span>1차 자동 채점 기준 및 채점 루브릭 (기준표)</span>
                 </label>
-                <span className="text-[10px] text-emerald-600 font-bold">📋 0.1초 1차 자동 채점 기준</span>
+                <span className="text-[10px] text-emerald-600 font-bold">📋 객관식·서술형 자동 채점 기준</span>
               </div>
               <textarea
                 value={assessmentRubricCriteria}
@@ -920,7 +920,7 @@ export default function TeacherDashboard({
                 className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-medium resize-none shadow-inner"
               />
               <p className="text-[10px] text-slate-500 leading-tight">
-                * 학생 답안 제출 시 AI가 상기 루브릭을 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
+                * 학생 답안 제출 시 상기 루브릭을 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
               </p>
             </div>
 
@@ -938,12 +938,12 @@ export default function TeacherDashboard({
                       transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                       className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                     />
-                    <span>AI 수학 문항 생성 중...</span>
+                    <span>수행평가 문항 생성 중...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 fill-white/20" />
-                    <span>AI 수행평가 문항 자동 생성</span>
+                    <Calculator className="w-4 h-4" />
+                    <span>수행평가 문항 자동 출제 및 생성</span>
                   </>
                 )}
               </button>
@@ -1305,7 +1305,7 @@ export default function TeacherDashboard({
                   학생 수행평가 응시 현황 및 2차 채점 관리 테이블
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  이름, 학년, 반, 번호별 검색 및 필터링이 가능하며, AI 1차 자동 채점 결과를 검토하고 최종 점수를 확정합니다.
+                  이름, 학년, 반, 번호별 검색 및 필터링이 가능하며, 1차 자동 채점 결과를 검토하고 최종 점수를 확정합니다.
                 </p>
               </div>
             </div>
@@ -1345,7 +1345,7 @@ export default function TeacherDashboard({
               >
                 <option value="ALL">전체 상태</option>
                 <option value="CONFIRMED">교사 2차 확정 완료</option>
-                <option value="PENDING">AI 완료 (교사 확정 대기)</option>
+                <option value="PENDING">가채점 완료 (교사 확정 대기)</option>
                 <option value="NOT_SUBMITTED">미응시 (미제출)</option>
               </select>
             </div>
@@ -1396,7 +1396,7 @@ export default function TeacherDashboard({
                   <th className="py-3.5 px-3">번호</th>
                   <th className="py-3.5 px-4">이름</th>
                   <th className="py-3.5 px-4">응시 상태</th>
-                  <th className="py-3.5 px-4 text-center">AI 1차 점수</th>
+                  <th className="py-3.5 px-4 text-center">1차 가채점</th>
                   <th className="py-3.5 px-4 text-center">교사 2차 확정 점수</th>
                   <th className="py-3.5 px-4 text-center">평가 상태</th>
                   <th className="py-3.5 px-4 text-right">채점 및 조정</th>
@@ -1527,10 +1527,10 @@ export default function TeacherDashboard({
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-indigo-700 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> AI 1차 자동 채점 결과
+                    <FileCheck2 className="w-3.5 h-3.5" /> 1차 시스템 가채점 결과
                   </span>
                   <span className="font-mono text-base font-black text-slate-900">
-                    AI 점수: {selectedStudentForReview.aiScore}점 / 100점
+                    가채점 점수: {selectedStudentForReview.aiScore}점 / 100점
                   </span>
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white p-3 rounded-xl border border-slate-200">
@@ -1596,7 +1596,7 @@ export default function TeacherDashboard({
                       </div>
 
                       <div className="text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-150">
-                        <strong className="text-indigo-700">AI 세부 판정:</strong> {ans.aiAssessment}
+                        <strong className="text-indigo-700">시스템 세부 판정:</strong> {ans.aiAssessment}
                       </div>
                     </div>
                   ))}

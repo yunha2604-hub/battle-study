@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Trophy, Award, RefreshCw, ChevronDown, ChevronUp, Check, X, 
-  Sparkles, Flame, ShieldAlert, BookOpen, MessageSquare, Zap, Crown
+  Sparkles, Flame, ShieldAlert, BookOpen, MessageSquare, Zap, Crown,
+  AlertTriangle, CheckCircle2, ArrowRight, ShieldCheck
 } from "lucide-react";
 import { OpponentData } from "./Lobby";
 import { Question, AnswerLogItem } from "./BattleArena";
+import SchoolVerificationModal from "./SchoolVerificationModal";
 
 interface ResultPageProps {
   userProfile: { nickname: string; school: string; tier: string; lp: number };
@@ -19,6 +21,8 @@ interface ResultPageProps {
   onReturnToLobby: (newTier: string, newLp: number) => void;
   isStrictAssessment?: boolean;
   onGoToTeacherDashboard?: () => void;
+  isSchoolVerified?: boolean;
+  onVerifySchool?: () => void;
 }
 
 const TIER_ORDER = ["Iron", "Bronze", "Silver", "Gold", "Diamond"];
@@ -32,7 +36,8 @@ const TIER_DETAILS: Record<string, { label: string; color: string; title: string
 
 export default function ResultPage({ 
   userProfile, opponent, userFinalHp, opponentFinalHp, answersLog, isFirstMatch, onReturnToLobby,
-  isStrictAssessment = false, onGoToTeacherDashboard
+  isStrictAssessment = false, onGoToTeacherDashboard,
+  isSchoolVerified = false, onVerifySchool
 }: ResultPageProps) {
   const isVictory = userFinalHp > opponentFinalHp;
   
@@ -48,6 +53,8 @@ export default function ResultPage({
   const [animatingLp, setAnimatingLp] = useState(true);
   const [showKakaoModal, setShowKakaoModal] = useState((isFirstMatch && !isStrictAssessment) || false);
   const [kakaoLinked, setKakaoLinked] = useState(false);
+  const [showSchoolVerifyModal, setShowSchoolVerifyModal] = useState(false);
+  const [localSchoolVerified, setLocalSchoolVerified] = useState(isSchoolVerified);
 
   // LP counting animation
   useEffect(() => {
@@ -197,7 +204,7 @@ export default function ResultPage({
                 수학 수행평가 답안 제출 완료
               </div>
               <h1 className="text-4xl md:text-6xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white to-cyan-300">
-                AI 1차 자동 채점 완료
+                1차 객관식 자동 가채점 완료
               </h1>
               <p className="text-xs md:text-sm font-extrabold text-indigo-300 mt-2">
                 답안이 안전하게 제출되었습니다. 담당 교사의 2차 최종 점수 확정 대기 중입니다.
@@ -232,7 +239,7 @@ export default function ResultPage({
             {isStrictAssessment ? (
               <>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-                <span>AI 1차 산출 점수: <strong className="text-emerald-400 font-mono text-sm">{Math.round((correctAnswersCount / (answersLog.length || 1)) * 100)}점</strong></span>
+                <span>1차 가채점 점수: <strong className="text-emerald-400 font-mono text-sm">{Math.round((correctAnswersCount / (answersLog.length || 1)) * 100)}점</strong></span>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                 <span>상태: <strong className="text-amber-400">교사 2차 확정 대기</strong></span>
               </>
@@ -321,10 +328,10 @@ export default function ResultPage({
           <div>
             <h3 className="text-lg font-extrabold tracking-tight flex items-center gap-2">
               <BookOpen className="text-cyan-400 w-5 h-5" />
-              배틀스터디 AI 오답 분석 피드백
+              문항별 정답 복기 및 핵심 해설
             </h3>
             <p className="text-xs text-slate-500 mt-1">
-              각 문제에 대한 AI 튜터의 맞춤형 분석 보고서입니다. 카드를 클릭해 상세 해설을 확인하세요.
+              실전 배틀에서 틀리기 쉬운 출제 포인트와 상세 해설입니다. 카드를 클릭해 확인하세요.
             </p>
           </div>
 
@@ -419,7 +426,7 @@ export default function ResultPage({
                                 <Zap className="w-3.5 h-3.5 text-white fill-white" />
                               </div>
                               <span className="text-xs font-extrabold text-cyan-400 uppercase tracking-wider">
-                                Battle Study AI 튜터 피드백
+                                핵심 출제 포인트 및 해설 요약
                               </span>
                             </div>
                             
@@ -477,7 +484,7 @@ export default function ResultPage({
         
       </div>
 
-      {/* Kakao Record Saving Modal (Growth Hacking Retention Popup) */}
+      {/* Retention / Sign-up Modal (손실 회피 기반 3초 간편 가입 모달) */}
       <AnimatePresence>
         {showKakaoModal && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -485,36 +492,118 @@ export default function ResultPage({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative text-center space-y-6"
+              className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative text-center space-y-7"
             >
-              <div className="inline-flex p-4 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500">
-                <Sparkles className="w-8 h-8 text-yellow-400 fill-yellow-400/20 animate-pulse" />
+              <div className="inline-flex p-5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                <AlertTriangle className="w-10 h-10 text-amber-400 animate-pulse" />
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-xl font-black text-white">
-                  🎉 첫 퀴즈 배틀 완료!
+              <div className="space-y-2.5">
+                <div className="inline-block px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-black tracking-wider uppercase">
+                  ⚠️ 임시 게스트 모드
+                </div>
+                <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                  브라우저 닫으면 방금 딴 점수 다 날아가요!
                 </h3>
-                <p className="text-slate-300 text-xs md:text-sm leading-relaxed break-keep font-sans">
-                  당신의 첫 번째 놀라운 기록을 영구 저장하시겠습니까? <br />
-                  <span className="text-slate-400 mt-1 block">
-                    (닉네임: <strong className="text-cyan-400">{userProfile.nickname}</strong>, 
-                    학교: <strong className="text-cyan-400">{userProfile.school}</strong>, 
-                    획득 LP: <strong className="text-yellow-400">+{lpChange} LP</strong>)
-                  </span>
+                <p className="text-slate-300 text-sm md:text-base leading-relaxed break-keep font-sans">
+                  방금 획득한 티어와 학교 랭킹 기여도를 안전하게 보존하려면 지금 3초 만에 계정을 등록하세요.
                 </p>
+              </div>
+
+              {/* 방금 획득한 전적 요약 카드 */}
+              <div className="p-5 bg-slate-950/70 border border-slate-800 rounded-2xl flex items-center justify-between text-left">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <span className="font-semibold text-slate-300">{userProfile.school}</span>
+                    <span className="text-slate-600">•</span>
+                    <strong className="text-white font-bold">{userProfile.nickname}</strong>
+                  </div>
+                  <div className="text-xs text-cyan-400 font-semibold">
+                    현재 등급: {currentTierInfo.label}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-slate-400 uppercase font-bold tracking-wider">방금 딴 승점</div>
+                  <div className={`text-2xl font-black ${lpChange > 0 ? "text-yellow-400" : "text-slate-400"}`}>
+                    {lpChange > 0 ? `+${lpChange} LP` : `${lpChange} LP`}
+                  </div>
+                </div>
               </div>
 
               {kakaoLinked ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl text-emerald-400 text-xs font-bold"
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="space-y-4"
                 >
-                  ✅ 카카오 계정 연동 완료! <br />
-                  <span className="text-slate-400 text-[10px] block mt-1">
-                    다음 판부터 전적 및 랭크 점수가 영구 보존됩니다.
-                  </span>
+                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl text-emerald-400 text-left space-y-1">
+                    <div className="flex items-center gap-2 text-sm font-black">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>🎉 카카오 회원가입 완료!</span>
+                    </div>
+                    <p className="text-slate-300 text-xs pl-6">
+                      개인 전적과 티어 점수가 안전하게 저장되었습니다.
+                    </p>
+                  </div>
+
+                  {!localSchoolVerified ? (
+                    <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-300 text-left space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-black text-amber-400">
+                        <ShieldAlert className="w-4 h-4 shrink-0" />
+                        <span>⚠️ 학교 미인증: 랭킹 점수 적립 대기 중</span>
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed pl-6">
+                        학교 공식 인증을 완료해야 방금 획득한 <strong className="text-yellow-400">+{lpChange} LP</strong>가 <strong>[{userProfile.school}] 전체 랭킹</strong>에 공식 반영됩니다.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-300 text-left flex items-center gap-2 text-xs font-bold">
+                      <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <span>[{userProfile.school}] 공식 인증 완료 (학교 랭킹 반영됨)</span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-2.5 pt-1">
+                    {!localSchoolVerified ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => setShowSchoolVerifyModal(true)}
+                          className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black text-sm md:text-base rounded-2xl shadow-lg shadow-emerald-500/20 cursor-pointer transition-all active:scale-[0.99]"
+                        >
+                          <ShieldCheck className="w-4.5 h-4.5" />
+                          <span>🛡️ 지금 1분 만에 학교 인증하기</span>
+                          <ArrowRight className="w-4.5 h-4.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleReturn}
+                          className="w-full py-2.5 text-xs md:text-sm text-slate-400 hover:text-slate-200 font-bold transition-colors cursor-pointer"
+                        >
+                          나중에 인증하고 다음 배틀하기
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleReturn}
+                          className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-sm md:text-base rounded-2xl shadow-lg shadow-cyan-500/20 cursor-pointer transition-all active:scale-[0.99]"
+                        >
+                          <Zap className="w-4.5 h-4.5 fill-current" />
+                          <span>다음 배틀 매칭하러 가기</span>
+                          <ArrowRight className="w-4.5 h-4.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowKakaoModal(false)}
+                          className="text-xs md:text-sm text-slate-400 hover:text-slate-200 font-bold transition-colors cursor-pointer py-2"
+                        >
+                          방금 경기 결과 및 오답 복기하기
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </motion.div>
               ) : (
                 <div className="flex flex-col gap-3">
@@ -522,21 +611,18 @@ export default function ResultPage({
                     type="button"
                     onClick={() => {
                       setKakaoLinked(true);
-                      setTimeout(() => {
-                        setShowKakaoModal(false);
-                      }, 2000);
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-[#FEE500] hover:bg-[#FEE500]/90 text-[#191919] font-black text-sm rounded-2xl shadow-lg cursor-pointer transition-all hover:scale-102"
+                    className="w-full flex items-center justify-center gap-2.5 py-4.5 bg-[#FEE500] hover:bg-[#FEE500]/90 text-[#191919] font-black text-base rounded-2xl shadow-lg shadow-yellow-500/10 cursor-pointer transition-all hover:scale-102 active:scale-98"
                   >
-                    <MessageSquare className="w-4 h-4 fill-current shrink-0" />
-                    <span>1초 만에 카카오로 시작하기</span>
+                    <MessageSquare className="w-5 h-5 fill-current shrink-0" />
+                    <span>3초 만에 기록 저장하고 가입하기</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowKakaoModal(false)}
-                    className="text-xs text-slate-500 hover:text-slate-300 font-bold transition-colors cursor-pointer"
+                    className="text-xs md:text-sm text-slate-500 hover:text-slate-300 font-bold transition-colors cursor-pointer py-1.5"
                   >
-                    나중에 연동하기
+                    나중에 가입할래요
                   </button>
                 </div>
               )}
@@ -544,6 +630,18 @@ export default function ResultPage({
           </div>
         )}
       </AnimatePresence>
+
+      {/* School Verification Modal */}
+      <SchoolVerificationModal
+        isOpen={showSchoolVerifyModal}
+        onClose={() => setShowSchoolVerifyModal(false)}
+        school={userProfile.school}
+        nickname={userProfile.nickname}
+        onVerified={() => {
+          setLocalSchoolVerified(true);
+          if (onVerifySchool) onVerifySchool();
+        }}
+      />
     </div>
   );
 }
