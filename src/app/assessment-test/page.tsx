@@ -10,7 +10,8 @@ function AssessmentTestContent() {
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from");
   const isFromPublicEdu = fromParam === "public-edu";
-  const isFromStudent = fromParam === "student" || isFromPublicEdu;
+  const isFromPin = fromParam === "pin";
+  const isFromStudent = fromParam === "student" || isFromPublicEdu || isFromPin;
 
   const {
     mathQuestions,
@@ -23,6 +24,8 @@ function AssessmentTestContent() {
       router.push("/public-edu");
     } else if (fromParam === "student") {
       router.push("/lobby");
+    } else if (isFromPin) {
+      router.push("/");
     } else {
       router.push("/teacher");
     }

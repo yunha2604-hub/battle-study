@@ -7,7 +7,7 @@ import {
   Swords, School, Search, Zap, User, Sparkles, Calculator, BookOpen, 
   ChevronRight, ChevronDown, ArrowLeft, LogIn, Building2,
   ShieldCheck, MapPin, Compass, AlertTriangle, Users, CheckCircle2, 
-  Lock, Copy, Check, Radio, Clock, ShieldAlert, Sparkle, MessageSquare
+  Lock, Copy, Check, Radio, Clock, ShieldAlert, Sparkle, MessageSquare, FileText
 } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
 import { ArenaLogo, EduLogo } from "./BrandLogo";
@@ -82,34 +82,47 @@ export default function LandingPage({
   const [showEduModal, setShowEduModal] = useState(false);
   const [eduTab, setEduTab] = useState<"STUDENT" | "TEACHER">("STUDENT");
   
-  // 학생 모드 입력 상태
+  // 학생 모드 입력 상태 (학번 단일 입력)
   const [eduSchool, setEduSchool] = useState("청계중학교");
-  const [eduGrade, setEduGrade] = useState("3");
-  const [eduClass, setEduClass] = useState("1");
-  const [eduStudentNum, setEduStudentNum] = useState("7");
+  const [eduStudentId, setEduStudentId] = useState("30107");
   const [eduName, setEduName] = useState("박윤하");
-  const [eduSchoolCode, setEduSchoolCode] = useState("CHK-2026");
+  const [eduPassword, setEduPassword] = useState("0524");
   const [isAutoFilled, setIsAutoFilled] = useState(true);
+
+  // 학번 파싱 유틸: 30107 -> 3학년 1반 7번
+  const parseStudentId = (idStr: string) => {
+    if (idStr.length >= 5) {
+      const g = Number(idStr[0]);
+      const c = Number(idStr.slice(1, 3));
+      const n = Number(idStr.slice(3, 5));
+      return { grade: g, classNum: c, studentNum: n };
+    }
+    return null;
+  };
+
+  // 학번 입력 시 Mock 학적부 DB 자동 매칭 핸들러
+  const handleStudentIdChange = (newId: string) => {
+    setEduStudentId(newId);
+    const parsed = parseStudentId(newId);
+    if (parsed) {
+      const matched = MOCK_EDU_STUDENTS.find(
+        (s) => s.school === eduSchool && s.grade === parsed.grade && s.classNum === parsed.classNum && s.studentNum === parsed.studentNum
+      );
+      if (matched) {
+        setEduName(matched.name);
+        setIsAutoFilled(true);
+      } else {
+        setIsAutoFilled(false);
+      }
+    } else {
+      setIsAutoFilled(false);
+    }
+  };
 
   // 교사 모드 입력 상태
   const [teacherSchool, setTeacherSchool] = useState("청계중학교");
   const [teacherId, setTeacherId] = useState("teacher_math");
   const [teacherPw, setTeacherPw] = useState("123456");
-
-  // 반/번호 변경 시 Mock DB 자동완성 핸들러
-  const handleStudentClassNumChange = (newClass: string, newNum: string) => {
-    setEduClass(newClass);
-    setEduStudentNum(newNum);
-    const matched = MOCK_EDU_STUDENTS.find(
-      (s) => s.school === eduSchool && s.grade === Number(eduGrade) && s.classNum === Number(newClass) && s.studentNum === Number(newNum)
-    );
-    if (matched) {
-      setEduName(matched.name);
-      setIsAutoFilled(true);
-    } else {
-      setIsAutoFilled(false);
-    }
-  };
 
   // 🛡️ 학교 공식 인증 모달 (카카오 로그인 시 미인증자 대상 호출)
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -408,45 +421,23 @@ export default function LandingPage({
                     </select>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className="block text-slate-400 font-bold mb-1">학년</label>
-                      <select
-                        value={eduGrade}
-                        onChange={(e) => setEduGrade(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium"
-                      >
-                        <option value="3">3학년</option>
-                        <option value="2">2학년</option>
-                        <option value="1">1학년</option>
-                      </select>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-slate-400 font-bold">학번 (5자리)</label>
+                      {eduStudentId.length >= 5 && parseStudentId(eduStudentId) && (
+                        <span className="text-[11px] font-bold text-indigo-400">
+                          {parseStudentId(eduStudentId)?.grade}학년 {parseStudentId(eduStudentId)?.classNum}반 {parseStudentId(eduStudentId)?.studentNum}번
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <label className="block text-slate-400 font-bold mb-1">학급 (반)</label>
-                      <select
-                        value={eduClass}
-                        onChange={(e) => handleStudentClassNumChange(e.target.value, eduStudentNum)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium"
-                      >
-                        <option value="1">1반</option>
-                        <option value="2">2반</option>
-                        <option value="3">3반</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-slate-400 font-bold mb-1">출석 번호</label>
-                      <select
-                        value={eduStudentNum}
-                        onChange={(e) => handleStudentClassNumChange(eduClass, e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium font-mono"
-                      >
-                        {[1, 2, 3, 4, 5, 7, 8, 12, 15, 20, 25, 30].map((num) => (
-                          <option key={num} value={String(num)}>
-                            {num}번
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <input
+                      type="text"
+                      value={eduStudentId}
+                      onChange={(e) => handleStudentIdChange(e.target.value.replace(/[^0-9]/g, ""))}
+                      placeholder="예: 30107 (3학년 1반 7번)"
+                      maxLength={5}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium font-mono text-sm tracking-wider"
+                    />
                   </div>
 
                   <div>
@@ -471,35 +462,59 @@ export default function LandingPage({
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 font-bold mb-1">학교 인증 코드</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-slate-400 font-bold">학생 비밀번호 (본인 확인용)</label>
+                      <span className="text-[10px] text-indigo-400 font-medium">
+                        초기 비밀번호: 생년월일 4자리
+                      </span>
+                    </div>
                     <input
-                      type="text"
-                      value={eduSchoolCode}
-                      onChange={(e) => setEduSchoolCode(e.target.value)}
-                      placeholder="예: CHK-2026"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium font-mono uppercase"
+                      type="password"
+                      value={eduPassword}
+                      onChange={(e) => setEduPassword(e.target.value)}
+                      placeholder="예: 0524"
+                      maxLength={8}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-medium font-mono tracking-widest"
                     />
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      🔒 타인 사칭 및 성적 무단 열람 방지를 위한 비밀번호입니다. (시연용 기본값: 0524)
+                    </p>
                   </div>
 
-                  {/* Submit Button */}
-                  <div className="flex items-center gap-2.5 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowEduModal(false)}
-                      className="w-1/3 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer text-center"
-                    >
-                      취소
-                    </button>
+                  {/* Action Buttons: 2-Way (학사 포털 성적/피드백 열람 vs 수업시간 시험 PIN 즉시 응시) */}
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setShowEduModal(false)}
+                        className="w-1/3 py-3.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer text-center"
+                      >
+                        취소
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEduModal(false);
+                          router.push("/public-edu");
+                        }}
+                        className="w-2/3 py-3.5 px-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-cyan-300" />
+                        <span>학사 포털 입장 (성적/피드백 조회)</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => {
                         setShowEduModal(false);
-                        router.push("/public-edu");
+                        router.push("/assessment-test?from=pin");
                       }}
-                      className="w-2/3 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 px-3 bg-slate-950/80 hover:bg-slate-850 border border-indigo-500/30 hover:border-indigo-400 text-indigo-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      <span>배틀스터디 에듀 학생 포털 입장</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                      <span>⚡ 수업시간 1회성 시험 PIN으로 즉시 응시하기</span>
                     </button>
                   </div>
                 </div>
@@ -508,6 +523,29 @@ export default function LandingPage({
               {/* TAB 2: 교사 모드 Form */}
               {eduTab === "TEACHER" && (
                 <div className="space-y-3.5 text-xs">
+                  {/* 🏛️ 교육청 교원 SSO 간편인증 (1초 데모 로그인) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEduModal(false);
+                      if (onGoToTeacherDashboard) {
+                        onGoToTeacherDashboard();
+                      } else {
+                        router.push("/teacher");
+                      }
+                    }}
+                    className="w-full py-3.5 px-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-black rounded-xl shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-cyan-300" />
+                    <span>🏛️ 교육청 교원 SSO 간편인증 (1초 데모 로그인)</span>
+                  </button>
+
+                  <div className="flex items-center gap-2 py-0.5">
+                    <div className="h-[1px] bg-slate-800 flex-1" />
+                    <span className="text-[10px] text-slate-500 font-bold">또는 교원 ID로 로그인</span>
+                    <div className="h-[1px] bg-slate-800 flex-1" />
+                  </div>
+
                   <div>
                     <label className="block text-slate-400 font-bold mb-1">소속 학교</label>
                     <select
