@@ -248,10 +248,10 @@ export default function PlayerAnalytics() {
             <div>
               <span className="text-xs text-slate-400 font-medium">전국 중학교 전체 기준 상위</span>
               <div className="flex items-baseline gap-1.5 mt-0.5">
-                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-200 to-white font-mono">
+                <span className="text-3xl font-black text-amber-300 font-mono">
                   상위 7.5%
                 </span>
-                <span className="text-xs text-cyan-400 font-bold font-mono">(다이아몬드 승격 도전권)</span>
+                <span className="text-xs text-amber-400 font-bold font-mono">(다이아몬드 승격 도전권)</span>
               </div>
             </div>
             <div className="text-right font-mono text-xs text-slate-400">

@@ -19,7 +19,7 @@ export default function EduHeader({
   const router = useRouter();
 
   return (
-    <header className="border-b border-indigo-950/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50 px-4 md:px-8 py-3 shadow-md transition-colors font-sans">
+    <header className="border-b border-slate-200 bg-white sticky top-0 z-50 px-4 md:px-8 py-3.5 shadow-sm transition-colors font-sans text-slate-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         
         {/* Brand Logo & School Info */}
@@ -28,50 +28,49 @@ export default function EduHeader({
           className="flex items-center gap-3 shrink-0 cursor-pointer group"
           title="배틀스터디 에듀 홈으로 이동"
         >
-          <EduLogo size="sm" showText={false} />
+          <EduLogo size="sm" showText={false} theme="light" />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-black bg-blue-500/20 text-blue-300 border border-blue-500/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                 공교육 모드
               </span>
-              <span className="text-[11px] text-slate-400 font-semibold">{schoolName} 3학년 수학과</span>
+              <span className="text-[11px] text-slate-500 font-semibold">{schoolName} 3학년 수학과</span>
             </div>
-            <h1 className="text-sm md:text-lg font-black text-white group-hover:text-blue-300 transition-colors">
+            <h1 className="text-sm md:text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
               배틀스터디 에듀
             </h1>
           </div>
         </div>
 
-        {/* Central Direct Navigation Tabs (MVP Fast Switching) */}
-        <div className="hidden md:flex items-center gap-1.5 bg-slate-900/90 border border-indigo-900/40 p-1.5 rounded-2xl shadow-inner">
+        {/* Central Direct Navigation Tabs */}
+        <div className="hidden md:flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl">
           
           {/* Tab 1: 학생 학사 포털 */}
           <button
             type="button"
             onClick={() => router.push("/public-edu")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "STUDENT"
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/40 scale-[1.02]"
-                : "text-slate-400 hover:text-white hover:bg-slate-850"
+                ? "bg-white text-blue-700 shadow-sm border border-slate-200 font-extrabold"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             }`}
           >
             <Building2 className="w-3.5 h-3.5" />
-            <span>🏛️ 학생 포털</span>
+            <span>학생 학사 포털</span>
           </button>
 
-
-          {/* Tab 3: 교사 통합 관리 대시보드 */}
+          {/* Tab 2: 교사 통합 관리 대시보드 */}
           <button
             type="button"
             onClick={() => router.push("/teacher")}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "TEACHER"
-                ? "bg-purple-600 text-white shadow-md shadow-purple-600/40 scale-[1.02]"
-                : "text-slate-400 hover:text-purple-400 hover:bg-slate-850"
+                ? "bg-white text-purple-700 shadow-sm border border-slate-200 font-extrabold"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             }`}
           >
             <Calculator className="w-3.5 h-3.5" />
-            <span>👩‍🏫 교사 통합 관리</span>
+            <span>교사 평가 관리</span>
           </button>
 
         </div>
@@ -83,18 +82,18 @@ export default function EduHeader({
           <button
             type="button"
             onClick={() => router.push("/lobby")}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 hover:text-white text-xs font-bold transition-all shadow-sm cursor-pointer group"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition-all shadow-sm cursor-pointer"
             title="게임 모드(배틀스터디 아레나)로 전환"
           >
-            <Home className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline">⚔️ 배틀스터디 아레나로 이동</span>
+            <Home className="w-3.5 h-3.5 text-slate-600" />
+            <span className="hidden sm:inline">아레나 게임으로 이동</span>
           </button>
 
           {/* 로그아웃 (홈 복귀) */}
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors cursor-pointer"
             title="로그아웃 및 랜딩 홈으로 이동"
           >
             <LogOut className="w-3.5 h-3.5" />

@@ -60,35 +60,32 @@ export function ArenaLogo({
       title={onClick ? "홈으로 이동" : undefined}
       className={`inline-flex items-center gap-3 select-none ${onClick ? "cursor-pointer group" : ""} ${className}`}
     >
-      {/* ⚔️ 아레나 심볼 마크 (다층 레이어 엠블럼) */}
+      {/* ⚔️ 아레나 심볼 마크 (묵직한 골드 & 네이비 엠블럼) */}
       <div className="relative shrink-0 flex items-center justify-center">
-        {/* 네온 백라이트 오라 */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 rounded-2xl blur-md opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
-
         {/* 엠블럼 본체 */}
         <div
-          className={`relative ${config.container} bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 border border-cyan-400/40 shadow-xl shadow-cyan-950/50 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105`}
+          className={`relative ${config.container} bg-gradient-to-b from-slate-900 via-[#111827] to-[#0b0f19] border border-amber-500/40 shadow-lg shadow-black/50 flex items-center justify-center overflow-hidden transition-transform duration-200 group-hover:scale-105`}
         >
-          {/* 내부 래디얼 글래스 하이라이트 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-cyan-500/10 to-indigo-400/20 pointer-events-none" />
+          {/* 내부 은은한 골드 하이라이트 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-amber-500/5 to-amber-300/10 pointer-events-none" />
 
           {/* 뒤쪽: 펼쳐진 지혜의 서(BookOpen) */}
-          <div className="absolute -bottom-1 text-cyan-400/40">
+          <div className="absolute -bottom-1 text-amber-500/30">
             <BookOpen className={config.bookIcon} />
           </div>
 
           {/* 좌상단: 승부욕의 불꽃 (Flame) */}
-          <div className="absolute top-1 left-1 text-amber-400 animate-pulse">
+          <div className="absolute top-1 left-1 text-amber-400">
             <Flame className={config.flameIcon} />
           </div>
 
-          {/* 우하단: 전격 번개 (Zap) */}
-          <div className="absolute bottom-1 right-1 text-cyan-300">
+          {/* 우하단: 골드 번개 (Zap) */}
+          <div className="absolute bottom-1 right-1 text-amber-300">
             <Zap className={config.flameIcon} />
           </div>
 
-          {/* 중앙: 빛나는 교차 배틀 쌍검 (Swords) */}
-          <div className="relative z-10 text-white drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+          {/* 중앙: 배틀 쌍검 (Swords) */}
+          <div className="relative z-10 text-amber-200 drop-shadow-md">
             <Swords className={config.swordIcon} />
           </div>
         </div>
@@ -101,21 +98,21 @@ export function ArenaLogo({
             <h1
               className={`font-black tracking-tight font-sans bg-clip-text text-transparent ${
                 isLight
-                  ? "bg-gradient-to-r from-slate-900 via-indigo-900 to-cyan-900"
-                  : "bg-gradient-to-r from-cyan-300 via-indigo-200 to-purple-300"
+                  ? "bg-gradient-to-r from-amber-700 via-yellow-600 to-amber-900"
+                  : "bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500"
               } ${config.title}`}
             >
               배틀스터디 아레나
             </h1>
             {size !== "sm" && (
-              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-sm">
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-sm">
                 ARENA
               </span>
             )}
           </div>
           <p
-            className={`font-bold uppercase tracking-wider ${
-              isLight ? "text-indigo-600" : "text-cyan-400"
+            className={`font-bold tracking-wider ${
+              isLight ? "text-amber-700/80" : "text-amber-400/80"
             } ${config.subtitle}`}
           >
             BATTLE STUDY ARENA • 1:1 QUIZ LEAGUE

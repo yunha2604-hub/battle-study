@@ -1,6 +1,6 @@
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know 
+## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
@@ -73,6 +73,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   1. 사용자의 요청을 **단순히 수동적·맹목적으로 그대로 받아쓰듯 실행하지 마십시오.**
   2. 요구사항이나 구조에 논리적 허점, 교육적 비현실성(예: 수학 계산 시간 부족, 담합/치팅 가능성), 성능/UX 문제점이 보이면 **즉시 의문을 제기하고 솔직하게 피드백**하십시오.
   3. 항상 **"더 좋은 방법, 더 공정하고 완성도 높은 대안"을 2~3가지 비교 분석하여 먼저 적극적으로 제안**하고 사용자와 협의하십시오.
+
+### 규칙 7: 문서 작성 시 AI스러운 아이콘(이모지) 및 장식성 특수 기호 사용 금지 (No AI-style Emojis in Docs)
+- **배경**: AI가 자동 생성한 듯한 불필요한 이모지(예: 🚀, 💡, 📌, 📋, 🔍, 🛠️, 🛡️, ✨ 등)나 과도한 장식용 특수 기호의 남발은 공교육 및 입시 제출 문서로서의 전문성과 신뢰도를 심각하게 훼손합니다.
+- **필수 지침**:
+  1. 기획서, 요구사항 명세서, 가이드, 보고서 등 모든 문서(.md, .txt 등) 작성 시 **AI스러운 이모지나 장식성 기호를 문장/헤더 앞에 일절 붙이지 마십시오.**
+  2. 명확한 마크다운 헤더(`#`, `##`), 넘버링(`1.`, `2.`), 불릿 포인트(`-`)를 사용하여 담백하고 전문적인 비즈니스 보고서 톤을 유지하십시오.
+  3. 실제 프론트엔드 UI 컴포넌트 코드 레벨에서 명시적으로 사용하는 아이콘(Lucide React 컴포넌트 등)을 기술적으로 설명하는 경우를 제외하고는, 본문과 문서 전반에서 장식용 이모지를 전면 배제하십시오.
 
 ---
 
@@ -208,4 +215,7 @@ d:\workspace\battle-study
 7. **[필수 준수] 맹목적 수용 금지 & 더 나은 대안 상시 제시 (Proactive Challenge & Better Alternatives)**:
    - 사용자의 지시를 기계적으로 단순 수행하지 말고, **의문점·한계·부작용(예: 교육적 비현실성, 치팅 가능성, UX 저하 등)이 있다면 주저 없이 짚고 넘어가십시오.**
    - 도메인과 상황에 맞는 **더 우수하고 정교한 대안을 적극적으로 먼저 제안**하여 최선의 결과를 함께 만들어가십시오.
+8. **[필수 준수] 문서 작성 시 AI스러운 이모지/기호 전면 금지 (No AI-style Icons)**:
+   - 기획서, 가이드, 산출물 문서 등 작성 시 헤더나 문장 앞뒤에 습관적으로 붙이던 AI스러운 이모지(🚀, 💡, 📌, 📋, 🔍, 🛠️, 🛡️, ✨ 등)를 일체 사용하지 마십시오.
+   - 담백하고 신뢰성 높은 표준 비즈니스 문서 포맷(헤더, 넘버링, 불릿 포인트)으로만 서술하십시오.
 

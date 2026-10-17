@@ -168,7 +168,7 @@ export default function LandingPage({
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 font-sans">
+    <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-[#0b0f19] font-sans">
       
       {/* Global Header */}
       <GlobalHeader 
@@ -177,13 +177,8 @@ export default function LandingPage({
         onOpenEduModal={() => setShowEduModal(true)} 
       />
 
-      {/* Background Particles / Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 pointer-events-none" />
-      
-      {/* Glow Effects */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 bg-[#0b0f19] pointer-events-none" />
 
 
 
@@ -197,7 +192,7 @@ export default function LandingPage({
         >
           {/* Logo / Header (배틀스터디 아레나 게임 전용) */}
           <div className="text-center pt-1 flex flex-col items-center">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold mb-3">
               <Swords className="w-3.5 h-3.5" />
               <span>실시간 1:1 퀴즈 배틀 아레나</span>
             </div>
@@ -304,10 +299,10 @@ export default function LandingPage({
             {/* 1초 빠른 배틀 시작 메인 버튼 */}
             <button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black rounded-2xl text-sm transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer group hover:scale-[1.01] active:scale-[0.99]"
+              className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-lg shadow-black/40 flex items-center justify-center gap-2 cursor-pointer group hover:scale-[1.01] active:scale-[0.99]"
             >
-              <Swords className="w-4 h-4 text-cyan-300 group-hover:rotate-12 transition-transform" />
-              <span>⚔️ 1초 만에 퀴즈 배틀 시작하기</span>
+              <Swords className="w-4 h-4 text-slate-950 group-hover:rotate-12 transition-transform" />
+              <span>1초 만에 퀴즈 배틀 시작하기</span>
             </button>
           </form>
 

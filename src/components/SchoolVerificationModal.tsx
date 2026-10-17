@@ -368,9 +368,9 @@ export default function SchoolVerificationModal({
               <button
                 type="button"
                 onClick={handleComplete}
-                className="w-2/3 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black rounded-2xl text-sm md:text-base shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-2/3 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm md:text-base shadow-lg shadow-black/40 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Sparkles className="w-5 h-5 fill-current text-yellow-300" />
+                <Sparkles className="w-5 h-5 fill-current text-slate-950" />
                 <span>공식 인증 완료 & 점수 반영</span>
               </button>
             </div>

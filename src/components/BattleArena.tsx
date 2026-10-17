@@ -395,46 +395,46 @@ export default function BattleArena({
 
   return (
     <div className={`min-h-screen flex flex-col justify-between font-sans select-none overflow-hidden relative ${
-      isStrictAssessment ? "bg-slate-50 text-slate-800" : "bg-slate-950 text-slate-100"
+      isStrictAssessment ? "bg-slate-50 text-slate-800" : "bg-[#0b0f19] text-slate-100"
     }`}>
       {/* 1번 요구사항: 1:1 퀴즈배틀 시작 전 확인 모달 */}
       <AnimatePresence>
         {!isGameStarted && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl text-center space-y-6 text-white relative"
+              className="bg-[#101528] border-2 border-[#222d54] rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl text-center space-y-6 text-white relative"
             >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20">
+              <div className="w-16 h-16 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center mx-auto shadow-lg shadow-black/40">
                 <Swords className="w-8 h-8" />
               </div>
 
               <div className="space-y-1.5">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-950 text-cyan-400 border border-cyan-800 tracking-wider uppercase">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black bg-amber-950/80 text-amber-300 border border-amber-800/80 tracking-wider uppercase">
                   1:1 실시간 퀴즈 배틀
                 </span>
                 <h3 className="text-xl md:text-2xl font-black text-white mt-1">
                   배틀을 시작하시겠습니까?
                 </h3>
                 <p className="text-xs text-slate-400">
-                  선택 과목: <strong className="text-cyan-400">{subject}</strong> • 총 문항: <strong className="text-white">{subjectQuestions.length}문항</strong>
+                  선택 과목: <strong className="text-amber-400">{subject}</strong> • 총 문항: <strong className="text-white">{subjectQuestions.length}문항</strong>
                 </p>
               </div>
 
               {/* Matchup Preview */}
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between text-xs">
+              <div className="bg-[#0a0e1c] border border-[#1e274b] rounded-2xl p-4 flex items-center justify-between text-xs">
                 <div className="text-left">
                   <span className="text-[10px] text-slate-500 block font-semibold">내 프로필</span>
                   <strong className="text-white text-sm">{displayUserNickname}</strong>
-                  <span className="text-[11px] text-cyan-400 block">{userProfile.school}</span>
+                  <span className="text-[11px] text-amber-300 block font-semibold">{userProfile.school}</span>
                 </div>
-                <div className="text-base font-black text-slate-600 px-3">VS</div>
+                <div className="text-xs font-black text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2 py-0.5 rounded-md">VS</div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-500 block font-semibold">라이벌 상대</span>
                   <strong className="text-white text-sm">{displayOpponentNickname}</strong>
-                  <span className="text-[11px] text-purple-400 block">{opponent.school}</span>
+                  <span className="text-[11px] text-red-300 block font-semibold">{opponent.school}</span>
                 </div>
               </div>
 
@@ -450,7 +450,7 @@ export default function BattleArena({
                 <button
                   type="button"
                   onClick={() => setIsGameStarted(true)}
-                  className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-black/40 flex items-center justify-center gap-1.5"
                 >
                   <Swords className="w-3.5 h-3.5" />
                   <span>배틀 시작하기</span>
@@ -470,12 +470,9 @@ export default function BattleArena({
         </div>
       )}
 
-      {/* Background radial atmosphere */}
+      {/* Background atmosphere */}
       {!isStrictAssessment && (
-        <>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black opacity-90 pointer-events-none" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:6rem_6rem] opacity-10 pointer-events-none" />
-        </>
+        <div className="absolute inset-0 bg-[#0b0f19] pointer-events-none" />
       )}
       {isStrictAssessment && (
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-35 pointer-events-none" />
@@ -598,7 +595,7 @@ export default function BattleArena({
           <div className={`grid grid-cols-11 items-center gap-2 md:gap-4 p-4 md:p-5 border rounded-2xl ${
             isStrictAssessment 
               ? "bg-white border-slate-200 shadow-sm" 
-              : "bg-slate-900/60 backdrop-blur-xl border-slate-800 shadow-2xl"
+              : "bg-[#101528] border-[#222d54] shadow-xl"
           }`}>
             
             {/* User Side */}
@@ -611,7 +608,7 @@ export default function BattleArena({
                 <div className={`w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center font-bold overflow-hidden shadow-inner ${
                   isStrictAssessment 
                     ? "bg-slate-100 border border-slate-200 text-slate-700" 
-                    : "bg-slate-950 border border-slate-800/80 text-slate-400"
+                    : "bg-[#0a0e1c] border border-amber-500/30 text-amber-300"
                 }`}>
                   🙋
                 </div>
@@ -619,7 +616,7 @@ export default function BattleArena({
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border block w-max ${
                     isStrictAssessment 
                       ? "bg-slate-100 text-slate-600 border-slate-200" 
-                      : "bg-cyan-950 text-cyan-300 border-cyan-500/20"
+                      : "bg-amber-950/80 text-amber-300 border-amber-500/30"
                   }`}>
                     {userProfile.school}
                   </span>
@@ -633,7 +630,7 @@ export default function BattleArena({
 
               <div className="w-full space-y-1">
                 <div className="flex justify-between items-center text-[10px] md:text-xs">
-                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-cyan-400"}`}>HP</span>
+                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-amber-400"}`}>HP</span>
                   <span className={`font-mono font-black ${isStrictAssessment ? "text-slate-700" : "text-slate-300"}`}>{Math.max(0, userHp)} / 100</span>
                 </div>
                 <div className={`h-3 w-full rounded-full border overflow-hidden relative ${
@@ -657,7 +654,7 @@ export default function BattleArena({
               <div className={`w-9 h-9 rounded-full flex items-center justify-center border font-bold text-[10px] ${
                 isStrictAssessment 
                   ? "bg-slate-100 border-slate-250 text-slate-750 shadow-sm" 
-                  : "bg-gradient-to-tr from-cyan-600 via-indigo-600 to-purple-600 border-white/10 text-white shadow-lg shadow-indigo-500/20"
+                  : "bg-red-950 border border-red-500/40 text-red-200 shadow-md font-sans"
               }`}>
                 VS
               </div>
@@ -673,7 +670,7 @@ export default function BattleArena({
                 <div className={`w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center font-bold overflow-hidden shadow-inner ${
                   isStrictAssessment 
                     ? "bg-slate-100 border border-slate-200 text-slate-700" 
-                    : "bg-slate-950 border border-slate-800/80 text-slate-400"
+                    : "bg-[#0a0e1c] border border-red-500/30 text-red-300"
                 }`}>
                   😈
                 </div>
@@ -681,7 +678,7 @@ export default function BattleArena({
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border block w-max ml-auto ${
                     isStrictAssessment 
                       ? "bg-slate-100 text-slate-600 border-slate-200" 
-                      : "bg-purple-950 text-purple-300 border-purple-500/20"
+                      : "bg-red-950/80 text-red-300 border-red-500/30"
                   }`}>
                     {opponent.school}
                   </span>
@@ -695,7 +692,7 @@ export default function BattleArena({
 
               <div className="w-full space-y-1">
                 <div className="flex justify-between items-center text-[10px] md:text-xs flex-row-reverse">
-                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-purple-400"}`}>HP</span>
+                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-red-400"}`}>HP</span>
                   <span className={`font-mono font-black ${isStrictAssessment ? "text-slate-700" : "text-slate-300"}`}>{Math.max(0, opponentHp)} / 100</span>
                 </div>
                 <div className={`h-3 w-full rounded-full border overflow-hidden relative ${
@@ -742,7 +739,7 @@ export default function BattleArena({
             <span className={`text-[10px] md:text-xs font-black tracking-widest uppercase border px-3 py-1 rounded-full ${
               isStrictAssessment 
                 ? "bg-slate-200 border-slate-300 text-slate-700" 
-                : "bg-slate-900 border-cyan-500/20 text-cyan-400"
+                : "bg-[#141a2e] border-amber-500/30 text-amber-300"
             }`}>
               ROUND {currentRound + 1} / {subjectQuestions.length}
             </span>
@@ -754,12 +751,12 @@ export default function BattleArena({
           <div className={`flex items-center gap-2 border px-3.5 py-1.5 rounded-full font-mono text-xs md:text-sm ${
             isStrictAssessment 
               ? "bg-white border-slate-200 text-slate-700 shadow-sm" 
-              : "bg-slate-900 border-slate-800 text-slate-200"
+              : "bg-[#101528] border-slate-800 text-slate-200"
           }`}>
             <Clock className={`w-4 h-4 ${
               isStrictAssessment 
                 ? "text-slate-650" 
-                : timeLeft <= 5 ? "text-red-500 animate-pulse" : "text-cyan-400"
+                : timeLeft <= 5 ? "text-red-500 animate-pulse" : "text-amber-400"
             }`} />
             <span className={`font-black ${
               !isStrictAssessment && timeLeft <= 5 ? "text-red-500 animate-pulse" : ""
@@ -780,7 +777,7 @@ export default function BattleArena({
             className={`h-full rounded-full ${
               isStrictAssessment 
                 ? "bg-slate-600" 
-                : timeLeft <= 5 ? "bg-red-500" : "bg-gradient-to-r from-cyan-500 to-indigo-500"
+                : timeLeft <= 5 ? "bg-red-500" : "bg-amber-400"
             }`}
           />
         </div>
@@ -789,7 +786,7 @@ export default function BattleArena({
         <div className={`w-full border rounded-3xl p-6 md:p-8 text-center shadow-md relative ${
           isStrictAssessment 
             ? "bg-white border-slate-250" 
-            : "bg-slate-900/50 backdrop-blur-xl border-slate-800"
+            : "bg-[#101528] border-[#222d54]"
         }`}>
           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-7xl md:text-8xl pointer-events-none select-none ${
             isStrictAssessment ? "text-slate-100/70" : "text-white/5"
@@ -857,7 +854,7 @@ export default function BattleArena({
                   ? isStrictAssessment ? "bg-emerald-500/20 text-emerald-700" : "bg-emerald-500/20 text-emerald-300"
                   : isStrictAssessment ? "bg-red-500/20 text-red-700" : "bg-red-500/20 text-red-300"
                 : isStrictAssessment ? "bg-slate-200 text-slate-400" : "bg-slate-950 text-slate-750"
-              : isStrictAssessment ? "bg-slate-100 text-slate-600 border border-slate-250" : "bg-slate-950 text-cyan-400";
+              : isStrictAssessment ? "bg-slate-100 text-slate-600 border border-slate-250" : "bg-[#0a0e1c] text-amber-300 border border-amber-500/30 font-black";
 
             return (
               <motion.button

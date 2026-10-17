@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Zap, LogIn, User, ChevronDown, LogOut, BarChart2, ShieldCheck, Trophy } from "lucide-react";
+import { LogIn, User, ChevronDown, LogOut, BarChart2, ShieldCheck, Trophy } from "lucide-react";
 import { ArenaLogo, EduLogo } from "./BrandLogo";
 import { useBattleStudy } from "@/context/BattleStudyContext";
 
@@ -100,13 +100,12 @@ export default function GlobalHeader({
         <button
           type="button"
           onClick={() => router.push("/lobby")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center ${
             activeTab === "LOBBY"
               ? isLight ? "bg-white text-slate-900 shadow-sm" : "bg-slate-900 text-white shadow-sm"
               : "text-slate-500 hover:text-slate-300"
           }`}
         >
-          <span>🏛️</span>
           <span>메인 로비</span>
         </button>
 
@@ -114,13 +113,12 @@ export default function GlobalHeader({
         <button
           type="button"
           onClick={() => router.push("/battle")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center ${
             activeTab === "BATTLE"
               ? isLight ? "bg-white text-red-600 shadow-sm border border-red-200" : "bg-slate-900 text-red-400 shadow-sm border border-red-500/40"
               : "text-slate-500 hover:text-red-400"
           }`}
         >
-          <span>⚔️</span>
           <span>1:1 퀴즈 배틀</span>
         </button>
 
@@ -128,27 +126,25 @@ export default function GlobalHeader({
         <button
           type="button"
           onClick={() => router.push("/deathmatch")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center ${
             activeTab === "DEATHMATCH"
               ? isLight ? "bg-white text-orange-600 shadow-sm border border-orange-200" : "bg-slate-900 text-orange-400 shadow-sm border border-orange-500/40"
               : "text-slate-500 hover:text-orange-400"
           }`}
         >
-          <span>🔥</span>
-          <span>학교 대항</span>
+          <span>학교 대항전</span>
         </button>
 
-        {/* Tab 3: 오답 던전 */}
+        {/* Tab 4: 오답 던전 */}
         <button
           type="button"
           onClick={() => router.push("/shadow-raid")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center ${
             activeTab === "SHADOW_RAID"
               ? isLight ? "bg-white text-emerald-600 shadow-sm" : "bg-slate-900 text-emerald-400 shadow-sm"
               : "text-slate-500 hover:text-emerald-400"
           }`}
         >
-          <span>👾</span>
           <span>오답 던전</span>
         </button>
 
@@ -156,18 +152,16 @@ export default function GlobalHeader({
         <button
           type="button"
           onClick={() => router.push("/analytics")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center ${
             activeTab === "ANALYTICS"
               ? isLight ? "bg-white text-purple-600 shadow-sm" : "bg-slate-900 text-purple-400 shadow-sm"
               : "text-slate-500 hover:text-purple-400"
           }`}
         >
-          <span>📊</span>
-          <span>나의 역량 분석</span>
+          <span>역량 분석</span>
         </button>
 
-
-        {/* Tab 5: 로그인 */}
+        {/* Tab 6: 로그인 */}
         <button
           type="button"
           onClick={() => router.push("/")}
@@ -181,14 +175,13 @@ export default function GlobalHeader({
           <span>로그인</span>
         </button>
 
-        {/* Tab 6: 배틀스터디 에듀 (공교육 모드) */}
+        {/* Tab 7: 배틀스터디 에듀 (공교육 모드) */}
         <button
           type="button"
           onClick={onOpenEduModal ? onOpenEduModal : () => router.push("/public-edu")}
-          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 hover:text-white hover:bg-indigo-900/60 shadow-sm hover:border-indigo-400`}
+          className={`px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 hover:text-white hover:bg-indigo-900/60 shadow-sm hover:border-indigo-400`}
           title="공교육 수학 수행평가 관리 (배틀스터디 에듀)"
         >
-          <span>🏛️</span>
           <span>배틀스터디 에듀</span>
         </button>
       </div>
@@ -196,11 +189,10 @@ export default function GlobalHeader({
       {/* User Status Bar */}
       <div className="flex items-center gap-3 shrink-0">
         {/* Lightning Energy Badge */}
-        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-black ${
-          isLight ? "bg-yellow-50 border-yellow-200 text-yellow-600" : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+        <div className={`flex items-center px-3 py-1.5 rounded-xl border text-xs font-bold ${
+          isLight ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-amber-500/10 border-amber-500/20 text-amber-300"
         }`}>
-          <Zap className={`w-4 h-4 animate-pulse ${isLight ? "fill-yellow-500" : "fill-yellow-400"}`} />
-          <span>⚡ {energy} / 5</span>
+          <span>에너지 {energy} / 5</span>
         </div>
 
         {/* Live Connected Students Count */}

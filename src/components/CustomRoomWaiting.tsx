@@ -267,19 +267,12 @@ export default function CustomRoomWaiting({
           
           <button
             onClick={onStartBattle}
-            className="w-full sm:flex-1 relative group overflow-hidden rounded-xl p-[1.5px] focus:outline-none cursor-pointer"
+            className="w-full sm:flex-1 py-3.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition-all cursor-pointer shadow-lg shadow-black/40 flex items-center justify-center gap-2"
           >
-            {/* Pulsing Outline */}
-            <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-xl" />
-            <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-            
-            {/* Inner button */}
-            <div className="relative flex items-center justify-center gap-2 bg-slate-950 text-white font-black rounded-[10px] py-3 transition-colors group-hover:bg-slate-900">
-              <Swords className="w-4.5 h-4.5 text-cyan-400 fill-cyan-400/10" />
-              <span>
-                {isTeamBattle ? "단체 대항전 배틀 시작 (Start Team Battle)" : "방장 전용 배틀 시작 (Start Game)"}
-              </span>
-            </div>
+            <Swords className="w-4.5 h-4.5" />
+            <span>
+              {isTeamBattle ? "단체 대항전 배틀 시작 (Start Team Battle)" : "방장 전용 배틀 시작 (Start Game)"}
+            </span>
           </button>
         </div>
       </motion.div>

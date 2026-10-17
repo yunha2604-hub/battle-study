@@ -391,8 +391,7 @@ export default function SchoolDeathmatchArena({
       </AnimatePresence>
 
       {/* Background Ambience */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[#0b0f19] pointer-events-none" />
 
       {/* Global Header */}
       <GlobalHeader activeTab="DEATHMATCH" />
@@ -900,7 +899,7 @@ export default function SchoolDeathmatchArena({
               <button
                 type="button"
                 onClick={() => router.push("/lobby")}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-90 text-white font-black rounded-xl text-xs transition-colors cursor-pointer shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition-colors cursor-pointer shadow-lg shadow-black/40 flex items-center justify-center gap-1.5"
               >
                 <Home className="w-4 h-4" />
                 <span>메인 로비로 복귀</span>

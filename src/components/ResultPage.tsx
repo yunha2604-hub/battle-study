@@ -143,11 +143,9 @@ export default function ResultPage({
   const currentTierInfo = TIER_DETAILS[displayedTier] || TIER_DETAILS.Silver;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 relative overflow-x-hidden font-sans">
-      {/* Background Radial Glow */}
-      <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] rounded-full blur-3xl pointer-events-none opacity-20 ${
-        isVictory ? "bg-cyan-500" : "bg-red-500"
-      }`} />
+    <div className="min-h-screen bg-[#0b0f19] text-slate-100 py-12 px-4 relative overflow-x-hidden font-sans">
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 bg-[#0b0f19] pointer-events-none" />
 
       {/* Promotion Animation Screen Overlay */}
       <AnimatePresence>
@@ -212,23 +210,20 @@ export default function ResultPage({
             </div>
           ) : isVictory ? (
             <div className="relative">
-              {/* Confetti Glow Background */}
-              <div className="absolute inset-0 bg-cyan-400/10 blur-xl rounded-full scale-125" />
-              <h1 className="text-6xl md:text-8xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-200 to-teal-400 drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+              <h1 className="text-6xl md:text-8xl font-black tracking-widest text-amber-400 drop-shadow-md">
                 VICTORY
               </h1>
-              <p className="text-sm font-extrabold text-cyan-400 tracking-[0.25em] uppercase mt-2">
-                배틀에서 승리하여 명예를 쟁취했습니다!
+              <p className="text-sm font-extrabold text-amber-300 tracking-[0.25em] uppercase mt-2">
+                배틀에서 승리하여 학교와 개인의 명예를 쟁취했습니다!
               </p>
             </div>
           ) : (
             <div className="relative">
-              <div className="absolute inset-0 bg-red-500/10 blur-xl rounded-full scale-125" />
-              <h1 className="text-6xl md:text-8xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-purple-400 to-rose-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.3)]">
+              <h1 className="text-6xl md:text-8xl font-black tracking-widest text-red-500 drop-shadow-md">
                 DEFEAT
               </h1>
               <p className="text-sm font-extrabold text-red-400 tracking-[0.25em] uppercase mt-2">
-                배틀에서 패배했습니다. 다시 기회를 노리세요.
+                배틀에서 패배했습니다. 복습 후 다시 도전하세요.
               </p>
             </div>
           )}
@@ -472,12 +467,9 @@ export default function ResultPage({
             {isStrictAssessment ? (
               <span>학생 로비로 복귀</span>
             ) : (
-              <>
-                <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 rounded-2xl" />
-                <div className="relative flex items-center justify-center gap-2 bg-slate-950 text-white font-bold rounded-[14px] py-4 hover:bg-slate-900 transition-colors">
-                  <span>로비로 돌아가기</span>
-                </div>
-              </>
+              <div className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-black/40">
+                <span>로비로 돌아가기</span>
+              </div>
             )}
           </motion.button>
         </div>
@@ -588,7 +580,7 @@ export default function ResultPage({
                         <button
                           type="button"
                           onClick={handleReturn}
-                          className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-sm md:text-base rounded-2xl shadow-lg shadow-cyan-500/20 cursor-pointer transition-all active:scale-[0.99]"
+                          className="w-full flex items-center justify-center gap-2 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm md:text-base rounded-2xl shadow-lg shadow-black/40 cursor-pointer transition-all active:scale-[0.99]"
                         >
                           <Zap className="w-4.5 h-4.5 fill-current" />
                           <span>다음 배틀 매칭하러 가기</span>

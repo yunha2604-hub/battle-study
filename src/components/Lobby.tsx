@@ -218,10 +218,9 @@ export default function Lobby({
   const currentTierData = TIER_DETAILS[tier] || TIER_DETAILS.Silver;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative font-sans overflow-x-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-900/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-900/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col relative font-sans overflow-x-hidden">
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 bg-[#0b0f19] pointer-events-none" />
 
       {/* Global Header */}
       <GlobalHeader 
@@ -744,14 +743,10 @@ export default function Lobby({
                     </span>
                   </div>
                 ) : (
-                  <>
-                    <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600" />
-                    <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 opacity-50 blur-lg animate-pulse" />
-                    <div className="relative flex items-center justify-center gap-3">
-                      <Swords className="w-5 h-5 animate-pulse" />
-                      <span>매칭 시작 (Find Match)</span>
-                    </div>
-                  </>
+                  <div className="relative flex items-center justify-center gap-3 bg-red-600 hover:bg-red-500 text-white font-black py-0.5 px-4 rounded-xl transition-colors">
+                    <Swords className="w-5 h-5" />
+                    <span>매칭 시작 (Find Match)</span>
+                  </div>
                 )}
               </motion.button>
 
