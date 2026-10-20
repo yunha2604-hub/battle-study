@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배틀스터디 주요 기능 구조도 및 투 트랙 아키텍처</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-paper: #ffffff;
+      --color-ink: #0f172a;
+      --color-muted: #334155;
+      --color-line: #0f172a;
+      --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 48px;
+      color: var(--color-ink);
+      background: #ffffff;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .diagram-wrapper {
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      border: 1.5px solid var(--color-line);
+      border-radius: 4px;
+      padding: 20px 20px;
+    }
+
+    .header {
+      margin-bottom: 18px;
+      border-bottom: 1.5px solid var(--color-line);
+      padding-bottom: 12px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--color-ink);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+
+    .description {
+      margin: 0;
+      font-size: 13px;
+      color: var(--color-muted);
+      line-height: 1.4;
+    }
+
+    .canvas-container {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      padding: 2px 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 700px;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="diagram-wrapper">
+    <header class="header">
+      <p class="eyebrow">Battle Study Arena & Edu • System Architecture</p>
+      <h1>배틀스터디 주요 기능 구조도 및 투 트랙 아키텍처</h1>
+      <p class="description">
+        단일 랜딩 진입점에서 공교육 평가 관리(에듀 트랙)와 학생 게이미피케이션 학습 배틀(아레나 트랙)을 분리 및 연동하는 시스템 아키텍처입니다.
+      </p>
+    </header>
+
+    <div class="canvas-container">
+      <svg viewBox="0 0 740 610" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+          </marker>
+        </defs>
+
+        <!-- 최상단: 통합 랜딩 페이지 (폭 260 중앙 배치) -->
+        <rect x="240" y="16" width="260" height="64" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="370" y="42" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="15"
+          font-weight="800" fill="#0f172a">배틀스터디 통합 랜딩 (/)</text>
+        <text x="370" y="64" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="13"
+          fill="#334155">1초 배틀 • 카카오 • 에듀</text>
+
+        <!-- 좌측: 에듀 공교육 트랙 영역 (폭 340) -->
+        <rect x="20" y="105" width="340" height="410" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <rect x="20" y="105" width="340" height="38" rx="4" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="32" y="130" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">배틀스터디 에듀 (수학 수행평가)</text>
+        <text x="348" y="130" text-anchor="end" font-family="'Geist Mono', monospace" font-size="13" font-weight="700"
+          fill="#0f172a">EDU</text>
+
+        <!-- 에듀 1. 모달 (폭 310) -->
+        <rect x="35" y="158" width="310" height="40" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="190" y="184" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="13"
+          font-weight="800" fill="#0f172a">에듀 인증 (교원인증 / 학생학번)</text>
+
+        <!-- 에듀 2. 교사용 대시보드 박스 (폭 310) -->
+        <rect x="35" y="212" width="310" height="195" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <rect x="35" y="212" width="310" height="30" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.2" />
+        <text x="45" y="233" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">교사용 대시보드 (/teacher)</text>
+
+        <!-- 4대 기능 내부 그리드 (각 폭 145) -->
+        <!-- 기능 1 -->
+        <rect x="41" y="252" width="145" height="56" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+        <text x="48" y="275" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">기능
+          1: AI 출제</text>
+        <text x="48" y="296" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">2022 개정
+          성취기준</text>
+
+        <!-- 기능 2 -->
+        <rect x="194" y="252" width="145" height="56" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+        <text x="201" y="275" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800"
+          fill="#0f172a">기능 2: 1회용 PIN</text>
+        <text x="201" y="296" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700"
+          fill="#0f172a">MTH-7429 (즉시 만료)</text>
+
+        <!-- 기능 3 -->
+        <rect x="41" y="318" width="145" height="56" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+        <text x="48" y="341" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">기능
+          3: 학생 관리</text>
+        <text x="48" y="362" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">반/번호/이름
+          필터</text>
+
+        <!-- 기능 4 -->
+        <rect x="194" y="318" width="145" height="56" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="201" y="341" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800"
+          fill="#0f172a">기능 4: 2단계 평가</text>
+        <text x="201" y="362" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700"
+          fill="#0f172a">AI 채점 ➔ 교사 확정</text>
+
+        <!-- 에듀 3. 학생 뷰들 (각 폭 145) -->
+        <rect x="41" y="420" width="145" height="80" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="50" y="447" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800" fill="#0f172a">학사
+          포털</text>
+        <text x="50" y="472" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">학번 로그인 ➔
+          열람</text>
+
+        <rect x="194" y="420" width="145" height="80" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="203" y="447" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">시험 응시 (/test)</text>
+        <text x="203" y="472" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700"
+          fill="#0f172a">칠판 PIN • 이탈 0점</text>
+
+        <!-- 시험 -> 채점 연동 -->
+        <path d="M 266 420 V 374" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)" />
+
+        <!-- 우측: 아레나 게이밍 트랙 영역 (폭 340) -->
+        <rect x="380" y="105" width="340" height="410" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <rect x="380" y="105" width="340" height="38" rx="4" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="392" y="130" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">배틀스터디 아레나 (퀴즈 배틀)</text>
+        <text x="708" y="130" text-anchor="end" font-family="'Geist Mono', monospace" font-size="13" font-weight="700"
+          fill="#0f172a">ARENA</text>
+
+        <!-- 아레나 1. 인증/진입 (폭 310) -->
+        <rect x="395" y="158" width="310" height="40" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="550" y="184" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="13"
+          font-weight="800" fill="#0f172a">1초 배틀 • 카카오 학교인증</text>
+
+        <!-- 아레나 2. 메인 로비 허브 (폭 310) -->
+        <rect x="395" y="212" width="310" height="120" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <rect x="395" y="212" width="310" height="30" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.2" />
+        <text x="405" y="233" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">메인 로비 (/lobby)</text>
+
+        <!-- 3개 탭 구성 (각 폭 96) -->
+        <!-- 탭 1 -->
+        <rect x="400" y="250" width="96" height="72" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+        <text x="406" y="272" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">탭
+          1: 배틀</text>
+        <text x="406" y="291" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">과목/랭킹</text>
+        <text x="406" y="309" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">에너지
+          1</text>
+
+        <!-- 탭 2 -->
+        <rect x="502" y="250" width="96" height="72" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+        <text x="508" y="272" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">탭
+          2: 전적</text>
+        <text x="508" y="291" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">OP.GG</text>
+        <text x="508" y="309" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">방사형 차트</text>
+
+        <!-- 탭 3 -->
+        <rect x="604" y="250" width="96" height="72" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="610" y="272" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">탭
+          3: 오답</text>
+        <text x="610" y="291" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">오답 몬스터</text>
+        <text x="610" y="309" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800"
+          fill="#0f172a">완충!</text>
+
+        <!-- 아레나 3. 배틀 아레나 & 결과 페이지 (각 폭 145) -->
+        <rect x="401" y="348" width="145" height="88" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="410" y="374" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">배틀 아레나</text>
+        <text x="410" y="397" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">HP 100 •
+          크리티컬</text>
+        <text x="410" y="418" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700"
+          fill="#0f172a">선답 10초 압박</text>
+
+        <rect x="554" y="348" width="145" height="88" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="563" y="374" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">결과 페이지</text>
+        <text x="563" y="397" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">LP 변동 •
+          승격</text>
+        <text x="563" y="418" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#0f172a">AI 오답 복기 해설</text>
+
+        <!-- 배틀 -> 결과 -> 로비 복귀 -->
+        <path d="M 546 392 H 554" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 626 436 V 458 H 470 V 332" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="4 3"
+          marker-end="url(#arrow)" fill="none" />
+        <text x="580" y="475" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700"
+          fill="#0f172a">로비 복귀</text>
+
+        <!-- 상단 랜딩 분기선 -->
+        <path d="M 240 48 H 190 V 158" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" fill="none" />
+        <text x="198" y="40" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800"
+          fill="#0f172a">공교육</text>
+
+        <path d="M 500 48 H 550 V 158" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" fill="none" />
+        <text x="510" y="40" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">배틀
+        </text>
+
+        <!-- 에듀 모달 분기 -->
+        <path d="M 113 198 V 212" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 266 198 V 420" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+
+        <!-- 아레나 인증 -> 로비 -->
+        <path d="M 550 198 V 212" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+
+        <!-- 하단 수익화 모델 바 (폭 700) -->
+        <rect x="20" y="538" width="700" height="52" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="32" y="570" font-family="'Noto Sans KR', sans-serif" font-size="14" font-weight="800"
+          fill="#0f172a">비즈니스 모델:</text>
+        <text x="135" y="570" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">B2C: 월 9,900원 AI
+          구독 (마진 97%)</text>
+        <text x="430" y="570" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800"
+          fill="#0f172a">B2G: 학교/교육청 바우처 연간 계약</text>
+      </svg>
+    </div>
+  </main>
+
+</body>
+
+</html>
