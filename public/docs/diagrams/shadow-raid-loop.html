@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한눈에 보는 오답 복습 4단계 흐름 - 배틀스터디</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --color-paper: #ffffff;
+      --color-ink: #0f172a;
+      --color-muted: #334155;
+      --color-line: #0f172a;
+      --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 48px;
+      color: var(--color-ink);
+      background: #ffffff;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    .diagram-wrapper {
+      width: 100%;
+      max-width: 1140px;
+      background: #ffffff;
+      border: 1.5px solid var(--color-line);
+      border-radius: 4px;
+      padding: 28px 32px;
+    }
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--color-line);
+      padding-bottom: 14px;
+    }
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--color-ink);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+    .description {
+      margin: 0;
+      font-size: 14px;
+      color: var(--color-muted);
+      line-height: 1.5;
+    }
+    .canvas-container {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      padding: 6px 0;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 1040px;
+      height: auto;
+    }
+    .footer-notes {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      border-top: 1.5px solid var(--color-line);
+      padding-top: 18px;
+    }
+    .note-card {
+      background: #ffffff;
+      border: 1px solid var(--color-line);
+      border-radius: 4px;
+      padding: 12px 14px;
+    }
+    .note-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-bottom: 4px;
+    }
+    .note-desc {
+      font-size: 12px;
+      color: var(--color-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="diagram-wrapper">
+    <header class="header">
+      <p class="eyebrow">Battle Study Arena • Technical Architecture</p>
+      <h1>한눈에 보는 오답 복습 4단계 흐름</h1>
+      <p class="description">
+        게임 과몰입을 막고, 틀린 문제를 직접 다시 풀어야만 배틀을 계속할 수 있는 자연스러운 복습 구조입니다.
+      </p>
+    </header>
+
+    <div class="canvas-container">
+      <svg viewBox="0 0 1080 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+          </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4472c4" />
+          </marker>
+        </defs>
+
+        <!-- 상단 범례 (Legend) -->
+        <line x1="770" y1="26" x2="795" y2="26" stroke="#4472c4" stroke-width="2" />
+        <text x="802" y="30" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#1f4e78">진행 순서</text>
+        <line x1="905" y1="26" x2="930" y2="26" stroke="#4472c4" stroke-width="2" stroke-dasharray="3 2" />
+        <text x="937" y="30" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#1f4e78">복습 후 다시 도전</text>
+
+        <!-- 열 1 헤더 -->
+        <text x="45" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">1단계: 1:1 퀴즈 배틀</text>
+
+        <!-- 열 2 헤더 -->
+        <text x="305" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">2단계: 에너지 방전 / 잠금</text>
+
+        <!-- 열 3 헤더 -->
+        <text x="565" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">3단계: 오답 던전 복습</text>
+
+        <!-- 열 4 헤더 -->
+        <text x="825" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">4단계: 격파 & 재충전</text>
+
+        <!-- ========================================== -->
+        <!-- 1단계 카드들 (x=45, 너비 205) -->
+        <!-- ========================================== -->
+        <!-- 1.1 실시간 배틀 -->
+        <rect x="45" y="80" width="205" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="57" y="103" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">1:1 실시간 퀴즈 대결</text>
+        <rect x="55" y="112" width="185" height="26" rx="2" fill="#f8fafc" stroke="#0f172a" stroke-width="1" />
+        <text x="147" y="129" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">보유: [⚡⚡⚡⚡⚡] (5/5)</text>
+        <text x="57" y="153" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">• 매칭 1회당 번개 에너지 1개 차감</text>
+
+        <!-- 1.2 오답 데이터 축적 -->
+        <rect x="45" y="185" width="205" height="95" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="57" y="210" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">오답 데이터 실시간 축적</text>
+        <text x="57" y="229" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">틀린 문제 단원/성취기준 태깅</text>
+        <!-- 점선 예시 박스 -->
+        <rect x="55" y="237" width="185" height="33" rx="2" fill="#fafafa" stroke="#0f172a" stroke-width="1" stroke-dasharray="3 2" />
+        <text x="61" y="250" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="600" fill="#0f172a">[예시] 오답 몬스터 생성</text>
+        <text x="61" y="262" font-family="'Geist Mono', monospace" font-size="9.5" font-weight="700" fill="#475569">삼각비 구미호 / 관계사 골렘</text>
+
+        <!-- 1.3 복귀 착륙 박스 (점선) -->
+        <rect x="45" y="305" width="205" height="52" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="3 2" />
+        <text x="147" y="326" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">배틀 재진입 활성화</text>
+        <text x="147" y="344" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" fill="#334155">충전된 에너지로 매칭 대기실 복귀</text>
+
+        <!-- ========================================== -->
+        <!-- 2단계 카드들 (x=305, 너비 205) -->
+        <!-- ========================================== -->
+        <!-- 2.1 에너지 방전 -->
+        <rect x="305" y="95" width="205" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="317" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">연속 5판 진행 후 방전</text>
+        <rect x="317" y="128" width="181" height="26" rx="2" fill="#0f172a" />
+        <text x="407" y="145" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#ffffff">ENERGY: [     ] (0/5)</text>
+        <text x="317" y="168" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">무제한 게임 과몰입 원천 차단</text>
+
+        <!-- 2.2 매칭 잠금 -->
+        <rect x="305" y="205" width="205" height="95" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="317" y="230" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">아레나 매칭 버튼 잠금 (LOCK)</text>
+        <text x="317" y="250" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">"에너지가 모두 소진되었습니다!"</text>
+        <rect x="317" y="258" width="181" height="30" rx="2" fill="#f8fafc" stroke="#0f172a" stroke-width="1" />
+        <text x="407" y="277" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="700" fill="#0f172a">[오답 복습 던전 즉시 입장]</text>
+
+        <!-- ========================================== -->
+        <!-- 3단계 카드들 (x=565, 너비 205) -->
+        <!-- ========================================== -->
+        <!-- 3.1 1차 AI 오답 분석 -->
+        <rect x="565" y="95" width="205" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="577" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">1차: AI 오답 함정 분석</text>
+        <text x="577" y="140" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">개념 왜곡 및 풀이 오류 진단</text>
+        <rect x="575" y="147" width="185" height="24" rx="2" fill="#f8fafc" stroke="#0f172a" stroke-width="1" />
+        <text x="667" y="163" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="700" fill="#0f172a">[나의 1줄 풀이노트] 직접 작성</text>
+
+        <!-- 3.2 2차 쌍둥이 변형 배틀 -->
+        <rect x="565" y="205" width="205" height="95" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="577" y="230" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">2차: 쌍둥이 변형 배틀</text>
+        <text x="577" y="250" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">동일 성취기준 숫자·조건 변형</text>
+        <rect x="575" y="258" width="185" height="30" rx="2" fill="#0f172a" />
+        <text x="667" y="277" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="800" fill="#ffffff">단순 암기 차단 & 10초 타임어택</text>
+
+        <!-- ========================================== -->
+        <!-- 4단계 카드들 (x=825, 너비 210) -->
+        <!-- ========================================== -->
+        <!-- 4.1 몬스터 격파 성공 -->
+        <rect x="825" y="95" width="210" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="837" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">변형 문항 통과 (VICTORY)</text>
+        <text x="837" y="142" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">오답 극복 완료 & +5 LP 보상</text>
+        <text x="837" y="162" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">weakness_overcome: true</text>
+
+        <!-- 4.2 에너지 즉시 회복 -->
+        <rect x="825" y="205" width="210" height="95" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <rect x="837" y="217" width="186" height="28" rx="2" fill="#0f172a" />
+        <text x="930" y="235" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="12" font-weight="700" fill="#ffffff">RECHARGED: Energy + 1</text>
+        <text x="837" y="262" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">아레나 매칭 잠금 즉시 해제</text>
+        <text x="837" y="282" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">1:1 배틀 대기실 자동 복귀</text>
+
+
+        <!-- ========================================== -->
+        <!-- 직각 연결선 (손익분기점 표준 블루 #4472c4 하이라이트) -->
+        <!-- ========================================== -->
+        <!-- 1.1 -> 1.2 -->
+        <path d="M 147 165 V 185" stroke="#4472c4" stroke-width="1.8" marker-end="url(#arrow-blue)" />
+
+        <!-- 1.2 -> 2.1 (에너지 소진 시 방전) -->
+        <path d="M 250 232 H 277 Q 285 232 285 145 Q 285 137 293 137 H 305" stroke="#4472c4" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
+
+        <!-- 2.1 -> 2.2 -->
+        <path d="M 407 180 V 205" stroke="#4472c4" stroke-width="1.8" marker-end="url(#arrow-blue)" />
+
+        <!-- 2.2 -> 3.1 (복습 던전 입장) -->
+        <path d="M 510 252 H 537 Q 545 252 545 145 Q 545 137 553 137 H 565" stroke="#4472c4" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
+
+        <!-- 3.1 -> 3.2 -->
+        <path d="M 667 180 V 205" stroke="#4472c4" stroke-width="1.8" marker-end="url(#arrow-blue)" />
+
+        <!-- 3.2 -> 4.1 (격파 성공) -->
+        <path d="M 770 252 H 797 Q 805 252 805 145 Q 805 137 813 137 H 825" stroke="#4472c4" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
+
+        <!-- 4.1 -> 4.2 -->
+        <path d="M 930 180 V 205" stroke="#4472c4" stroke-width="1.8" marker-end="url(#arrow-blue)" />
+
+
+        <!-- ========================================== -->
+        <!-- 대형 수평 유턴 순환선 (4단계 ➔ 1단계 복귀 루프, 블루 하이라이트) -->
+        <!-- ========================================== -->
+        <path d="M 930 300 V 415 Q 930 425 915 425 H 162 Q 147 425 147 415 V 360" stroke="#4472c4" stroke-width="2.2" stroke-dasharray="5 3" marker-end="url(#arrow-blue)" fill="none" />
+
+        <!-- 순환선 중앙 텍스트 배지 -->
+        <rect x="320" y="410" width="440" height="30" rx="3" fill="#ffffff" stroke="#4472c4" stroke-width="1.5" />
+        <text x="540" y="429" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="800" fill="#1f4e78">
+          에너지 충전 완료 ➔ 1:1 퀴즈 배틀 다시 도전!
+        </text>
+
+
+        <!-- ========================================== -->
+        <!-- 최하단 핵심 교육 원리 배너 (y=520, 높이 42) -->
+        <!-- ========================================== -->
+        <rect x="30" y="520" width="1020" height="42" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
+        <text x="45" y="546" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">핵심 교육 원리:</text>
+        <text x="160" y="546" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">
+          게임 과몰입 방지 ➔ <tspan font-weight="800" fill="#0f172a">틀린 문제를 직접 다시 풀어야만 다음 배틀을 이어갈 수 있는 복습 규칙</tspan>
+        </text>
+      </svg>
+    </div>
+
+    <footer class="footer-notes">
+      <div class="note-card">
+        <div class="note-title">1. 유한 에너지 시스템</div>
+        <p class="note-desc">최대 5개의 에너지를 두고 배틀 시마다 1개씩 소모하여 무한 과몰입을 차단하고 피로도를 관리합니다.</p>
+      </div>
+      <div class="note-card">
+        <div class="note-title">2. 2단계 오답 분석 & 변형 문제</div>
+        <p class="note-desc">단순 답안 암기를 막기 위해 AI 오답 함정 분석 후 동일 성취기준의 숫자 변형 쌍둥이 문제를 직접 풀어야 통과합니다.</p>
+      </div>
+      <div class="note-card">
+        <div class="note-title">3. 학습 보상 기반 선순환 구조</div>
+        <p class="note-desc">오답 던전 몬스터를 격파해야만 에너지가 충전되고 랭킹전에 재진입할 수 있어 자연스러운 복습을 강제합니다.</p>
+      </div>
+    </footer>
+  </main>
+
+</body>
+</html>
