@@ -3,281 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>배틀스터디 시스템 아키텍처 및 프로세스 다이어그램</title>
+  <title>배틀스터디 시스템 다이어그램 목록</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-primary: #0a0d14;
-      --bg-card: #121824;
-      --bg-card-hover: #182234;
-      --border-color: #232f46;
-      --border-focus: #3b82f6;
-      --text-title: #f1f5f9;
-      --text-desc: #94a3b8;
-      --text-muted: #64748b;
-      --accent-blue: #3b82f6;
-      --accent-cyan: #06b6d4;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-title);
+      background-color: #ffffff;
+      color: #1e293b;
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      line-height: 1.6;
-      padding: 40px 20px;
-      min-height: 100vh;
+      line-height: 1.8;
+      padding: 40px 24px;
     }
-
     .container {
-      max-width: 960px;
+      max-width: 800px;
       margin: 0 auto;
     }
-
-    header {
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 24px;
-      margin-bottom: 36px;
-    }
-
-    .nav-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      color: var(--accent-cyan);
-      background-color: rgba(6, 182, 212, 0.1);
-      border: 1px solid rgba(6, 182, 212, 0.25);
-      padding: 4px 10px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .home-link {
-      color: var(--accent-blue);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid var(--border-color);
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-      background-color: var(--bg-card);
-    }
-
-    .home-link:hover {
-      background-color: var(--bg-card-hover);
-      border-color: var(--accent-blue);
-    }
-
     h1 {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-      color: #ffffff;
-    }
-
-    .subtitle {
-      color: var(--text-desc);
-      font-size: 15px;
-      font-weight: 400;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 24px;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .card:hover {
-      background-color: var(--bg-card-hover);
-      border-color: var(--border-focus);
-      transform: translateY(-2px);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .card-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent-blue);
-      letter-spacing: 0.05em;
-    }
-
-    .card-link-arrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      color: var(--text-muted);
-      transition: color 0.2s ease, transform 0.2s ease;
-    }
-
-    .card:hover .card-link-arrow {
-      color: var(--accent-blue);
-      transform: translateX(4px);
-    }
-
-    .card-title {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
+      color: #0f172a;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
     }
-
-    .card-desc {
-      font-size: 14px;
-      color: var(--text-desc);
-      line-height: 1.5;
-    }
-
-    .card-tags {
+    ol {
+      padding-left: 20px;
       display: flex;
-      gap: 8px;
-      margin-top: 14px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 12px;
     }
-
-    .tag {
-      font-size: 11px;
+    li {
+      font-size: 15px;
+      color: #334155;
+    }
+    a {
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    a:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+    .filename {
       font-family: 'JetBrains Mono', monospace;
-      padding: 2px 8px;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      color: var(--text-muted);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    footer {
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--text-muted);
-      font-size: 12px;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 400;
+      margin-left: 4px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <div class="nav-bar">
-        <span class="badge">Documentation & Architecture</span>
-        <a href="../" class="home-link">서비스 메인으로 이동</a>
-      </div>
-      <h1>배틀스터디 시스템 다이어그램 뷰어</h1>
-      <p class="subtitle">배틀스터디(Battle Study Arena)의 시스템 아키텍처, 인증 프로세스, 수학 수행평가 4단계 라이프사이클 및 순환 루프 명세 다이어그램 목록입니다.</p>
-    </header>
-
-    <div class="grid">
-      <a href="./system-architecture.html" class="card">
-        <div class="card-header">
-          <span class="card-id">DIAGRAM 01</span>
-          <span class="card-link-arrow">열기 &rarr;</span>
-        </div>
-        <div class="card-title">주요 기능 구조도 및 투 트랙 아키텍처</div>
-        <div class="card-desc">학생용 실시간 퀴즈 배틀 아레나와 교사용 청계중 수학 수행평가 관리 시스템 간의 투 트랙(Two-Track) 데이터 연동 및 컴포넌트 계층 구조.</div>
-        <div class="card-tags">
-          <span class="tag">Architecture</span>
-          <span class="tag">Two-Track</span>
-          <span class="tag">Next.js 16</span>
-        </div>
-      </a>
-
-      <a href="./assessment-lifecycle.html" class="card">
-        <div class="card-header">
-          <span class="card-id">DIAGRAM 02</span>
-          <span class="card-link-arrow">열기 &rarr;</span>
-        </div>
-        <div class="card-title">수학 수행평가 4단계 End-to-End 라이프사이클</div>
-        <div class="card-desc">AI 문항 출제(2022 개정 성취기준 연계)부터 일회성 PIN 발급 및 만료, 시험 진행 및 실시간 답안 제출, 2단계 평가(AI 1차 자동 채점 및 교사 2차 최종 확정)까지의 전체 운영 라이프사이클.</div>
-        <div class="card-tags">
-          <span class="tag">Teacher Flow</span>
-          <span class="tag">Assessment Lifecycle</span>
-          <span class="tag">2-Step Grading</span>
-        </div>
-      </a>
-
-      <a href="./edu-auth-flow.html" class="card">
-        <div class="card-header">
-          <span class="card-id">DIAGRAM 03</span>
-          <span class="card-link-arrow">열기 &rarr;</span>
-        </div>
-        <div class="card-title">교사용 교육 계정 인증 흐름도</div>
-        <div class="card-desc">공교육 교사 권한 검증 및 전용 대시보드 접근 제어 파이프라인.</div>
-        <div class="card-tags">
-          <span class="tag">Auth Flow</span>
-          <span class="tag">Teacher Verification</span>
-        </div>
-      </a>
-
-      <a href="./arena-auth-flow.html" class="card">
-        <div class="card-header">
-          <span class="card-id">DIAGRAM 04</span>
-          <span class="card-link-arrow">열기 &rarr;</span>
-        </div>
-        <div class="card-title">학생용 무마찰 진입(Frictionless Onboarding) 및 배틀 매칭 흐름도</div>
-        <div class="card-desc">복잡한 회원가입 절차 없이 닉네임과 학교 검색만으로 즉시 진입하는 온보딩 구조 및 실시간 배틀 매칭 로직.</div>
-        <div class="card-tags">
-          <span class="tag">Student Flow</span>
-          <span class="tag">Frictionless Onboarding</span>
-          <span class="tag">Matchmaking</span>
-        </div>
-      </a>
-
-      <a href="./shadow-raid-loop.html" class="card">
-        <div class="card-header">
-          <span class="card-id">DIAGRAM 05</span>
-          <span class="card-link-arrow">열기 &rarr;</span>
-        </div>
-        <div class="card-title">오답 던전(Shadow Raid) 및 번개 에너지 복습 순환 루프</div>
-        <div class="card-desc">배틀 중 발생한 오답 데이터가 몬스터로 생성되며, 오답 격파 시 번개 에너지가 충전되어 배틀을 지속할 수 있는 게임화 기반 복습 강제 순환 메커니즘.</div>
-        <div class="card-tags">
-          <span class="tag">Game Loop</span>
-          <span class="tag">Shadow Raid</span>
-          <span class="tag">Review Loop</span>
-        </div>
-      </a>
-    </div>
-
-    <footer>
-      <span>배틀스터디 (Battle Study Arena)</span>
-      <span>청계중학교 3학년 수학과 전용 수행평가 및 실시간 퀴즈 배틀 시제품</span>
-    </footer>
+    <h1>배틀스터디 시스템 다이어그램 목록</h1>
+    <ol>
+      <li><a href="./system-architecture.html">주요 기능 구조도 및 투 트랙 아키텍처 <span class="filename">(system-architecture.html)</span></a></li>
+      <li><a href="./assessment-lifecycle.html">수학 수행평가 4단계 라이프사이클 <span class="filename">(assessment-lifecycle.html)</span></a></li>
+      <li><a href="./arena-flowchart-standard.html">학생 아레나 인증 표준 순서도 <span class="filename">(arena-flowchart-standard.html)</span></a></li>
+      <li><a href="./edu-flowchart-standard.html">교사 에듀 인증 표준 순서도 <span class="filename">(edu-flowchart-standard.html)</span></a></li>
+      <li><a href="./shadow-raid-loop.html">오답 던전 및 복습 순환 루프 <span class="filename">(shadow-raid-loop.html)</span></a></li>
+    </ol>
   </div>
 </body>
 </html>
