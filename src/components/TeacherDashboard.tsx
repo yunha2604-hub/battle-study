@@ -475,7 +475,7 @@ export default function TeacherDashboard({
           type: "서술형 풀이",
           correctAnswer: "단계별 풀이 및 최종값 유도",
           solution: assessmentRubricCriteria.trim() 
-            ? `교사 입력 루브릭 반영 채점 기준: ${assessmentRubricCriteria.trim()}`
+            ? `교사 입력 채점 기준표 반영: ${assessmentRubricCriteria.trim()}`
             : "조건에 맞춘 식 수립(15점) + 계산 과정의 정확성(10점) + 최종 해 도출(10점)",
           points: 35,
           difficulty: difficulty,
@@ -903,12 +903,12 @@ export default function TeacherDashboard({
               </div>
             </div>
 
-            {/* 2) AI 1차 자동 채점 기준 및 평가요소(루브릭) 기입란 */}
+            {/* 2) AI 1차 자동 채점 기준표 기입란 */}
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>1차 자동 채점 기준 및 채점 루브릭 (기준표)</span>
+                  <span>1차 자동 채점 기준표 (부분점수 및 감점 기준)</span>
                 </label>
                 <span className="text-[10px] text-emerald-600 font-bold">📋 객관식·서술형 자동 채점 기준</span>
               </div>
@@ -920,7 +920,7 @@ export default function TeacherDashboard({
                 className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-medium resize-none shadow-inner"
               />
               <p className="text-[10px] text-slate-500 leading-tight">
-                * 학생 답안 제출 시 상기 루브릭을 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
+                * 학생 답안 제출 시 위 채점 기준표를 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
               </p>
             </div>
 

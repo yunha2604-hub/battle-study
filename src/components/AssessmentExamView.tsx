@@ -476,7 +476,7 @@ export default function AssessmentExamView({
               </div>
             )}
 
-            {/* Teacher Inspector Solution & Rubric Card */}
+            {/* Teacher Inspector Solution & Criteria Card */}
             {isTeacherMode && showTeacherInspector && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아레나 게이밍 트랙 표준 인증 순서도 (중학교 정보 교과 기준) - 배틀스터디</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-paper: #ffffff;
+      --color-ink: #0f172a;
+      --color-muted: #475569;
+      --color-subtle: #64748b;
+      --color-border: #cbd5e1;
+      --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 36px;
+      color: var(--color-ink);
+      background: #ffffff;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .diagram-wrapper {
+      width: 100%;
+      max-width: 820px;
+      background: #ffffff;
+      border: 1.5px solid var(--color-ink);
+      border-radius: 4px;
+      padding: 24px 28px;
+    }
+
+    .header {
+      margin-bottom: 16px;
+      border-bottom: 1.5px solid var(--color-ink);
+      padding-bottom: 12px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--color-ink);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+
+    .description {
+      margin: 0;
+      font-size: 13px;
+      color: var(--color-muted);
+      line-height: 1.45;
+    }
+
+    .canvas-container {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      padding: 4px 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 720px;
+      height: auto;
+    }
+
+    .legend-container {
+      margin-top: 18px;
+      border-top: 1.5px solid var(--color-ink);
+      padding-top: 14px;
+    }
+
+    .legend-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--color-ink);
+      margin-bottom: 8px;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .legend-item {
+      border: 1px solid var(--color-border);
+      border-radius: 3px;
+      padding: 7px 9px;
+      background: #ffffff;
+    }
+
+    .legend-symbol {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-bottom: 2px;
+    }
+
+    .legend-meaning {
+      font-size: 10.5px;
+      color: var(--color-subtle);
+      margin: 0;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="diagram-wrapper">
+    <header class="header">
+      <p class="eyebrow">Battle Study Arena • Gradual Authentication Specification</p>
+      <h1>아레나 게이밍 트랙 표준 인증 순서도 (중학교 정보 교과 기준)</h1>
+      <p class="description">
+        회원가입 없는 즉시 참여, 승점 보존 카카오 연결, 소속 학교 공식 인증의 3단계 인증 구조를 정보 교과서 표준 기호로 도식화한 순서도입니다.
+      </p>
+    </header>
+
+    <div class="canvas-container">
+      <svg viewBox="0 0 760 660" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+          </marker>
+          <marker id="arrow-sub" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b" />
+          </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#1d4ed8" />
+          </marker>
+        </defs>
+
+        <!-- ========================================== -->
+        <!-- 1. 시작 캡슐 (Terminator) -->
+        <!-- ========================================== -->
+        <rect x="240" y="14" width="280" height="38" rx="19" fill="#ffffff" stroke="#0f172a" stroke-width="2" />
+        <text x="380" y="38" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="12.5" font-weight="800" fill="#0f172a">시작: 아레나 진입 (/)</text>
+
+        <!-- 하향 화살표 -->
+        <path d="M 380 52 V 70" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+
+        <!-- ========================================== -->
+        <!-- [1단계] 즉시 배틀 참여 (기호 내부에 단계 타이틀 통합) -->
+        <!-- ========================================== -->
+        <!-- 1.1 데이터 입력 (평행사변형 - Data I/O) -->
+        <path d="M 245 70 L 535 70 L 515 116 L 225 116 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="380" y="90" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="800" fill="#0f172a">[1단계: 즉시 참여] 닉네임 &amp; 소속 학교 선택</text>
+        <text x="380" y="106" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" fill="#334155">회원가입 절차 없이 1초 무마찰 진입</text>
+
+        <path d="M 380 116 V 134" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+        <!-- 1.2 처리 (Process) -->
+        <rect x="235" y="134" width="290" height="42" rx="2" fill="#ffffff" stroke="#64748b" stroke-width="1.2" />
+        <text x="380" y="152" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="700" fill="#334155">1초 즉시 참가 자격 부여</text>
+        <text x="380" y="167" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="600" fill="#0f172a">대기 없이 즉시 1:1 배틀 시작</text>
+
+        <path d="M 380 176 V 196" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+
+        <!-- ========================================== -->
+        <!-- [2단계] 카카오 소셜 계정 연결 -->
+        <!-- ========================================== -->
+        <!-- 2.1 마름모 판단 (Decision) -->
+        <path d="M 380 196 L 470 220 L 380 244 L 290 220 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="380" y="224" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">2단계: 카카오 간편 연동?</text>
+
+        <!-- 미연동 분기 -->
+        <path d="M 470 220 H 625 V 244" stroke="#64748b" stroke-width="1.2" marker-end="url(#arrow-sub)" />
+        <text x="545" y="212" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="700" fill="#64748b">나중에 하기</text>
+
+        <rect x="535" y="244" width="180" height="44" rx="2" fill="#ffffff" stroke="#64748b" stroke-width="1.2" />
+        <text x="625" y="262" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#334155">미연동 상태 유지</text>
+        <text x="625" y="278" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9.5" fill="#64748b">창 닫을 시 승점 보관 불가</text>
+
+        <!-- 연동 승인 분기 -->
+        <path d="M 380 244 V 264" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+        <text x="396" y="256" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="700" fill="#0f172a">예</text>
+
+        <!-- 2.2 데이터 입력 (평행사변형 - Data I/O) -->
+        <path d="M 265 264 L 515 264 L 495 306 L 245 306 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="380" y="283" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="800" fill="#0f172a">[입력] 카카오 간편 로그인</text>
+        <text x="380" y="298" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" fill="#334155">고유 회원 식별 정보 연동</text>
+
+        <path d="M 380 306 V 324" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+        <!-- 2.3 처리 (Process) -->
+        <rect x="235" y="324" width="290" height="42" rx="2" fill="#ffffff" stroke="#64748b" stroke-width="1.2" />
+        <text x="380" y="342" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="700" fill="#334155">내 전적 및 승점 영구 보관</text>
+        <text x="380" y="357" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="600" fill="#0f172a">카카오 계정에 경기 기록 저장</text>
+
+        <path d="M 380 366 V 386" stroke="#0f172a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+
+        <!-- ========================================== -->
+        <!-- [3단계] 소속 학교 공식 검증 -->
+        <!-- ========================================== -->
+        <!-- 3.1 마름모 판단 (Decision: 인증 방식) -->
+        <path d="M 380 386 L 470 410 L 380 434 L 290 410 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="380" y="414" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">3단계: 학교 인증 수단은?</text>
+
+        <!-- 방법 A (GPS/Wi-Fi - 핵심 인증 라인 하이라이트) -->
+        <path d="M 290 410 H 195 V 446" stroke="#1d4ed8" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+        <text x="240" y="402" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="800" fill="#1d4ed8">[방법 A: 현장 인증]</text>
+
+        <rect x="95" y="446" width="200" height="48" rx="2" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.8" />
+        <text x="195" y="464" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#1d4ed8">GPS 현장 위치 or 교내 Wi-Fi</text>
+        <text x="195" y="478" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9.5" fill="#1e3a8a">학교 반경 150m 이내 1초 자동 확인</text>
+        <text x="195" y="489" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" fill="#475569">위치 조작 시도 시 즉시 차단</text>
+
+        <!-- 방법 B (동문 추천 - 핵심 인증 라인 하이라이트) -->
+        <path d="M 470 410 H 565 V 446" stroke="#1d4ed8" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+        <text x="520" y="402" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="800" fill="#1d4ed8">[방법 B: 동문 추천]</text>
+
+        <rect x="465" y="446" width="200" height="48" rx="2" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.8" />
+        <text x="565" y="464" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#1d4ed8">재학생 상호 추천 코드</text>
+        <text x="565" y="478" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9.5" fill="#1e3a8a">인증된 재학생 2~3인 초대 연계</text>
+        <text x="565" y="489" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" fill="#475569">원격 접속 시 동문 네트워크 확인</text>
+
+        <!-- 양쪽 집결 (핵심 인증 라인) -->
+        <path d="M 195 494 V 514 H 380" stroke="#1d4ed8" stroke-width="1.5" />
+        <path d="M 565 494 V 514 H 380" stroke="#1d4ed8" stroke-width="1.5" />
+        <path d="M 380 514 V 528" stroke="#1d4ed8" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+
+        <!-- 3.2 판단 마름모 -->
+        <path d="M 380 528 L 450 548 L 380 568 L 310 548 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <text x="380" y="552" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="800" fill="#0f172a">인증 조건 충족?</text>
+
+        <path d="M 380 568 V 592" stroke="#1d4ed8" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+        <text x="396" y="582" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="700" fill="#1d4ed8">예</text>
+
+
+        <!-- ========================================== -->
+        <!-- [종료 캡슐로 단일화] 소속 학교 공식 인증 완료 -->
+        <!-- ========================================== -->
+        <rect x="180" y="594" width="400" height="52" rx="26" fill="#ffffff" stroke="#1d4ed8" stroke-width="2" />
+        <text x="380" y="616" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#1d4ed8">종료: 소속 학교 공식 인증 완료</text>
+        <text x="380" y="633" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10" fill="#1e3a8a">개인 획득 승점의 학교 대항전 순위 100% 공식 합산 (90일 소속 보호)</text>
+      </svg>
+    </div>
+
+    <!-- 순서도 기호 범례 (교과서 기준) -->
+    <footer class="legend-container">
+      <div class="legend-title">중학교 정보 교과 순서도(Flowchart) 표준 기호 범례</div>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <div class="legend-symbol">1. 타원/캡슐 (Terminator)</div>
+          <p class="legend-meaning">온보딩 시작과 최종 공식 인증 완료 (2.0px 외곽선)</p>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">2. 마름모 (Decision)</div>
+          <p class="legend-meaning">카카오 연동 여부, 인증 수단 및 충족 검증</p>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">3. 평행사변형 (Data I/O)</div>
+          <p class="legend-meaning">닉네임/학교 입력, 카카오 로그인 정보 입력</p>
+        </div>
+        <div class="legend-item">
+          <div class="legend-symbol">4. 직사각형 (Process)</div>
+          <p class="legend-meaning">즉시 참여 자격 부여 및 계정 저장 처리</p>
+        </div>
+        <div class="legend-item" style="border-color: #1d4ed8;">
+          <div class="legend-symbol" style="color: #1d4ed8;">5. 강조 외곽선 (Highlight)</div>
+          <p class="legend-meaning">GPS·동문 검증 수단 및 최종 공식 인증 완료 라인</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+</body>
+
+</html>
