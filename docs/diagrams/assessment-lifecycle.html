@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>수학 수행평가 관리 4단계 라이프사이클 - 배틀스터디 에듀</title>
+  <title>한눈에 보는 수행평가 4단계 흐름 - 배틀스터디 에듀</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -83,9 +83,9 @@
   <main class="diagram-wrapper">
     <header class="header">
       <p class="eyebrow">Battle Study Edu • Technical Architecture</p>
-      <h1>수학 수행평가 관리 4단계 라이프사이클</h1>
+      <h1>한눈에 보는 수행평가 4단계 흐름</h1>
       <p class="description">
-        청계중 3학년 수학과 전용 환경에서 교사 출제 노동을 82% 절감하고, 1회용 PIN과 2단계 평가로 공정성을 완성하는 구조입니다.
+        중·고등학교 교과 전반의 교사 출제 노동을 82% 절감하고, 1회용 PIN과 2단계 공정 평가(AI 1차 ➔ 교사 2차 확정)를 완성하는 구조입니다. (실증 데모: 청계중 3학년 수학 기준)
       </p>
     </header>
 
@@ -95,9 +95,18 @@
           <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a"/>
           </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#1d4ed8"/>
+          </marker>
         </defs>
 
-        <!-- 단계별 상단 순수 한글 텍스트 헤더 (영문 STEP 삭제 완료) -->
+        <!-- 범례 (Legend) -->
+        <line x1="770" y1="26" x2="795" y2="26" stroke="#1d4ed8" stroke-width="2" />
+        <text x="802" y="30" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#1d4ed8">진행 순서</text>
+        <line x1="885" y1="26" x2="910" y2="26" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="3 2" />
+        <text x="917" y="30" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#475569">실제 예시</text>
+
+        <!-- 단계별 상단 헤더 -->
         <!-- 열 1 헤더 -->
         <text x="45" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">1단계: AI 문항 출제</text>
 
@@ -110,37 +119,42 @@
         <!-- 열 4 헤더 -->
         <text x="825" y="50" font-family="'Noto Sans KR', sans-serif" font-size="15" font-weight="800" fill="#0f172a">4단계: 2단계 공정 평가</text>
 
-        <!-- 1단계 카드들 (압축) -->
+        <!-- 1단계 카드들 -->
         <!-- 1.1 범위 지정 -->
-        <rect x="45" y="80" width="205" height="75" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-        <text x="57" y="105" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">교과서 범위 및 조건 지정</text>
-        <text x="57" y="127" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">3학년 1학기 실수와 연산 (p.12~35)</text>
-        <text x="57" y="145" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">[9수01-01] 성취기준 연동</text>
+        <rect x="45" y="80" width="205" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="57" y="102" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">교과 단원 및 출제 범위 지정</text>
+        <text x="57" y="119" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#475569">교과서 단원/페이지 및 문항 설정</text>
+        
+        <!-- 1.1 예시 데이터 박스 (점선) -->
+        <rect x="55" y="125" width="185" height="32" rx="2" fill="#fafafa" stroke="#0f172a" stroke-width="1" stroke-dasharray="3 2" />
+        <text x="61" y="138" font-family="'Noto Sans KR', sans-serif" font-size="10" font-weight="600" fill="#0f172a">[예시] 중3 수학: 실수와 연산</text>
+        <text x="61" y="150" font-family="'Geist Mono', monospace" font-size="9.5" font-weight="700" fill="#475569">[9수01-01] 성취기준 연동</text>
 
         <!-- 1.2 AI 문항 생성 -->
-        <rect x="45" y="180" width="205" height="75" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-        <text x="57" y="205" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">AI 문항 및 채점표 생성</text>
-        <text x="57" y="227" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">단계별 부분점수 산출 기준표 포함</text>
-        <text x="57" y="245" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">출제 45분 ➔ 8분 압축 (82%↓)</text>
+        <rect x="45" y="185" width="205" height="75" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+        <text x="57" y="210" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">AI 문항 및 채점 기준표 생성</text>
+        <text x="57" y="232" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">단계별 부분점수 산출 기준표 포함</text>
+        <text x="57" y="250" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">출제 시간: 45분 ➔ 8분 (-82%)</text>
 
         <!-- 1.3 교사 최종 확정 -->
         <rect x="45" y="280" width="205" height="75" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
         <text x="57" y="305" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">[수행평가 문제 최종 확정]</text>
-        <text x="57" y="327" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">교사 직접 수식 검토 및 확정</text>
+        <text x="57" y="327" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">교사 직접 문항·지문 검토 및 확정</text>
         <text x="57" y="345" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">수정 잠금 & 시험 준비 완료</text>
 
-        <!-- 2단계 카드들 (압축) -->
+        <!-- 2단계 카드들 -->
         <!-- 2.1 PIN 발급 -->
         <rect x="305" y="95" width="205" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
         <text x="317" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">1회성 시험 PIN 발급</text>
-        <rect x="317" y="130" width="181" height="28" rx="2" fill="#0f172a" />
-        <text x="407" y="149" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="2">PIN: MTH-7429</text>
+        <!-- PIN 예시 박스 (점선 테두리) -->
+        <rect x="317" y="128" width="181" height="28" rx="2" fill="#0f172a" stroke="#0f172a" stroke-width="1" />
+        <text x="407" y="147" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="12" font-weight="700" fill="#ffffff" letter-spacing="1.5">[예시 PIN] MTH-7429</text>
         <text x="317" y="172" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">교실 프로젝터 화면 즉시 공유</text>
 
         <!-- 2.2 실시간 응시 -->
         <rect x="305" y="205" width="205" height="75" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
         <text x="317" y="230" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">수업시간 실시간 응시</text>
-        <text x="317" y="252" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">흰색 시험지 테마 / 1인 1단말기 제한</text>
+        <text x="317" y="252" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">시험 모드 전환 / 1인 1단말기 제한</text>
         <text x="317" y="270" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700" fill="#0f172a">"화면 이탈 시 0점" 상시 감지</text>
 
         <!-- 2.3 만료 처리 -->
@@ -149,78 +163,80 @@
         <text x="317" y="352" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">상태: EXPIRED (즉시 무효화)</text>
         <text x="317" y="370" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">지각자/외부 재접속 영구 차단</text>
 
-        <!-- 3단계 카드들 (압축) -->
-        <!-- 3.1 필터 -->
-        <rect x="565" y="95" width="205" height="70" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-        <text x="577" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">다중 실시간 필터 시스템</text>
-        <text x="577" y="142" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">학년/반(1~3반)/번호/이름 다중 검색</text>
-        <text x="577" y="157" font-family="'Geist Mono', monospace" font-size="10" fill="#0f172a">교사용 전용 테이블</text>
+        <!-- 3단계 카드: 학급 응시 관리 명단 (단독 메인 카드) -->
+        <rect x="565" y="95" width="205" height="205" rx="3" fill="#fafafa" stroke="#0f172a" stroke-width="1.4" stroke-dasharray="4 3" />
+        <text x="575" y="120" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">학급 응시 관리 명단 (예시: 청계중)</text>
 
-        <!-- 3.2 학생 그리드 모형 -->
-        <rect x="565" y="190" width="205" height="150" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-        <text x="577" y="213" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">청계중 3학년 응시 명단</text>
+        <!-- 미니 필터 바 (검색/필터 통합) -->
+        <rect x="573" y="130" width="189" height="22" rx="2" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+        <text x="579" y="145" font-family="'Noto Sans KR', sans-serif" font-size="10" fill="#475569">[필터] 3학년 1반 • 제출완료순 검색</text>
 
-        <rect x="577" y="223" width="181" height="24" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
-        <text x="583" y="239" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#0f172a">30107 김민서</text>
-        <text x="750" y="239" text-anchor="end" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">제출완료 (95점)</text>
+        <rect x="573" y="158" width="189" height="25" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" />
+        <text x="579" y="174" font-family="'Noto Sans KR', sans-serif" font-size="10.5" fill="#0f172a">30107 김민서</text>
+        <text x="755" y="174" text-anchor="end" font-family="'Geist Mono', monospace" font-size="10.5" font-weight="700" fill="#0f172a">제출완료 (95점)</text>
 
-        <rect x="577" y="253" width="181" height="24" rx="2" fill="#f8fafc" stroke="#0f172a" stroke-width="1.2" />
-        <text x="583" y="269" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">30114 박윤하</text>
-        <text x="750" y="269" text-anchor="end" font-family="'Geist Mono', monospace" font-size="11" font-weight="800" fill="#0f172a">최종확정 (100점)</text>
+        <rect x="573" y="189" width="189" height="25" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="1" stroke-dasharray="2 2" />
+        <text x="579" y="205" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="800" fill="#0f172a">30114 박윤하</text>
+        <text x="755" y="205" text-anchor="end" font-family="'Geist Mono', monospace" font-size="10.5" font-weight="800" fill="#0f172a">최종확정 (100점)</text>
 
-        <rect x="577" y="283" width="181" height="24" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
-        <text x="583" y="299" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#0f172a">30122 이준호</text>
-        <text x="750" y="299" text-anchor="end" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">검토대기 (70점)</text>
+        <rect x="573" y="220" width="189" height="25" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" />
+        <text x="579" y="236" font-family="'Noto Sans KR', sans-serif" font-size="10.5" fill="#0f172a">30122 이준호</text>
+        <text x="755" y="236" text-anchor="end" font-family="'Geist Mono', monospace" font-size="10.5" font-weight="700" fill="#0f172a">검토대기 (70점)</text>
 
-        <text x="577" y="328" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="700" fill="#0f172a">총 28명 응시 완료 / 평균 84.5점</text>
+        <line x1="575" y1="258" x2="760" y2="258" stroke="#cbd5e1" stroke-width="1" />
+        <text x="575" y="278" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="700" fill="#475569">총 28명 응시 완료 / 평균 84.5점</text>
 
-        <!-- 4단계 카드들 (압축) -->
+        <!-- 4단계 카드들 -->
         <!-- 4.1 AI 가채점 -->
         <rect x="825" y="95" width="210" height="85" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
         <text x="837" y="120" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">1차: AI 초고속 자동 가채점</text>
         <text x="837" y="142" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">제출 즉시 0.1초 내 서술형 부분점수 계산</text>
-        <text x="837" y="162" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">Gemini Flash 채점 근거 산출</text>
+        <text x="837" y="162" font-family="'Geist Mono', monospace" font-size="11" font-weight="700" fill="#0f172a">문항별 채점 근거 및 기준표 매칭</text>
 
         <!-- 4.2 교사 확정 -->
         <rect x="825" y="205" width="210" height="95" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
         <text x="839" y="230" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">2차: 선생님 최종 점수 확정</text>
         <text x="839" y="252" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">AI 근거 확인 후 점수 가감 & 코멘트 작성</text>
         <text x="839" y="272" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">[최종 성적 확정 (isConfirmed)]</text>
-        <text x="839" y="290" font-family="'Geist Mono', monospace" font-size="10" fill="#0f172a">법적 권한은 인간 교사 단독 귀속</text>
+        <text x="839" y="290" font-family="'Geist Mono', monospace" font-size="10" fill="#0f172a">평가 권한은 인간 교사 단독 귀속</text>
 
         <!-- 4.3 포털 연동 -->
         <rect x="825" y="325" width="210" height="65" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
         <text x="837" y="350" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="800" fill="#0f172a">공교육 학사 포털 실시간 연동</text>
         <text x="837" y="372" font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#334155">학생 학번 로그인 시 확정 점수 열람</text>
 
-        <!-- 직각 연결선 (1.2px) -->
+        <!-- 직각 연결선 (원색 블루 #1d4ed8 하이라이트) -->
         <!-- 1.1 -> 1.2 -->
-        <path d="M 147 155 V 180" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 147 165 V 185" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
         <!-- 1.2 -> 1.3 -->
-        <path d="M 147 255 V 280" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 147 260 V 280" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
 
-        <!-- 1.3 -> 2.1 -->
-        <path d="M 250 317 H 277 Q 285 317 285 309 V 145 Q 285 137 293 137 H 305" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" fill="none" />
+        <!-- 1.3 -> 2.1 (출제 ➔ 배포) -->
+        <path d="M 250 317 H 277 Q 285 317 285 309 V 145 Q 285 137 293 137 H 305" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
 
         <!-- 2.1 -> 2.2 -->
-        <path d="M 407 180 V 205" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 407 180 V 205" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
         <!-- 2.2 -> 2.3 -->
-        <path d="M 407 280 V 305" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 407 280 V 305" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
 
-        <!-- 2.2 -> 3.2 (제출 현황 집계) -->
-        <path d="M 510 242 H 537 Q 545 242 545 250 V 250 Q 545 258 553 258 H 565" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)" fill="none" />
+        <!-- 2.2 -> 3단계 테이블 (실시간 제출 수평 직진) -->
+        <path d="M 510 242 H 565" stroke="#1d4ed8" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#arrow-blue)" fill="none" />
 
-        <!-- 2.3 -> 4.1 (시험 종료 즉시 AI 채점) -->
-        <path d="M 510 342 H 530 Q 538 342 538 334 V 145 Q 538 137 546 137 H 825" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" fill="none" />
+        <!-- 2.3 -> 4.1 (시험 종료 즉시 3단계 하단 여백 직진 ➔ AI 채점 진입) -->
+        <path d="M 510 342 H 790 Q 798 342 798 334 V 145 Q 798 137 806 137 H 825" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
+
+        <!-- 우회 경로 중앙 안내 배지 -->
+        <rect x="575" y="328" width="185" height="26" rx="3" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" />
+        <text x="667" y="345" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" font-weight="700" fill="#1d4ed8">시험 종료 즉시 ➔ AI 채점 시작</text>
 
         <!-- 4.1 -> 4.2 -->
-        <path d="M 930 180 V 205" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 930 180 V 205" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
 
         <!-- 4.2 -> 4.3 -->
-        <path d="M 930 300 V 325" stroke="#0f172a" stroke-width="1.2" marker-end="url(#arrow)" />
+        <path d="M 930 300 V 325" stroke="#1d4ed8" stroke-width="1.8" marker-end="url(#arrow-blue)" />
 
         <!-- 4.2 -> 3.2 (확정 역반영) -->
-        <path d="M 825 252 H 780" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)" fill="none" />
+        <path d="M 825 252 H 770" stroke="#1d4ed8" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#arrow-blue)" fill="none" />
 
         <!-- 하단 성과 지표 바 -->
         <rect x="30" y="520" width="1020" height="42" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5" />
