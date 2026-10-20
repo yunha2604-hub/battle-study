@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배틀스터디 1단계(아레나) 가입자 증가에 따른 손익분기점(BEP) 엑셀 시뮬레이션</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 12px;
+        }
+        .excel-wrap {
+            background-color: #ffffff;
+            border: 1px solid #a6a6a6;
+            color: #000000;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 10px 12px;
+        }
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .excel-table th, .excel-table td {
+            border: 1px solid #bfbfbf;
+            padding: 3px 5px;
+            line-height: 1.25;
+        }
+        .excel-table th {
+            background-color: #d9d9d9;
+            font-weight: 700;
+            text-align: center;
+            color: #000000;
+        }
+        .excel-bep-row td {
+            background-color: #fff2cc;
+            font-weight: 700;
+        }
+        .excel-chart-box {
+            border: 1px solid #bfbfbf;
+            background-color: #ffffff;
+            padding: 6px 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="excel-wrap">
+        <!-- 상단 캡션 (보고서 표 제목 형식, 최소 높이) -->
+        <div class="flex justify-between items-end mb-1.5 pb-1 border-b border-[#808080] text-[11px]">
+            <div class="font-bold text-black">
+                1단계(배틀 아레나) 가입자 증가에 따른 손익분기점(BEP) 시뮬레이션 ('25년 전국 중고생 267만 명·유료 전환율 4% 기준)
+            </div>
+            <div class="text-[#333333]">(단위: 명, 원)</div>
+        </div>
+
+        <!-- 좌우 밀착 배치 (좌: 엑셀 데이터 표 / 우: 엑셀 기본 꺾은선 차트) -->
+        <div class="grid grid-cols-12 gap-2.5 items-stretch">
+            <!-- 좌측 (5칸): 엑셀 표 + 하단 2줄 주석 -->
+            <div class="col-span-5 flex flex-col justify-between">
+                <table class="excel-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 28%;">가입자(모수비중)</th>
+                            <th style="width: 18%;">유료(4%)</th>
+                            <th style="width: 18%;">월 매출</th>
+                            <th style="width: 18%;">월 총비용</th>
+                            <th style="width: 18%;">월 순수익</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center">0 (0.00%)</td>
+                            <td class="text-right">0</td>
+                            <td class="text-right">0</td>
+                            <td class="text-right">2,400,000</td>
+                            <td class="text-right text-[#c00000]">-2,400,000</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">2,500 (0.09%)</td>
+                            <td class="text-right">100</td>
+                            <td class="text-right">1,000,000</td>
+                            <td class="text-right">2,600,000</td>
+                            <td class="text-right text-[#c00000]">-1,600,000</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">5,000 (0.19%)</td>
+                            <td class="text-right">200</td>
+                            <td class="text-right">2,000,000</td>
+                            <td class="text-right">2,800,000</td>
+                            <td class="text-right text-[#c00000]">-800,000</td>
+                        </tr>
+                        <tr class="excel-bep-row">
+                            <td class="text-center">7,500 (0.28%)</td>
+                            <td class="text-right text-[#c00000]">300</td>
+                            <td class="text-right">3,000,000</td>
+                            <td class="text-right">3,000,000</td>
+                            <td class="text-right">0 (BEP)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">10,000 (0.37%)</td>
+                            <td class="text-right">400</td>
+                            <td class="text-right">4,000,000</td>
+                            <td class="text-right">3,200,000</td>
+                            <td class="text-right text-[#1f4e78] font-bold">800,000</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">15,000 (0.56%)</td>
+                            <td class="text-right">600</td>
+                            <td class="text-right">6,000,000</td>
+                            <td class="text-right">3,600,000</td>
+                            <td class="text-right text-[#1f4e78] font-bold">2,400,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 하단 엑셀 셀 형태 산출 기준 요약 -->
+                <div class="border border-[#bfbfbf] bg-[#f9f9f9] px-2 py-1.5 text-[10.5px] leading-snug text-black mt-1.5">
+                    <div>- <b>고정비(월 240만):</b> 전담 인력 1명(200만) + 서버 기본료·관리비(40만)</div>
+                    <div>- <b>변동비:</b> 가입자 2,500명당 AI API·결제수수료·홍보비 20만 원 증가</div>
+                    <div>- <b>현실성:</b> BEP(7,500명)는 <b>'25년 전국 중고생(267만 명)의 0.28%</b>(약 25~30개교) 규모</div>
+                </div>
+            </div>
+
+            <!-- 우측 (7칸): 엑셀 기본 꺾은선 차트 (세로 폭 압축) -->
+            <div class="col-span-7 excel-chart-box flex flex-col justify-between">
+                <div class="flex justify-between items-center px-1 mb-0.5">
+                    <span class="text-[11px] font-bold text-black">가입자 및 유료 사용자 증가에 따른 월 손익 추이 (단위: 만 원)</span>
+                    <!-- 엑셀 기본 범례 (우측 상단 인라인 배치로 세로 공간 절약) -->
+                    <div class="flex items-center gap-4 text-[10.5px]">
+                        <div class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-0.5 bg-[#4472c4]"></span>
+                            <span class="text-black">월 매출</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="inline-block w-4 h-0.5 bg-[#ed7d31]"></span>
+                            <span class="text-black">월 총비용</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 컴팩트 SVG 차트 (높이 195px 수준으로 최소화) -->
+                <svg viewBox="0 0 520 190" class="w-full h-auto" style="font-family: 'Malgun Gothic', sans-serif;">
+                    <!-- 가로 눈금선 -->
+                    <g stroke="#d9d9d9" stroke-width="1">
+                        <line x1="48" y1="12" x2="495" y2="12" />
+                        <line x1="48" y1="44" x2="495" y2="44" />
+                        <line x1="48" y1="76" x2="495" y2="76" />
+                        <line x1="48" y1="108" x2="495" y2="108" />
+                        <line x1="48" y1="140" x2="495" y2="140" stroke="#898989" />
+                    </g>
+
+                    <!-- Y축 선 -->
+                    <line x1="48" y1="12" x2="48" y2="140" stroke="#898989" stroke-width="1" />
+
+                    <!-- BEP 수직/수평 점선 (x=297, y=76) -->
+                    <line x1="297" y1="12" x2="297" y2="140" stroke="#7f7f7f" stroke-width="1" stroke-dasharray="3,2" />
+
+                    <!-- Y축 라벨 -->
+                    <g fill="#000000" font-size="10" text-anchor="end">
+                        <text x="42" y="143">0</text>
+                        <text x="42" y="111">150</text>
+                        <text x="42" y="79" font-weight="700">300</text>
+                        <text x="42" y="47">450</text>
+                        <text x="42" y="15">600</text>
+                    </g>
+
+                    <!-- X축 눈금 -->
+                    <g stroke="#898989" stroke-width="1">
+                        <line x1="78" y1="140" x2="78" y2="144" />
+                        <line x1="151" y1="140" x2="151" y2="144" />
+                        <line x1="224" y1="140" x2="224" y2="144" />
+                        <line x1="297" y1="140" x2="297" y2="144" />
+                        <line x1="370" y1="140" x2="370" y2="144" />
+                        <line x1="443" y1="140" x2="443" y2="144" />
+                    </g>
+
+                    <!-- X축 라벨 (가입자 / 유료 사용자) -->
+                    <g font-size="9.5" fill="#000000" text-anchor="middle">
+                        <text x="44" y="156" text-anchor="end" fill="#595959">가입자</text>
+                        <text x="44" y="170" text-anchor="end" fill="#595959">유료(4%)</text>
+
+                        <text x="78" y="156">0명</text>
+                        <text x="78" y="170" fill="#595959">0명</text>
+
+                        <text x="151" y="156">2,500명</text>
+                        <text x="151" y="170" fill="#595959">100명</text>
+
+                        <text x="224" y="156">5,000명</text>
+                        <text x="224" y="170" fill="#595959">200명</text>
+
+                        <text x="297" y="156" font-weight="700">7,500명(BEP)</text>
+                        <text x="297" y="170" font-weight="700" fill="#c00000">유료 300명</text>
+
+                        <text x="370" y="156">10,000명</text>
+                        <text x="370" y="170" fill="#595959">400명</text>
+
+                        <text x="443" y="156">15,000명</text>
+                        <text x="443" y="170" fill="#595959">600명</text>
+                    </g>
+
+                    <!-- 1. 월 총비용 선 (#ed7d31) : 240(88.8), 260(84.5), 280(80.3), 300(76.0), 320(71.7), 360(63.2) -->
+                    <polyline fill="none" stroke="#ed7d31" stroke-width="2"
+                        points="78,88.8 151,84.5 224,80.3 297,76.0 370,71.7 443,63.2" />
+                    <g fill="#ed7d31">
+                        <rect x="75.5" y="86.3" width="5" height="5" />
+                        <rect x="148.5" y="82.0" width="5" height="5" />
+                        <rect x="221.5" y="77.8" width="5" height="5" />
+                        <rect x="294.5" y="73.5" width="5" height="5" />
+                        <rect x="367.5" y="69.2" width="5" height="5" />
+                        <rect x="440.5" y="60.7" width="5" height="5" />
+                    </g>
+
+                    <!-- 2. 월 매출 선 (#4472c4) : 0(140), 100(118.7), 200(97.3), 300(76.0), 400(54.7), 600(12.0) -->
+                    <polyline fill="none" stroke="#4472c4" stroke-width="2"
+                        points="78,140.0 151,118.7 224,97.3 297,76.0 370,54.7 443,12.0" />
+                    <g fill="#4472c4">
+                        <rect x="75.5" y="137.5" width="5" height="5" />
+                        <rect x="148.5" y="116.2" width="5" height="5" />
+                        <rect x="221.5" y="94.8" width="5" height="5" />
+                        <rect x="294.5" y="73.5" width="5" height="5" />
+                        <rect x="367.5" y="52.2" width="5" height="5" />
+                        <rect x="440.5" y="9.5" width="5" height="5" />
+                    </g>
+
+                    <!-- 데이터 레이블 (매출) -->
+                    <g font-size="9.5" fill="#1f4e78" font-weight="700" text-anchor="middle">
+                        <text x="78" y="133" fill="#000000" font-weight="400">0</text>
+                        <text x="151" y="131">100</text>
+                        <text x="224" y="110">200</text>
+                        <text x="370" y="47">400</text>
+                        <text x="443" y="24">600</text>
+                    </g>
+
+                    <!-- 데이터 레이블 (총비용) -->
+                    <g font-size="9.5" fill="#b45309" text-anchor="middle">
+                        <text x="86" y="81">240</text>
+                        <text x="151" y="77">260</text>
+                        <text x="224" y="73">280</text>
+                        <text x="370" y="84">320</text>
+                        <text x="443" y="75">360</text>
+                    </g>
+
+                    <!-- BEP 텍스트 상자 (엑셀 기본 텍스트 상자 스타일) -->
+                    <line x1="297" y1="76" x2="250" y2="42" stroke="#595959" stroke-width="1" />
+                    <rect x="115" y="16" width="180" height="34" fill="#ffffff" stroke="#898989" stroke-width="1" />
+                    <text x="205" y="30" text-anchor="middle" fill="#000000" font-size="9.5" font-weight="700">손익분기점(BEP): 가입자 7,500명(유료 300명)</text>
+                    <text x="205" y="43" text-anchor="middle" fill="#333333" font-size="9">'25년 모수(267만)의 0.28% / 매출·비용 300만 원 일치</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
