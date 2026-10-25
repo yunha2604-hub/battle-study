@@ -524,7 +524,7 @@ export default function AssessmentExamView({
               >
                 <div className="flex items-center gap-2 font-bold text-emerald-800">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>[교사용 출제 검수 인스펙터] 정답 해설 및 AI 채점 기준표</span>
+                  <span>[교사용 출제 검수 인스펙터] 정답 해설 및 채점 기준</span>
                 </div>
                 <p className="text-slate-700 leading-relaxed font-normal">
                   <strong className="text-emerald-900">정답:</strong> {currentQ.correctAnswer}
@@ -586,7 +586,7 @@ export default function AssessmentExamView({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-indigo-600" />
-                OMR 답안 마킹표
+                문항 현황
               </h3>
               <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
                 {answeredCount} / {examQuestions.length} 완료
@@ -621,27 +621,11 @@ export default function AssessmentExamView({
               })}
             </div>
 
-            {/* Answered Progress Bar */}
-            <div className="space-y-1.5 mb-4">
-              <div className="flex justify-between text-xs font-bold text-slate-500">
-                <span>답안 작성 진행률</span>
-                <span className="text-indigo-600">
-                  {Math.round((answeredCount / examQuestions.length) * 100)}%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-300"
-                  style={{ width: `${(answeredCount / examQuestions.length) * 100}%` }}
-                />
-              </div>
-            </div>
-
             {/* Integrity Warning */}
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-[11px] text-amber-800">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="leading-snug">
-                <strong>공교육 수행평가 신뢰도 보장:</strong> 답안 제출 시 AI 1차 자동 채점이 즉시 수행되며, 최종 점수는 담당 교사의 2차 검토 후 확정됩니다.
+                <strong>공교육 수행평가 신뢰도 보장:</strong> 제출된 답안은 담당 교사가 직접 채점하여 최종 점수를 확정합니다.
               </p>
             </div>
           </div>
@@ -657,7 +641,7 @@ export default function AssessmentExamView({
                 출제하신 수학 수행평가 문항의 <strong>지문, 선택지, 배점, 성취기준 연계</strong>를 실제 학생 시험 뷰에서 직접 체험하고 검증하는 공간입니다.
               </p>
               <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                <span>총 배점: 100점 만점</span>
+                <span>총 배점: {examQuestions.reduce((sum, q) => sum + q.points, 0)}점 만점</span>
                 <span>문항 수: {examQuestions.length}문항</span>
               </div>
             </div>
