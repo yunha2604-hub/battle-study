@@ -11,6 +11,7 @@ import {
   Swords, Zap, LogIn, QrCode, Monitor, Maximize2
 } from "lucide-react";
 import EduHeader from "./EduHeader";
+import { makeSampleHandwritingImage, SAMPLE_SOLUTION_IMAGE } from "./HandwritingSolution";
 
 // Purity compliant random PIN generator
 function generateRandomTeacherPin(): string {
@@ -47,6 +48,14 @@ export interface QuestionAnswerDetail {
   pointsEarned: number;
   maxPoints: number;
   aiAssessment: string;
+  // AI 감점 집중 검수 필드
+  deductionCriteria?: string;   // 감점 기준 (예: [성취기준] 완전제곱식 전개 누락)
+  errorLine?: string;           // 오류가 있는 답안 줄 (예: 답안 2행: (x-3)^2 전개식 생략)
+  aiReviewOpinion?: string;     // AI 검토 의견
+  isAmbiguous?: boolean;        // 풀이 비약 등 모호한 답안 여부
+  // 손글씨 풀이 제출 (필기 원본 이미지 + 디지털 변환 텍스트는 studentAnswer)
+  handwritingImage?: string;    // 학생 필기 원본 이미지 (data URL)
+  confirmedAt?: string;         // 학생 최종 제출(확정) 시각
 }
 
 export interface StudentAssessmentRow {
@@ -63,7 +72,20 @@ export interface StudentAssessmentRow {
   aiSummary: string;
   answers: QuestionAnswerDetail[];
   teacherFeedback?: string;
+  // 예외 확인 플래그 (풀이 비약 등 모호한 답안 교사 직접 확인 요망)
+  isNeedsReview?: boolean;
+  reviewReason?: string;
 }
+
+// 교사용 기본 출제 프롬프트 및 채점 기준 템플릿
+export const DEFAULT_TEACHER_PROMPT_TEMPLATE = `[출제 목적] 2022 개정 교육과정 성취기준 연계 중3 수학 형성평가
+[문항 구성] 객관식 2문항, 서술형 풀이 1문항
+[세부 지침] 서술형 문항은 단계별 풀이 과정을 유도하고, 학생이 자주 범하는 부호 실수 및 조건 누락 요소를 포함할 것.`;
+
+export const DEFAULT_RUBRIC_TEMPLATE = `[1번 30점] 제곱근 정의 및 부호 판단 일치 여부
+[2번 35점] 근호 사칙연산 단순화 정확성 (부호 오류 시 15점 감점)
+[3번 35점] 완전제곱식 전개 과정 20점, 최종 중근 명시 15점 (풀이 비약 시 교사 확인 플래그 지정)`;
+
 
 // --- Mock Math Curriculum ---
 const MATH_CHAPTERS: MathChapter[] = [
@@ -153,11 +175,47 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 95,
     teacherScore: 95,
     isConfirmed: true,
+    isNeedsReview: false,
     aiSummary: "객관식 2문항 만점(+65점). 3번 서술형 완전제곱식 유도 과정 논리적 완결성 우수(+30/35점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "정답 (2√8 단순화 정확함)" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "(x-3)^2 = 0 이므로 x=3 중근", correctAnswer: "x=3 (중근)", pointsEarned: 30, maxPoints: 35, aiAssessment: "부분점수 부여: 중근 도출은 완벽하나 계수 관계 설명 1줄 누락" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음 (정답 일치)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "제곱근의 양의 값 정의를 정확히 이해하고 올바른 값을 도출함."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "정답 (2√8 단순화 정확함)",
+        deductionCriteria: "감점 기준 없음 (동류항 계산 완벽)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "2√8 = 4√2 변형 및 동류항 덧셈·뺄셈 과정이 완전하게 성립함."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "(x - 3)² = 0 | x = 3", 
+        handwritingImage: SAMPLE_SOLUTION_IMAGE,
+        confirmedAt: "10:41:52",
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 30, 
+        maxPoints: 35, 
+        aiAssessment: "부분점수 부여: 중근 도출은 완벽하나 계수 관계 설명 1줄 누락",
+        deductionCriteria: "완전제곱식 계수 관계(b/2)² = c 유도 서술 누락 (-5점)",
+        errorLine: "답안 1행: 인수분해 공식 성립 이유 설명 생략",
+        aiReviewOpinion: "완전제곱식 변형과 중근 표기는 완벽하나 일차항 계수와의 관계 서술이 누락되어 5점 감점 산출."
+      }
     ],
     teacherFeedback: "풀이 단계별 전개 과정이 매우 우수하여 AI 1차 채점 점수를 그대로 확정함."
   },
@@ -169,14 +227,64 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     name: "박지민",
     submitted: true,
     submittedAt: "10:28",
-    aiScore: 84,
+    aiScore: 90,
     teacherScore: null,
     isConfirmed: false,
-    aiSummary: "객관식 1번 정답(+30점), 2번 오답(6√2 선택, 0점). 3번 서술형 완벽 풀이(+35/35점). AI 산출 65점이나 서술형 가산점 적용 84점 부여.",
+    isNeedsReview: false,
+    aiSummary: "1, 2, 4번 문항 기준 충족(+75점). 3번 서술형 답안 3행에서 분수 약분 분배법칙 오류(-10점) 감지. 부분점수 15점 부여 제안.",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "6√2", correctAnswer: "4√2", pointsEarned: 19, maxPoints: 35, aiAssessment: "오답: 2√8 단순화 부호 계산 실수 (부분 배점 적용)" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x^2 - 6x + 9 = (x-3)^2 = 0, 따라서 x=3 (중근)", correctAnswer: "x=3 (중근)", pointsEarned: 35, maxPoints: 35, aiAssessment: "만점: 완전제곱식 공식과 중근 표기 완벽" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 25, 
+        maxPoints: 25, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음 (정답 일치)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "올바른 정답 선택."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 25, 
+        maxPoints: 25, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음 (정답 일치)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "올바른 정답 도출."
+      },
+      { 
+        qNum: 3, 
+        title: "이차방정식 근의 공식 서술형", 
+        studentAnswer: "1행: a=1, b=-6, c=5를 근의 공식에 대입 | 2행: x = (6 ± √(36 - 20)) / 2 = (6 ± √16) / 2 | 3행: x = (6 ± 4) / 2 이므로 약분하여 x = 3 ± 4 | 4행: 따라서 해는 x = 7 또는 x = -1", 
+        correctAnswer: "x = (6 ± 4) / 2 이므로 분자 전체를 2로 나누면 x = 3 ± 2. 따라서 x = 5 또는 x = 1", 
+        handwritingImage: makeSampleHandwritingImage("1행: a=1, b=-6, c=5를 근의 공식에 대입 | 2행: x = (6 ± √(36 - 20)) / 2 = (6 ± √16) / 2 | 3행: x = (6 ± 4) / 2 이므로 약분하여 x = 3 ± 4 | 4행: 따라서 해는 x = 7 또는 x = -1"),
+        confirmedAt: "10:42:18",
+        pointsEarned: 15, 
+        maxPoints: 25, 
+        aiAssessment: "부분점수: 공식 대입은 정확하나 분수 약분 분배법칙 누락으로 감점",
+        deductionCriteria: "다항식 분수 약분 원칙 미준수 (분자 전체 분배 약분 누락, -10점)",
+        errorLine: "답안 3행: '(6 ± 4) / 2'에서 분모 2를 앞 항(6)에만 나누어 '3 ± 4'로 전개한 오류 발생",
+        aiReviewOpinion: "근의 공식 계수 대입(1~2행) 및 판별식 계산(√16)은 정확하게 수행하여 수학적 개념을 올바르게 숙지하고 있습니다. 그러나 3행의 분수 약분 과정에서 분모 2를 분자 전체에 분배하지 않고 앞 항(6)만 약분하여 최종 근이 오답으로 도출되었습니다. 공식 대입 및 전개 배점(15점)은 인정하고, 분수 약분 오류(-10점)를 감점하여 부분점수 15점 부여를 제안합니다."
+      },
+      {
+        qNum: 4,
+        title: "이차방정식 실생활 활용 서술형",
+        studentAnswer: "식: x(x+2)=24, x²+2x-24=0, (x+6)(x-4)=0. x>0이므로 가로 길이는 4m",
+        handwritingImage: makeSampleHandwritingImage("식: x(x+2)=24, x²+2x-24=0, (x+6)(x-4)=0. x>0이므로 가로 길이는 4m"),
+        confirmedAt: "10:42:18",
+        correctAnswer: "가로 길이: 4m (길이 조건 x>0)",
+        pointsEarned: 25,
+        maxPoints: 25,
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음 (충족)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "미지수 설정, 방정식 수립, 음수 근 제외 조건 서술이 모두 완벽함."
+      }
     ]
   },
   {
@@ -190,11 +298,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 78,
     teacherScore: 82,
     isConfirmed: true,
-    aiSummary: "객관식 2문항 정답(+65점). 서술형 풀이에서 중근 표기 누락(-10점). AI 70점 산출 후 교사가 풀이 성의 감안 82점으로 상향 확정.",
+    isNeedsReview: false,
+    aiSummary: "객관식 2문항 정답(+65점). 서술형 풀이에서 중근 표기 누락(-22점). 교사가 풀이 성의 감안 82점으로 상향 확정.",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "정답" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x=3", correctAnswer: "x=3 (중근)", pointsEarned: 13, maxPoints: 35, aiAssessment: "부분점수: 중근 명시 누락으로 13점 부여" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답 판정."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답 판정."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "x=3", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 13, 
+        maxPoints: 35, 
+        aiAssessment: "부분점수: 중근 명시 누락 및 전개식 생략으로 13점 부여",
+        deductionCriteria: "중근(Multiple Root) 표기 누락(-15점) 및 인수분해 과정 생략(-7점)",
+        errorLine: "답안 1행: 'x=3' 단독 기재 (중근 괄호 및 유도식 없음)",
+        aiReviewOpinion: "정답 수치 3은 맞았으나 중근 표기가 생략되었고 완전제곱식 전개 과정이 작성되지 않아 부분점수 13점 산출."
+      }
     ],
     teacherFeedback: "중근 표현은 누락했으나 근의 도출 과정이 명확하므로 4점 상향 조정(82점)."
   },
@@ -209,11 +351,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 100,
     teacherScore: 100,
     isConfirmed: true,
+    isNeedsReview: false,
     aiSummary: "전 문항 정답 및 서술형 풀이과정 모범답안 수준(+100점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "만점" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "만점" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x² - 6x + 9 = (x - 3)² = 0 이므로 x = 3 (중근)", correctAnswer: "x=3 (중근)", pointsEarned: 35, maxPoints: 35, aiAssessment: "만점" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "x² - 6x + 9 = (x - 3)² = 0 이므로 x = 3 (중근)", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음 (충족)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "완전제곱식의 도출 과정과 중근 표시가 모두 포함된 모범 답안."
+      }
     ]
   },
   {
@@ -227,11 +403,47 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 88,
     teacherScore: null,
     isConfirmed: false,
-    aiSummary: "1번 정답(+30점), 2번 정답(+35점). 3번 서술형 수식 전개 부분오류(+23/35점). 교사 확인 요망.",
+    isNeedsReview: true,
+    reviewReason: "3번 서술형 풀이 비약 감지: AI 단독 판정 모호 (교사 직접 확인 필요)",
+    aiSummary: "1번 정답(+30점), 2번 정답(+35점). 3번 서술형 수식 전개에서 풀이 비약 감지(+23/35점). 교사 직접 검수 요망.",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "정답" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "(x-3)(x-3)=0, x=3", correctAnswer: "x=3 (중근)", pointsEarned: 23, maxPoints: 35, aiAssessment: "중근 표기 생략으로 감점" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답 일치."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답 일치."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "(x-3)(x-3)=0, x=3", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 23, 
+        maxPoints: 35, 
+        aiAssessment: "중근 표기 생략 및 완전제곱식 유도 비약 감점",
+        deductionCriteria: "완전제곱식 표준 꼴 (x-a)² 미작성(-7점) 및 중근 명시 누락(-5점)",
+        errorLine: "답안 1행: (x-3)(x-3)=0에서 (x-3)² 변형 생략 및 중근 누락",
+        aiReviewOpinion: "인수분해를 (x-3)(x-3)으로 표현한 후 바로 x=3으로 비약함. 완전제곱식 개념을 인지한 것인지 단순 나열인지 모호하므로 교사의 직접 감점 폭 결정이 필요합니다.",
+        isAmbiguous: true
+      }
     ]
   },
   {
@@ -245,11 +457,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 92,
     teacherScore: 92,
     isConfirmed: true,
+    isNeedsReview: false,
     aiSummary: "모든 문항 안정적 해결, 계산 속도 우수(+92점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "정답" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "(x-3)² = 0, x=3 (중근)", correctAnswer: "x=3 (중근)", pointsEarned: 27, maxPoints: 35, aiAssessment: "우수" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "(x-3)² = 0, x=3 (중근)", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 27, 
+        maxPoints: 35, 
+        aiAssessment: "우수 (세부 유도 과정 1줄 생략)",
+        deductionCriteria: "일차항 계수의 반의 제곱 관계식 서술 생략 (-8점)",
+        errorLine: "답안 1행: 유도 근거 문장 누락",
+        aiReviewOpinion: "완전제곱식 표현과 중근 명시는 완벽하나 전개 공식 연계 문장이 축약되어 27점 산출."
+      }
     ]
   },
   {
@@ -263,11 +509,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 75,
     teacherScore: null,
     isConfirmed: false,
+    isNeedsReview: false,
     aiSummary: "1번 정답(+30점), 2번 계산 오류(+15/35점), 3번 서술형 부분점수(+30/35점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "8√2", correctAnswer: "4√2", pointsEarned: 15, maxPoints: 35, aiAssessment: "2√8 덧셈 기호 오인" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "(x-3)²=0 => x=3", correctAnswer: "x=3 (중근)", pointsEarned: 30, maxPoints: 35, aiAssessment: "양호" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "8√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 15, 
+        maxPoints: 35, 
+        aiAssessment: "2√8 덧셈 기호 오인",
+        deductionCriteria: "연산 부호 실수 (-20점)",
+        errorLine: "답안 1행: 3√2 + 5√2 = 8√2 후 2√8을 빼지 않고 누락",
+        aiReviewOpinion: "앞부분 덧셈만 완료하고 뒤의 뺄셈 항을 정상 처리하지 못함."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "(x-3)²=0 => x=3", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 30, 
+        maxPoints: 35, 
+        aiAssessment: "양호 (중근 표기 생략)",
+        deductionCriteria: "중근 표기 생략 (-5점)",
+        errorLine: "답안 1행: x=3 뒤 (중근) 표시 누락",
+        aiReviewOpinion: "완전제곱식 유도는 정확하나 중근 표기를 생략하여 5점 감점."
+      }
     ]
   },
   {
@@ -281,11 +561,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 85,
     teacherScore: 85,
     isConfirmed: true,
+    isNeedsReview: false,
     aiSummary: "안정적인 풀이와 정확한 중근 도출(+85점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "정답" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x=3", correctAnswer: "x=3 (중근)", pointsEarned: 20, maxPoints: 35, aiAssessment: "부분점수" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "x=3 (중근)", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 20, 
+        maxPoints: 35, 
+        aiAssessment: "부분점수 (풀이 유도식 생략)",
+        deductionCriteria: "완전제곱식 전개 과정 미기재 (-15점)",
+        errorLine: "답안 1행: 인수분해 과정 없이 해만 제시",
+        aiReviewOpinion: "중근 명시는 완벽하나 서술형 요구사항인 완전제곱식 전개 과정이 누락되어 15점 감점."
+      }
     ]
   },
   {
@@ -299,11 +613,45 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 100,
     teacherScore: 100,
     isConfirmed: true,
+    isNeedsReview: false,
     aiSummary: "수행평가 만점. 서술형 풀이 논리 전개 완벽(+100점).",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "만점" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "4√2", correctAnswer: "4√2", pointsEarned: 35, maxPoints: 35, aiAssessment: "만점" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x² - 6x + 9 = (x - 3)² = 0, x = 3(중근)", correctAnswer: "x=3 (중근)", pointsEarned: 35, maxPoints: 35, aiAssessment: "만점" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "모범 답안."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "4√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "모범 답안."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "x² - 6x + 9 = (x - 3)² = 0, x = 3(중근)", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 35, 
+        maxPoints: 35, 
+        aiAssessment: "만점",
+        deductionCriteria: "감점 기준 없음 (충족)",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "논리적 비약 없이 모든 수식이 완결된 최고 수준의 서술."
+      }
     ]
   },
   {
@@ -317,11 +665,47 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 68,
     teacherScore: null,
     isConfirmed: false,
+    isNeedsReview: true,
+    reviewReason: "2번 오답 원인 및 3번 식 미완성: 교사 확인 필요",
     aiSummary: "1번 정답(+30점), 2번 오답(+10/35점), 3번 서술형 식 미완성(+28/35점). 2차 검토 필요.",
     answers: [
-      { qNum: 1, title: "제곱근 계산", studentAnswer: "5", correctAnswer: "5", pointsEarned: 30, maxPoints: 30, aiAssessment: "정답" },
-      { qNum: 2, title: "근호 사칙연산", studentAnswer: "2√2", correctAnswer: "4√2", pointsEarned: 10, maxPoints: 35, aiAssessment: "감점" },
-      { qNum: 3, title: "이차식 서술형", studentAnswer: "x=3", correctAnswer: "x=3 (중근)", pointsEarned: 28, maxPoints: 35, aiAssessment: "부분점수" }
+      { 
+        qNum: 1, 
+        title: "제곱근 계산", 
+        studentAnswer: "5", 
+        correctAnswer: "5", 
+        pointsEarned: 30, 
+        maxPoints: 30, 
+        aiAssessment: "정답",
+        deductionCriteria: "감점 기준 없음",
+        errorLine: "오류 없음",
+        aiReviewOpinion: "정답 일치."
+      },
+      { 
+        qNum: 2, 
+        title: "근호 사칙연산", 
+        studentAnswer: "2√2", 
+        correctAnswer: "4√2", 
+        pointsEarned: 10, 
+        maxPoints: 35, 
+        aiAssessment: "감점 (단순화 계산 착오)",
+        deductionCriteria: "근호 안 소인수분해 계산 착오 (-25점)",
+        errorLine: "답안 1행: 2√8을 6√2로 잘못 단순화",
+        aiReviewOpinion: "근호 밖으로 빼는 소인수분해 연산 오류."
+      },
+      { 
+        qNum: 3, 
+        title: "이차식 서술형", 
+        studentAnswer: "x=3", 
+        correctAnswer: "x=3 (중근)", 
+        pointsEarned: 28, 
+        maxPoints: 35, 
+        aiAssessment: "부분점수 (중근 표기 생략)",
+        deductionCriteria: "중근 표기 누락 (-7점)",
+        errorLine: "답안 1행: x=3 단독 표기",
+        aiReviewOpinion: "중근 표현 누락으로 7점 감점 처리.",
+        isAmbiguous: true
+      }
     ]
   },
   {
@@ -334,6 +718,7 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     aiScore: 0,
     teacherScore: null,
     isConfirmed: false,
+    isNeedsReview: false,
     aiSummary: "수행평가 미응시 (시험 미제출 상태).",
     answers: []
   }
@@ -398,12 +783,15 @@ export default function TeacherDashboard({
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   
   // 선생님 AI 직접 요구 프롬프트 및 AI 1차 채점 평가요소 상태
-  const [teacherAiPrompt, setTeacherAiPrompt] = useState<string>(
-    "서술형 문항은 실생활 문제(예: 놀이공원 요금, 스포츠 경기 등)와 연계하고, 함정 보기 1개를 포함하여 출제해줘."
-  );
-  const [assessmentRubricCriteria, setAssessmentRubricCriteria] = useState<string>(
-    "1번(30점): 정답 일치 여부 / 2번(35점): 계산 부호 실수 시 부분점수 15점 / 3번(35점): 완전제곱식 전개 식 세우기 20점, 최종 중근 표기 15점"
-  );
+  const [teacherAiPrompt, setTeacherAiPrompt] = useState<string>(DEFAULT_TEACHER_PROMPT_TEMPLATE);
+  const [assessmentRubricCriteria, setAssessmentRubricCriteria] = useState<string>(DEFAULT_RUBRIC_TEMPLATE);
+
+  const handleResetPromptTemplate = () => {
+    setTeacherAiPrompt(DEFAULT_TEACHER_PROMPT_TEMPLATE);
+    setAssessmentRubricCriteria(DEFAULT_RUBRIC_TEMPLATE);
+    showToast("🔄 출제 프롬프트와 채점 기준이 기본 표준 템플릿으로 복원되었습니다.");
+  };
+
 
   // --- Step 2: One-time Code (PIN) State & Projector View ---
   const [submittedCount, setSubmittedCount] = useState<number>(10);
@@ -422,6 +810,17 @@ export default function TeacherDashboard({
   const [tempTeacherScore, setTempTeacherScore] = useState<number>(85);
   const [tempFeedback, setTempFeedback] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Step 4: 감점(오답) 문항만 보기 필터 (기본: 감점 문항만 상단 필터링)
+  const [showOnlyDeductions, setShowOnlyDeductions] = useState<boolean>(false);
+
+  // Step 4: AI 감점 검수 적용 여부 (문항별 토글 상태 - 기본값: 전체 적용)
+  const [appliedAiQuestions, setAppliedAiQuestions] = useState<Record<number, boolean>>({
+    1: true,
+    2: true,
+    3: true,
+    4: true
+  });
 
   // --- Step 1 Inline Question Edit State ---
   const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
@@ -582,6 +981,7 @@ export default function TeacherDashboard({
       // Status filter
       if (filterStatus === "CONFIRMED" && !student.isConfirmed) return false;
       if (filterStatus === "PENDING" && (!student.submitted || student.isConfirmed)) return false;
+      if (filterStatus === "NEEDS_REVIEW" && (!student.isNeedsReview || student.isConfirmed)) return false;
       if (filterStatus === "NOT_SUBMITTED" && student.submitted) return false;
 
       // Student number filter
@@ -605,6 +1005,92 @@ export default function TeacherDashboard({
     const calculatedTotal = initialAnswers.reduce((sum, a) => sum + a.pointsEarned, 0);
     setTempTeacherScore(student.teacherScore ?? calculatedTotal);
     setTempFeedback(student.teacherFeedback ?? "");
+    // 모달 오픈 시 필터 초기화 및 모든 문항 AI 검수 기본 활성화
+    setShowOnlyDeductions(false);
+    setAppliedAiQuestions({
+      1: true,
+      2: true,
+      3: true,
+      4: true
+    });
+  };
+
+  // 개별 문항 AI 감점 검수 적용/미적용 토글
+  const handleToggleAiForQuestion = (qNum: number) => {
+    setAppliedAiQuestions(prev => {
+      const willApply = !prev[qNum];
+      const nextState = { ...prev, [qNum]: willApply };
+
+      setTempAnswers(ansList => {
+        const updated = ansList.map(ans => {
+          if (ans.qNum === qNum) {
+            if (!willApply) {
+              // 미적용(Uncheck) 시 감점 배제하고 해당 문항 만점으로 복원
+              return { ...ans, pointsEarned: ans.maxPoints };
+            } else {
+              // 적용(Check) 시 원래 학생 점수로 환원
+              const originalAns = selectedStudentForReview?.answers.find(a => a.qNum === qNum);
+              return { ...ans, pointsEarned: originalAns ? originalAns.pointsEarned : ans.pointsEarned };
+            }
+          }
+          return ans;
+        });
+        const newTotal = updated.reduce((sum, a) => sum + a.pointsEarned, 0);
+        setTempTeacherScore(newTotal);
+        return updated;
+      });
+
+      if (!willApply) {
+        setTempFeedback(fb => {
+          const note = `[${qNum}번 문항: 교사 판단으로 AI 감점 미적용 (원안 인정)]`;
+          if (fb.includes(note)) return fb;
+          return fb ? `${fb}\n${note}` : note;
+        });
+        showToast(`💡 ${qNum}번 문항: AI 감점을 미적용하고 만점으로 복원했습니다.`);
+      } else {
+        showToast(`🔄 ${qNum}번 문항: AI 감점 검수를 다시 적용했습니다.`);
+      }
+
+      return nextState;
+    });
+  };
+
+  // 전체 문항 AI 감점 검수 일괄 토글 (마스터 스위치)
+  const handleToggleAllAi = () => {
+    const anyOn = Object.values(appliedAiQuestions).some(v => v);
+    const targetState = !anyOn;
+
+    const nextState: Record<number, boolean> = {
+      1: targetState,
+      2: targetState,
+      3: targetState,
+      4: targetState
+    };
+    setAppliedAiQuestions(nextState);
+
+    setTempAnswers(ansList => {
+      const updated = ansList.map(ans => {
+        if (!targetState) {
+          return { ...ans, pointsEarned: ans.maxPoints };
+        } else {
+          const originalAns = selectedStudentForReview?.answers.find(a => a.qNum === ans.qNum);
+          return { ...ans, pointsEarned: originalAns ? originalAns.pointsEarned : ans.pointsEarned };
+        }
+      });
+      const newTotal = updated.reduce((sum, a) => sum + a.pointsEarned, 0);
+      setTempTeacherScore(newTotal);
+      return updated;
+    });
+
+    if (!targetState) {
+      setTempFeedback(fb => {
+        const note = "[전체 문항: 교사 전권으로 AI 감점 일괄 미적용 (원안 인정)]";
+        return fb.includes(note) ? fb : (fb ? `${fb}\n${note}` : note);
+      });
+      showToast("💡 전체 문항에 AI 감점을 미적용하고 만점으로 일괄 복원했습니다.");
+    } else {
+      showToast("🔄 전체 문항에 AI 감점 검수를 다시 일괄 적용했습니다.");
+    }
   };
 
   // Step 4: Per-Question Score Adjustment with Real-time Total Sum (Requirement 1 - Option 2)
@@ -650,6 +1136,7 @@ export default function TeacherDashboard({
           answers: tempAnswers,
           teacherScore: tempTeacherScore,
           isConfirmed: true,
+          isNeedsReview: false,
           teacherFeedback: tempFeedback.trim() || undefined
         };
       }
@@ -663,6 +1150,7 @@ export default function TeacherDashboard({
   // Calculated Stats
   const confirmedCount = students.filter(s => s.isConfirmed).length;
   const pendingCount = students.filter(s => s.submitted && !s.isConfirmed).length;
+  const needsReviewCount = students.filter(s => s.isNeedsReview && !s.isConfirmed).length;
   const averageScore = Math.round(
     students.filter(s => s.submitted).reduce((acc, cur) => acc + (cur.teacherScore ?? cur.aiScore), 0) /
     (students.filter(s => s.submitted).length || 1)
@@ -866,35 +1354,46 @@ export default function TeacherDashboard({
               <span className="truncate">{selectedChapter.achievementStandard}</span>
             </div>
 
-            {/* 1) AI 출제 직접 요구 프롬프트 입력창 */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+            {/* 1) AI 출제 직접 요구 프롬프트 입력창 (출제 의도 맞춤 프롬프트 수정 기능) */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <Calculator className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>출제 조건 및 추가 요구사항</span>
+                  <span>출제 의도 맞춤 프롬프트 수정</span>
                 </label>
-                <span className="text-[10px] text-indigo-600 font-bold">자유 서술형 요구사항 기입 가능</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleResetPromptTemplate}
+                    className="text-[10px] text-slate-500 hover:text-indigo-600 flex items-center gap-1 font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 hover:border-indigo-300 transition-colors cursor-pointer"
+                    title="기본 템플릿으로 원복"
+                  >
+                    <RotateCcw className="w-2.5 h-2.5" />
+                    <span>기본 템플릿 복원</span>
+                  </button>
+                  <span className="text-[10px] text-indigo-600 font-bold">선생님 직접 수정 가능</span>
+                </div>
               </div>
               <textarea
                 value={teacherAiPrompt}
                 onChange={(e) => setTeacherAiPrompt(e.target.value)}
-                rows={2}
-                placeholder="예: 서술형 문항은 실생활 문제(예: 놀이공원 요금 등)와 연계하고, 함정 보기 1개를 포함하여 출제해줘."
-                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium resize-none shadow-inner"
+                rows={3}
+                placeholder="출제 목적, 문항 구성, 서술형 세부 지침 등 선생님의 출제 의도에 맞게 프롬프트를 자유롭게 수정하세요."
+                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium resize-none shadow-inner leading-relaxed"
               />
               {/* 추천 프롬프트 태그 칩 */}
               <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                <span className="text-[10px] text-slate-400 font-bold">추천 태그:</span>
+                <span className="text-[10px] text-slate-400 font-bold">빠른 추가 태그:</span>
                 {[
-                  "실생활 활용 문제 연계",
+                  "실생활 활용 연계",
                   "자주 틀리는 함정 보기 포함",
-                  "서술형 풀이 3단계 명시",
+                  "단계별 풀이 유도",
                   "계산 과정 부분점수 배점"
                 ].map((tag) => (
                   <button
                     key={tag}
                     type="button"
-                    onClick={() => setTeacherAiPrompt(prev => prev ? `${prev} [${tag}]` : `[${tag}]`)}
+                    onClick={() => setTeacherAiPrompt(prev => prev ? `${prev}\n[조건] ${tag}` : `[조건] ${tag}`)}
                     className="px-2 py-0.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-md text-[10px] font-bold text-slate-600 hover:text-indigo-600 transition-colors cursor-pointer"
                   >
                     + {tag}
@@ -903,24 +1402,24 @@ export default function TeacherDashboard({
               </div>
             </div>
 
-            {/* 2) AI 1차 자동 채점 기준표 기입란 */}
+            {/* 2) 교사 직접 설정: 1차 자동 채점 기준표 (감점 기준표) */}
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>1차 자동 채점 기준표 (부분점수 및 감점 기준)</span>
+                  <span>교사 직접 설정 채점 기준 (루브릭 및 감점 기준)</span>
                 </label>
-                <span className="text-[10px] text-emerald-600 font-bold">📋 객관식·서술형 자동 채점 기준</span>
+                <span className="text-[10px] text-emerald-600 font-bold">감점 항목 기준표</span>
               </div>
               <textarea
                 value={assessmentRubricCriteria}
                 onChange={(e) => setAssessmentRubricCriteria(e.target.value)}
-                rows={2}
-                placeholder="예: 1번(30점): 정답 일치 여부 / 2번(35점): 부호 실수 시 감점 20점 / 3번(35점): 완전제곱식 전개 20점, 최종 중근 15점"
-                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-medium resize-none shadow-inner"
+                rows={3}
+                placeholder="각 문항별 배점, 필수 포함 공식, 감점 폭(예: 부호 오류 -15점, 중근 누락 -15점 등)을 직접 설정하세요."
+                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-medium resize-none shadow-inner leading-relaxed"
               />
               <p className="text-[10px] text-slate-500 leading-tight">
-                * 학생 답안 제출 시 위 채점 기준표를 바탕으로 문항별 부분점수 및 감점 사유를 자동 산출합니다.
+                * 위 기준에 따라 AI가 학생 답안 제출 시 감점 기준, 오류 줄, AI 검토 의견을 산출합니다.
               </p>
             </div>
 
@@ -1310,10 +1809,29 @@ export default function TeacherDashboard({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-              <span>표시 학생:</span>
-              <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-lg border border-indigo-200 font-extrabold">
-                총 {students.length}명 중 {filteredStudents.length}명
+            <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-600">
+              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-lg border border-indigo-200 text-[11px] font-black">
+                확정 {confirmedCount}명
+              </span>
+              <span className="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg border border-amber-200 text-[11px] font-black">
+                가채점 {pendingCount}명
+              </span>
+              {needsReviewCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setFilterStatus(filterStatus === "NEEDS_REVIEW" ? "ALL" : "NEEDS_REVIEW")}
+                  className={`px-2 py-0.5 rounded-lg border text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
+                    filterStatus === "NEEDS_REVIEW"
+                      ? "bg-amber-600 text-white border-amber-700 shadow-xs"
+                      : "bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200"
+                  }`}
+                >
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>확인 필요 {needsReviewCount}명</span>
+                </button>
+              )}
+              <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200 font-extrabold text-[11px]">
+                표시: {filteredStudents.length}명
               </span>
             </div>
           </div>
@@ -1346,6 +1864,7 @@ export default function TeacherDashboard({
                 <option value="ALL">전체 상태</option>
                 <option value="CONFIRMED">교사 2차 확정 완료</option>
                 <option value="PENDING">가채점 완료 (교사 확정 대기)</option>
+                <option value="NEEDS_REVIEW">교사 확인 필요 (풀이 비약/모호)</option>
                 <option value="NOT_SUBMITTED">미응시 (미제출)</option>
               </select>
             </div>
@@ -1396,8 +1915,8 @@ export default function TeacherDashboard({
                   <th className="py-3.5 px-3">번호</th>
                   <th className="py-3.5 px-4">이름</th>
                   <th className="py-3.5 px-4">응시 상태</th>
-                  <th className="py-3.5 px-4 text-center">1차 가채점</th>
-                  <th className="py-3.5 px-4 text-center">교사 2차 확정 점수</th>
+                  <th className="py-3.5 px-4 text-center">AI 감점 검수 요약</th>
+                  <th className="py-3.5 px-4 text-center">선생님 채점 점수</th>
                   <th className="py-3.5 px-4 text-center">평가 상태</th>
                   <th className="py-3.5 px-4 text-right">채점 및 조정</th>
                 </tr>
@@ -1432,34 +1951,51 @@ export default function TeacherDashboard({
                           </span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-center font-mono font-black text-slate-800">
-                        {student.submitted ? (
-                          <span className="text-sm">{student.aiScore}점</span>
+                      {/* AI 감점 검수 요약 (가채점 점수 완전 배제) */}
+                      <td className="py-3.5 px-4 text-center">
+                        {student.isNeedsReview ? (
+                          <span className="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-300 rounded-md text-[11px] font-bold inline-flex items-center gap-1 shadow-xs">
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                            풀이 비약 감지
+                          </span>
+                        ) : student.submitted ? (
+                          <span className="text-slate-700 font-medium text-[11px] block truncate max-w-[200px] mx-auto" title={student.aiSummary}>
+                            {student.aiSummary.split(".")[0] || "감점 검수 완료"}
+                          </span>
                         ) : (
                           <span className="text-slate-300">-</span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-center font-mono font-black">
+                      {/* 선생님 채점 점수 (단일 점수 체계) */}
+                      <td className="py-3.5 px-4 text-center font-mono font-bold">
                         {student.isConfirmed ? (
-                          <span className="text-sm text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-200">
+                          <span className="text-sm text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-300 font-black">
                             {student.teacherScore}점
                           </span>
                         ) : student.submitted ? (
-                          <span className="text-xs text-amber-600 font-bold">대기 중</span>
+                          <span className="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                            미채점 (대기)
+                          </span>
                         ) : (
                           <span className="text-slate-300">-</span>
                         )}
                       </td>
+                      {/* 평가 상태 배지 */}
                       <td className="py-3.5 px-4 text-center">
                         {student.isConfirmed ? (
-                          <span className="px-2.5 py-1 bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-full text-[10px] font-black inline-flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-indigo-600" />
-                            최종 확정
+                          <span className="px-2.5 py-1 bg-slate-900 text-white rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                            교사 채점 완료
+                          </span>
+                        ) : student.isNeedsReview ? (
+                          <span className="px-2.5 py-1 bg-amber-500 text-white rounded-full text-[10px] font-bold inline-flex items-center gap-1 shadow-xs">
+                            <AlertTriangle className="w-3 h-3 text-white" />
+                            교사 확인 필요
                           </span>
                         ) : student.submitted ? (
-                          <span className="px-2.5 py-1 bg-amber-100 text-amber-800 border border-amber-200 rounded-full text-[10px] font-black inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-amber-600" />
-                            AI 1차 완료
+                          <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-indigo-500" />
+                            검수 완료 (채점 대기)
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-slate-100 text-slate-400 rounded-full text-[10px] font-bold">
@@ -1467,15 +2003,34 @@ export default function TeacherDashboard({
                           </span>
                         )}
                       </td>
+                      {/* 채점 및 조정 버튼 (2차 채점 필요 대상 눈에 띄게 차별화) */}
                       <td className="py-3.5 px-4 text-right">
                         {student.submitted ? (
-                          <button
-                            onClick={() => handleOpenReviewModal(student)}
-                            className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1 ml-auto"
-                          >
-                            <Edit3 className="w-3.5 h-3.5 text-indigo-300" />
-                            <span>{student.isConfirmed ? "점수 재조정" : "2차 채점/확정"}</span>
-                          </button>
+                          student.isConfirmed ? (
+                            <button
+                              onClick={() => handleOpenReviewModal(student)}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 ml-auto"
+                            >
+                              <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+                              <span>점수 재조정</span>
+                            </button>
+                          ) : student.isNeedsReview ? (
+                            <button
+                              onClick={() => handleOpenReviewModal(student)}
+                              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm ring-2 ring-amber-200 cursor-pointer flex items-center gap-1.5 ml-auto"
+                            >
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-200" />
+                              <span>풀이 확인 및 채점</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleOpenReviewModal(student)}
+                              className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm ring-2 ring-indigo-200 cursor-pointer flex items-center gap-1.5 ml-auto"
+                            >
+                              <Edit3 className="w-3.5 h-3.5 text-indigo-200" />
+                              <span>2차 채점하기</span>
+                            </button>
+                          )
                         ) : (
                           <span className="text-xs text-slate-300 font-bold">-</span>
                         )}
@@ -1490,190 +2045,464 @@ export default function TeacherDashboard({
 
       </main>
 
-      {/* Step 4: 2차 평가 상세 모달 (AI 1차 채점 -> 교사 2차 점수 조정 및 확정) */}
+      {/* Step 4: 2차 평가 상세 모달 (AI 감점 검수 지원 -> 교사 단일 채점 및 확정) */}
       <AnimatePresence>
         {selectedStudentForReview && (
-          <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 lg:p-6">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6"
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              className="bg-white border border-slate-200 rounded-3xl w-full max-w-[1520px] h-[94vh] flex flex-col shadow-2xl overflow-hidden"
             >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 text-[10px] font-black">
-                      2차 평가자 점수 조정
-                    </span>
-                    <span className="text-xs text-slate-500 font-bold">
-                      {selectedStudentForReview.grade}학년 {selectedStudentForReview.classNum}반 {selectedStudentForReview.studentNum}번
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-black text-slate-900 mt-1">
-                    {selectedStudentForReview.name} 학생 수행평가 채점 및 확정
+              {/* Modal Top Header Bar */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                    AI 감점 검수 지원 · 교사 단일 평가 체계
+                  </span>
+                  <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+                  <span className="text-sm text-slate-500 font-semibold hidden sm:inline">
+                    {selectedStudentForReview.grade}학년 {selectedStudentForReview.classNum}반 {selectedStudentForReview.studentNum}번
+                  </span>
+                  <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {selectedStudentForReview.name} 학생 답안 검수 및 채점
                   </h3>
                 </div>
                 <button
                   onClick={() => setSelectedStudentForReview(null)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-sm cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-base cursor-pointer transition-colors"
+                  title="닫기"
                 >
                   ✕
                 </button>
               </div>
 
-              {/* AI 1st Evaluation Summary */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-indigo-700 flex items-center gap-1.5">
-                    <FileCheck2 className="w-3.5 h-3.5" /> 1차 시스템 가채점 결과
-                  </span>
-                  <span className="font-mono text-base font-black text-slate-900">
-                    가채점 점수: {selectedStudentForReview.aiScore}점 / 100점
-                  </span>
-                </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white p-3 rounded-xl border border-slate-200">
-                  {selectedStudentForReview.aiSummary}
-                </p>
-              </div>
-
-              {/* Detailed Question Answers & AI Check with Individual Score Adjustments */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-extrabold text-slate-700">문항별 학생 답안 및 부분점수 조정</h4>
-                  <span className="text-[11px] text-indigo-600 font-bold">
-                    💡 각 문항의 점수를 조정하면 총점이 실시간으로 자동 합산됩니다
-                  </span>
-                </div>
+              {/* Main Content Area: Left (Questions & AI Analysis) + Right (Grading & Confirmation Panel) */}
+              <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden min-h-0 bg-slate-50/50">
                 
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
-                  {tempAnswers.map((ans) => (
-                    <div key={ans.qNum} className="p-3.5 bg-white border border-slate-200 rounded-2xl text-xs space-y-2 shadow-xs">
-                      <div className="flex items-center justify-between font-bold text-slate-900">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-black">
-                            {ans.qNum}번
-                          </span>
-                          <span className="text-xs font-bold text-slate-800">{ans.title}</span>
-                        </div>
+                {/* Left Column (8 cols): Questions & Deduction Inspection */}
+                <div className="lg:col-span-8 flex flex-col h-full overflow-hidden bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <FileCheck2 className="w-4 h-4 text-slate-700" />
+                        <span>문항별 학생 답안 및 AI 감점 항목 검수</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        AI가 검수한 미충족 감점 기준과 오류 답안 위치를 대조하여 확인하세요.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-semibold text-slate-500">
+                        총 {tempAnswers.length}문항 중{" "}
+                        <strong className="text-rose-700">
+                          감점 {selectedStudentForReview.answers.filter(a => a.pointsEarned < a.maxPoints).length}문항
+                        </strong>
+                      </span>
+                      <label className={`flex items-center gap-1.5 cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                        showOnlyDeductions
+                          ? "bg-slate-900 text-white border-slate-900"
+                          : "bg-white text-slate-700 border-slate-300 hover:bg-slate-100"
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={showOnlyDeductions}
+                          onChange={(e) => setShowOnlyDeductions(e.target.checked)}
+                          className="w-3.5 h-3.5 rounded cursor-pointer"
+                        />
+                        <span>감점 문항만 보기</span>
+                      </label>
+                    </div>
+                  </div>
 
-                        {/* Individual Question Score Stepper / Direct Input */}
-                        <div className="flex items-center gap-1.5 bg-indigo-50/80 px-2 py-1 rounded-xl border border-indigo-200">
-                          <span className="text-[10px] font-black text-indigo-700 mr-1">점수 조정:</span>
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateQuestionScore(ans.qNum, -1)}
-                            className="w-6 h-6 rounded-md bg-white border border-indigo-200 font-black text-slate-700 hover:bg-indigo-100 flex items-center justify-center cursor-pointer text-xs"
-                          >
-                            -
-                          </button>
+                  {/* Scrollable Questions List */}
+                  <div className="flex-1 overflow-y-auto space-y-4 pt-3.5 pr-2">
+                    {showOnlyDeductions && selectedStudentForReview.answers.every(a => a.pointsEarned >= a.maxPoints) && (
+                      <div className="text-center text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-xl py-8">
+                        AI가 감지한 감점 문항이 없습니다. 전 문항 기준 충족.
+                      </div>
+                    )}
+                    {[...tempAnswers]
+                      .sort((a, b) => {
+                        // 감점(오답) 문항을 상단에, 동일 그룹 내에서는 문항 번호순
+                        const origA = selectedStudentForReview.answers.find(o => o.qNum === a.qNum);
+                        const origB = selectedStudentForReview.answers.find(o => o.qNum === b.qNum);
+                        const defA = origA && origA.pointsEarned < origA.maxPoints ? 0 : 1;
+                        const defB = origB && origB.pointsEarned < origB.maxPoints ? 0 : 1;
+                        return defA - defB || a.qNum - b.qNum;
+                      })
+                      .filter((ans) => {
+                        if (!showOnlyDeductions) return true;
+                        const orig = selectedStudentForReview.answers.find(o => o.qNum === ans.qNum);
+                        return !!orig && orig.pointsEarned < orig.maxPoints;
+                      })
+                      .map((ans) => {
+                      // 원래 AI 가채점 시 감점이 있었던 문항인지 고정 판별 (체크 해제 후에도 체크박스 영구 유지)
+                      const originalAns = selectedStudentForReview?.answers.find(a => a.qNum === ans.qNum);
+                      const hasAiDeduction = originalAns ? originalAns.pointsEarned < originalAns.maxPoints : false;
+                      const originalDeductionPoints = originalAns ? originalAns.maxPoints - originalAns.pointsEarned : 0;
+                      const isAiActive = appliedAiQuestions[ans.qNum] ?? true;
+                      const isFullScore = ans.pointsEarned === ans.maxPoints;
+                      const deducted = ans.maxPoints - ans.pointsEarned;
+
+                      return (
+                        <div 
+                          key={ans.qNum}
+                          className={`p-4 bg-white border rounded-xl space-y-3 transition-all ${
+                            ans.isAmbiguous
+                              ? "border-amber-300 ring-2 ring-amber-100"
+                              : "border-slate-200"
+                          }`}
+                        >
+                          {/* 문항 헤더 & AI 감점 적용/철회 체크박스 (AI 감점 문항만 고정 노출하여 재체크 가능!) */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2.5 py-0.5 rounded-md bg-slate-900 text-white text-xs font-bold font-mono">
+                                {ans.qNum}번
+                              </span>
+                              <span className="text-sm font-bold text-slate-800">{ans.title}</span>
+                              {ans.isAmbiguous && (
+                                <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold flex items-center gap-1">
+                                  <AlertTriangle className="w-3 h-3 text-amber-600" />
+                                  풀이 비약 감지
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              {/* AI 감점 문항이면 체크박스 영구 노출 (체크 해제 후에도 재체크 가능) */}
+                              {!hasAiDeduction ? (
+                                <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                                  기준 충족 (만점)
+                                </span>
+                              ) : (
+                                <label className={`flex items-center gap-1.5 cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition-all border shadow-xs ${
+                                  isAiActive
+                                    ? "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
+                                    : "bg-amber-50 text-amber-900 border-amber-300 ring-1 ring-amber-200"
+                                }`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={isAiActive}
+                                    onChange={() => handleToggleAiForQuestion(ans.qNum)}
+                                    className="w-3.5 h-3.5 rounded text-indigo-600 focus:ring-0 cursor-pointer"
+                                  />
+                                  <span>
+                                    {isAiActive 
+                                      ? `AI 감점 적용 (-${originalDeductionPoints}점 반영)` 
+                                      : "AI 감점 철회 (만점 복원됨 - 클릭 시 재적용)"}
+                                  </span>
+                                </label>
+                              )}
+
+                              <span className="text-xs text-slate-500 font-semibold">
+                                배점: {ans.maxPoints}점
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* 학생 손글씨 원본 (필기 -> 디지털 변환 텍스트의 근거 자료) */}
+                          {ans.handwritingImage && (
+                            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[11px] font-bold text-slate-500">학생 손글씨 원본</span>
+                                <span className="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                                  학생 변환 결과 확인 완료{ans.confirmedAt ? ` (${ans.confirmedAt} 제출)` : ""}
+                                </span>
+                              </div>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={ans.handwritingImage}
+                                alt={`${ans.qNum}번 문항 학생 손글씨 원본`}
+                                className="w-full max-w-xl rounded border border-slate-200 bg-white"
+                              />
+                              <p className="text-[10px] text-slate-500">
+                                아래 &apos;학생 제출 답안&apos;은 위 필기를 디지털 텍스트로 변환한 결과이며, 학생이 확인 후 제출했습니다.
+                              </p>
+                            </div>
+                          )}
+
+                          {/* 학생 답안 vs 기준 모범 답안 2열 나란한 비교 (오류 줄 붉은 물결 밑줄 시각화) */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[11px] font-bold text-slate-500">학생 제출 답안</span>
+                                {hasAiDeduction && (
+                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                                    isAiActive 
+                                      ? "text-rose-700 bg-rose-50 border-rose-200" 
+                                      : "text-amber-800 bg-amber-50 border-amber-200"
+                                  }`}>
+                                    {isAiActive ? "오류 감지 줄 하이라이트" : "교사 감점 철회 (만점 복원)"}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="font-mono text-slate-900 bg-white p-2.5 rounded border border-slate-200 break-all leading-relaxed space-y-1">
+                                {ans.studentAnswer.includes("|") ? (
+                                  ans.studentAnswer.split("|").map((line, idx) => {
+                                    const isErrorLine = hasAiDeduction && (line.includes("3행") || line.includes("3 ± 4") || (ans.errorLine && ans.errorLine.includes(line.trim().slice(0, 5))));
+
+                                    return (
+                                      <div 
+                                        key={idx}
+                                        className={`transition-all ${
+                                          isErrorLine 
+                                            ? isAiActive
+                                              ? "bg-rose-50/90 text-rose-950 font-bold px-2 py-1 rounded border border-rose-200 my-0.5"
+                                              : "bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200 opacity-70"
+                                            : "text-slate-800"
+                                        }`}
+                                      >
+                                        <span className={isErrorLine && isAiActive ? "underline decoration-rose-500 decoration-wavy decoration-2" : ""}>
+                                          {line.trim()}
+                                        </span>
+                                        {isErrorLine && (
+                                          <span className={`ml-2 inline-block px-1.5 py-0.2 text-[9px] font-bold rounded ${
+                                            isAiActive ? "bg-rose-500 text-white" : "bg-slate-400 text-white"
+                                          }`}>
+                                            {isAiActive ? "AI 감지 오류 줄" : "교사 감점 철회"}
+                                          </span>
+                                        )}
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div className="font-semibold">{ans.studentAnswer}</div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                              <span className="text-[11px] font-bold text-slate-500">기준 모범 답안</span>
+                              <div className="font-mono text-slate-700 bg-white p-2.5 rounded border border-slate-200 break-all leading-relaxed">
+                                {ans.correctAnswer}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* AI 감점 항목 검수 분석 리포트 */}
+                          <div className="bg-slate-50/70 border border-slate-200 rounded-lg p-3.5 space-y-2 text-xs">
+                            <div className="flex items-center justify-between border-b border-slate-200/80 pb-1.5">
+                              <span className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
+                                <ShieldCheck className="w-3.5 h-3.5 text-slate-600" />
+                                AI 감점 검수 분석
+                              </span>
+                              <span className={`text-[11px] font-bold px-2 py-0.5 rounded ${
+                                !hasAiDeduction
+                                  ? "bg-slate-200 text-slate-700" 
+                                  : !isAiActive
+                                  ? "bg-amber-100 text-amber-800 border border-amber-300"
+                                  : "bg-rose-50 text-rose-700 border border-rose-200"
+                              }`}>
+                                {!hasAiDeduction 
+                                  ? "기준 전원 충족" 
+                                  : !isAiActive
+                                  ? "감점 철회 (만점)"
+                                  : `감점 폭: -${originalDeductionPoints}점`}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                              {/* 1. 미충족 표시 (감점 기준) - 정답인 경우 차분한 슬레이트, 감점 시에만 경고색 */}
+                              <div className={`p-2.5 rounded border transition-colors ${
+                                !(appliedAiQuestions[ans.qNum] ?? true)
+                                  ? "bg-slate-50 border-slate-200 opacity-60"
+                                  : isFullScore
+                                  ? "bg-white border-slate-200"
+                                  : "bg-white border-rose-200"
+                              }`}>
+                                <span className="font-bold text-slate-500 block text-[10px] mb-0.5">
+                                  미충족 감점 기준
+                                </span>
+                                {!(appliedAiQuestions[ans.qNum] ?? true) ? (
+                                  <p className="text-slate-600 font-medium">
+                                    교사 재량으로 AI 감점 미적용 (원안 인정)
+                                  </p>
+                                ) : isFullScore ? (
+                                  <p className="text-slate-600 font-medium">
+                                    감점 항목 없음 (기준 전원 충족)
+                                  </p>
+                                ) : (
+                                  <p className="text-rose-700 font-bold">
+                                    {ans.deductionCriteria || "감점 기준 미충족"}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* 2. 오류가 있는 답안 줄 */}
+                              <div className={`p-2.5 rounded border transition-colors ${
+                                !(appliedAiQuestions[ans.qNum] ?? true)
+                                  ? "bg-slate-50 border-slate-200 opacity-60"
+                                  : "bg-white border-slate-200"
+                              }`}>
+                                <span className="font-bold text-slate-500 block text-[10px] mb-0.5">
+                                  오류 답안 위치 및 식
+                                </span>
+                                <p className={`font-mono text-[11px] break-all ${
+                                  isFullScore || !(appliedAiQuestions[ans.qNum] ?? true)
+                                    ? "text-slate-500" 
+                                    : "text-slate-800 font-semibold"
+                                }`}>
+                                  {ans.errorLine || "오류 위치 없음"}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* 3. AI 검토 의견 */}
+                            <div className="bg-white p-2.5 rounded border border-slate-200">
+                              <span className="font-bold text-slate-500 block text-[10px] mb-0.5">
+                                AI 검토 소견
+                              </span>
+                              <p className="text-slate-700 leading-relaxed font-medium">
+                                {ans.aiReviewOpinion || ans.aiAssessment}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column (4 cols): Scoring & Final Confirmation */}
+                <div className="lg:col-span-4 flex flex-col h-full bg-white border border-slate-200 rounded-2xl p-5 shadow-xs overflow-y-auto justify-between space-y-4">
+                  
+                  <div className="space-y-4">
+                    {/* [예외 확인 플래그] 풀이 비약 감지 시 안내 배너 */}
+                    {selectedStudentForReview.isNeedsReview && (
+                      <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500 text-white text-[10px] font-bold">
+                              교사 확인 필요
+                            </span>
+                            <span className="text-xs font-bold text-amber-950">
+                              {selectedStudentForReview.reviewReason || "풀이 비약 감지"}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-amber-900 leading-relaxed">
+                            중간 유도식 생략이 감지되었습니다. 최종 배점 및 감점 여부를 선생님께서 직접 결정해주세요.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AI 종합 소견 및 일괄 적용 마스터 체크박스 */}
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <FileCheck2 className="w-3.5 h-3.5 text-slate-600" />
+                          AI 감점 검수 적용 설정
+                        </span>
+                        <label className="flex items-center gap-1.5 cursor-pointer bg-white border border-slate-300 px-2 py-1 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors shadow-xs">
                           <input
-                            type="number"
-                            min={0}
-                            max={ans.maxPoints}
-                            value={ans.pointsEarned}
-                            onChange={(e) => handleSetQuestionScoreDirect(ans.qNum, e.target.value)}
-                            className="w-10 text-center font-mono font-black text-xs bg-white border border-indigo-300 rounded-md py-0.5 text-indigo-900 focus:outline-none"
+                            type="checkbox"
+                            checked={Object.values(appliedAiQuestions).some(v => v)}
+                            onChange={handleToggleAllAi}
+                            className="w-3.5 h-3.5 rounded text-indigo-600 focus:ring-0 cursor-pointer"
                           />
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateQuestionScore(ans.qNum, 1)}
-                            className="w-6 h-6 rounded-md bg-white border border-indigo-200 font-black text-slate-700 hover:bg-indigo-100 flex items-center justify-center cursor-pointer text-xs"
-                          >
-                            +
-                          </button>
-                          <span className="text-[11px] font-bold text-slate-500">
-                            / {ans.maxPoints}점
-                          </span>
-                        </div>
+                          <span>{Object.values(appliedAiQuestions).some(v => v) ? "AI 감점 항목 일괄 적용 중" : "AI 감점 일괄 철회 (전원 만점)"}</span>
+                        </label>
                       </div>
+                      <p className="text-xs text-slate-700 leading-relaxed bg-white p-2.5 rounded-lg border border-slate-200 font-medium">
+                        {selectedStudentForReview.aiSummary}
+                      </p>
+                    </div>
 
-                      <div className="text-[11px] text-slate-600 flex items-center gap-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                        <span><strong className="text-slate-800">학생 답안:</strong> {ans.studentAnswer}</span>
-                        <span className="text-slate-300">|</span>
-                        <span><strong className="text-emerald-700">정답:</strong> {ans.correctAnswer}</span>
-                      </div>
+                    {/* 문항별 점수 배점 스텝퍼 컨트롤러 */}
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                        <Edit3 className="w-3.5 h-3.5 text-slate-700" />
+                        <span>문항별 배점 입력 (총 100점)</span>
+                      </h4>
 
-                      <div className="text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-150">
-                        <strong className="text-indigo-700">시스템 세부 판정:</strong> {ans.aiAssessment}
+                      <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        {tempAnswers.map((ans) => (
+                          <div key={ans.qNum} className="flex items-center justify-between text-xs bg-white p-2.5 rounded-lg border border-slate-200">
+                            <span className="font-bold text-slate-800">
+                              {ans.qNum}번 ({ans.title.slice(0, 10)}...)
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateQuestionScore(ans.qNum, -1)}
+                                className="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                min={0}
+                                max={ans.maxPoints}
+                                value={ans.pointsEarned}
+                                onChange={(e) => handleSetQuestionScoreDirect(ans.qNum, e.target.value)}
+                                className="w-10 text-center font-mono font-bold text-xs bg-slate-50 border border-slate-300 rounded py-0.5 text-slate-900 focus:outline-none focus:border-slate-500"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateQuestionScore(ans.qNum, 1)}
+                                className="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                              >
+                                +
+                              </button>
+                              <span className="text-[11px] text-slate-400 font-semibold">
+                                / {ans.maxPoints}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Teacher 2nd Adjustment Controls (Real-time auto-summed total) */}
-              <div className="bg-indigo-50/60 border border-indigo-200 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-xs font-extrabold text-indigo-950 flex items-center gap-1.5">
-                      <Edit3 className="w-4 h-4 text-indigo-600" />
-                      선생님 최종 확정 점수 (문항별 합산)
-                    </h4>
-                    <p className="text-[11px] text-indigo-800 mt-0.5">
-                      위 문항별 부분점수를 조정한 결과가 실시간으로 총점에 자동 합산 반영되었습니다.
-                    </p>
+                    {/* 최종 합산 총점 표시 */}
+                    <div className="bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between">
+                      <div>
+                        <span className="text-[11px] font-semibold text-slate-400 block">선생님 최종 확정 점수</span>
+                        <span className="text-xs text-slate-300">문항별 점수 자동 합산</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-2xl font-black text-white">
+                          {tempTeacherScore}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-400">/ 100점</span>
+                      </div>
+                    </div>
+
+                    {/* 교사 평가 의견 / 피드백 */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-slate-700">
+                        교사 평가 총평 / 감점 사유 (선택)
+                      </label>
+                      <textarea
+                        value={tempFeedback}
+                        onChange={(e) => setTempFeedback(e.target.value)}
+                        placeholder="예: 서술형 단계별 유도 공식이 논리적이므로 부분점수 상향 조정함."
+                        rows={3}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-500 font-medium"
+                      />
+                    </div>
                   </div>
 
-                  {/* Total Score Display / Fine Adjustment */}
-                  <div className="flex items-center gap-2">
+                  {/* 확정 버튼 영역 */}
+                  <div className="pt-2 flex items-center gap-3">
                     <button
-                      onClick={() => setTempTeacherScore(prev => Math.max(0, prev - 1))}
-                      className="w-8 h-8 rounded-lg bg-white border border-indigo-200 font-black text-slate-800 hover:bg-indigo-100 cursor-pointer flex items-center justify-center"
-                      title="총점 1점 감점"
+                      onClick={() => setSelectedStudentForReview(null)}
+                      className="w-1/3 py-3 border border-slate-300 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-600 transition-colors cursor-pointer text-center"
                     >
-                      -
+                      취소
                     </button>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={tempTeacherScore}
-                      onChange={(e) => setTempTeacherScore(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
-                      className="w-16 text-center font-mono font-black text-lg bg-white border border-indigo-300 rounded-xl py-1 text-indigo-900 focus:outline-none"
-                    />
                     <button
-                      onClick={() => setTempTeacherScore(prev => Math.min(100, prev + 1))}
-                      className="w-8 h-8 rounded-lg bg-white border border-indigo-200 font-black text-slate-800 hover:bg-indigo-100 cursor-pointer flex items-center justify-center"
-                      title="총점 1점 가산"
+                      onClick={handleSaveTeacherEvaluation}
+                      className="w-2/3 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      +
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span>최종 점수 확정 및 채점 완료</span>
                     </button>
-                    <span className="text-xs font-bold text-indigo-900">점 / 100점</span>
                   </div>
-                </div>
 
-                {/* Teacher Feedback textarea */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-indigo-950">
-                    교사 평가 의견 / 점수 조정 사유 (선택)
-                  </label>
-                  <textarea
-                    value={tempFeedback}
-                    onChange={(e) => setTempFeedback(e.target.value)}
-                    placeholder="예: 서술형 단계별 유도 공식이 논리적이므로 부분점수 4점 상향 조정함."
-                    rows={2}
-                    className="w-full bg-white border border-indigo-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
-                  />
                 </div>
-              </div>
-
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  onClick={() => setSelectedStudentForReview(null)}
-                  className="px-4 py-2.5 border border-slate-300 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-600 transition-colors cursor-pointer"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={handleSaveTeacherEvaluation}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-lg transition-colors cursor-pointer flex items-center gap-1.5"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>최종 점수 확정 및 저장</span>
-                </button>
               </div>
             </motion.div>
           </div>

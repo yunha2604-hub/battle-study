@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수행평가 교사/학생 연동 순서도 (컴팩트 리포트용)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    @page {
+      size: 82mm 43mm;
+      margin: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .report-frame {
+      width: 82mm;
+      height: 43mm;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .report-frame {
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="report-frame">
+    <svg viewBox="0 0 328 172" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.5" markerHeight="3.5"
+          orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+        </marker>
+      </defs>
+
+      <!-- ========================================== -->
+      <!-- 가로 4단계 파이프라인 (x: 8, 88, 168, 248 / w: 72, h: 120) -->
+      <!-- ========================================== -->
+
+      <!-- [1단계] AI 문항 출제 (교사) -->
+      <rect x="8" y="14" width="72" height="120" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="14" y="19" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="44" y="30" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">1단계: 교사</text>
+      <text x="44" y="47" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">AI 문항 출제</text>
+      <text x="12" y="63" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">출제 지침 설정</tspan></text>
+      <text x="15" y="75" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 성취기준·옵션지침</text>
+      <text x="12" y="93" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">AI 문항 생성</tspan></text>
+      <text x="15" y="105" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 기준표·교사 확정</text>
+
+      <!-- 1단계 -> 2단계 화살표 -->
+      <path d="M 80 74 H 88" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [2단계] 시험 코드 응시 (학생) -->
+      <rect x="88" y="14" width="72" height="120" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="94" y="19" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="124" y="30" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">2단계: 학생</text>
+      <text x="124" y="47" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">시험 코드 응시</text>
+      <text x="92" y="63" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">시험 코드 응시</tspan></text>
+      <text x="95" y="75" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 계정 없이 응시</text>
+      <text x="92" y="93" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">부정행위 방지</tspan></text>
+      <text x="95" y="105" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 화면 이탈 0점</text>
+
+      <!-- 2단계 -> 3단계 화살표 -->
+      <path d="M 160 74 H 168" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [3단계] 실시간 답안 관리 (교사 대시보드) -->
+      <rect x="168" y="14" width="72" height="120" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="174" y="19" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="204" y="30" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">3단계: 관리</text>
+      <text x="204" y="47" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">실시간 답안 관리</text>
+      <text x="172" y="63" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">실시간 답안 수신</tspan></text>
+      <text x="175" y="75" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 제출 현황 집계</text>
+      <text x="172" y="93" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">관리 테이블 필터</tspan></text>
+      <text x="175" y="105" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 반·번호별 검색</text>
+
+      <!-- 3단계 -> 4단계 화살표 -->
+      <path d="M 240 74 H 248" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [4단계] 2단계 공정 평가 (AI 1차 + 교사 2차 확정) -->
+      <rect x="248" y="14" width="72" height="120" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="254" y="19" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="284" y="30" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">4단계: 채점</text>
+      <text x="284" y="47" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">2단계 점수 확정</text>
+      <text x="252" y="63" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">AI 1차 자동채점</tspan></text>
+      <text x="255" y="75" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 서술형 근거 제시</text>
+      <text x="252" y="93" font-family="'Noto Sans KR', sans-serif" font-size="7" font-weight="700" fill="#0f172a">• <tspan fill="#15803d">교사 2차 최종확정</tspan></text>
+      <text x="255" y="105" font-family="'Noto Sans KR', sans-serif" font-size="6.5" font-weight="500" fill="#64748b">└ 근거 기반 채점</text>
+
+      <!-- ========================================== -->
+      <!-- 최하단 핵심 요약 배너 (순수 화이트 + 그린 강조) -->
+      <!-- ========================================== -->
+      <rect x="8" y="142" width="312" height="22" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <text x="164" y="156" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">
+        <tspan fill="#15803d">AI 성취기준 출제</tspan> ➔ <tspan fill="#15803d">시험 코드 응시</tspan> ➔ <tspan fill="#15803d">실시간 제출 관리</tspan> ➔ <tspan fill="#15803d">2단계 최종 점수 확정</tspan>
+      </text>
+    </svg>
+  </div>
+
+</body>
+
+</html>

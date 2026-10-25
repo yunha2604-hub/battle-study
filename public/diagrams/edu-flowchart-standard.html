@@ -143,7 +143,7 @@
       <p class="eyebrow">Battle Study Edu • Role-Based Authentication Flow</p>
       <h1>에듀 공교육 트랙 표준 인증 순서도 (중학교 정보 교과 기준)</h1>
       <p class="description">
-        교사의 안전한 출제 권한 확인, 학생의 수업 중 1초 시험장 참여 자격 확인, 학부모의 비공개 성적 열람 승인을 중학교 정보 교과서 표준 기호로 도식화한 순서도입니다.
+        교사의 안전한 출제 권한 확인, 학생의 수업 중 1초 시험장 참여 자격 확인, 학생의 비공개 성적 열람 승인을 중학교 정보 교과서 표준 기호로 도식화한 순서도입니다.
       </p>
     </header>
 
@@ -187,9 +187,9 @@
         <path d="M 390 144 V 158" stroke="#1f4e78" stroke-width="1.8" marker-end="url(#arrow-navy)" />
         <text x="445" y="152" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">[학생: 시험 응시]</text>
 
-        <!-- 분기 3: 오른쪽 학생/학부모 성적 조회 트랙 (에듀 표준 딥 네이비 #1f4e78) -->
+        <!-- 분기 3: 오른쪽 학생 성적 확인 트랙 (에듀 표준 딥 네이비 #1f4e78) -->
         <path d="M 475 114 H 635 V 158" stroke="#1f4e78" stroke-width="1.8" marker-end="url(#arrow-navy)" />
-        <text x="565" y="106" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">[학생/학부모: 성적 열람]</text>
+        <text x="565" y="106" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">[학생: 성적 확인]</text>
 
 
         <!-- ========================================== -->
@@ -228,8 +228,8 @@
         <!-- ========================================== -->
         <!-- 2.1 데이터 입력 (평행사변형 - Data I/O) -->
         <path d="M 303 162 L 495 162 L 477 216 L 285 216 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
-        <text x="390" y="184" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">[입력] 칠판 6자리 PIN + 학번</text>
-        <text x="390" y="201" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" fill="#334155">아이디/비번 없이 1초 무마찰 진입</text>
+        <text x="390" y="184" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="800" fill="#0f172a">[입력] 1회용 6자리 PIN + 학번</text>
+        <text x="390" y="201" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="10.5" fill="#334155">아이디/비번 없이 1초 즉시 진입</text>
 
         <path d="M 390 216 V 238" stroke="#1f4e78" stroke-width="1.8" marker-end="url(#arrow-navy)" />
 
@@ -255,7 +255,7 @@
 
 
         <!-- ========================================== -->
-        <!-- [트랙 3] 학생/학부모 비공개 성적 열람 승인 (x 중심: 635) -->
+        <!-- [트랙 3] 학생 비공개 성적 확인 승인 (x 중심: 635) -->
         <!-- ========================================== -->
         <!-- 3.1 데이터 입력 (평행사변형 - Data I/O) -->
         <path d="M 548 162 L 740 162 L 722 216 L 530 216 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
@@ -266,7 +266,7 @@
 
         <!-- 3.2 판단 마름모 (Decision) -->
         <path d="M 635 238 L 710 264 L 635 290 L 560 264 Z" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
-        <text x="635" y="268" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">본인·학부모 일치?</text>
+        <text x="635" y="268" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="11" font-weight="800" fill="#0f172a">응시 학생 본인 일치?</text>
 
         <!-- 불일치 시 차단 -->
         <path d="M 710 264 H 745 V 292" stroke="#64748b" stroke-width="1.2" marker-end="url(#arrow-sub)" />
@@ -309,7 +309,7 @@
         <rect x="40" y="504" width="700" height="38" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
         <text x="56" y="528" font-family="'Noto Sans KR', sans-serif" font-size="11.5" font-weight="800" fill="#0f172a">에듀 보안 원칙:</text>
         <text x="150" y="528" font-family="'Noto Sans KR', sans-serif" font-size="11" fill="#334155">
-          교사는 교육청 인증으로 관리자 승인 | 수업 중 칠판 PIN 1회성 시험장 승인 | 성적은 실명확인 1:1 비공개 승인
+          교사는 교육청 인증으로 관리자 승인 | 수업 중 1회용 시험장 코드 승인 | 성적은 실명확인 1:1 비공개 승인
         </text>
       </svg>
     </div>

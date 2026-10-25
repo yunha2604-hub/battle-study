@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배틀스터디 프로젝트 개발 프로세스</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@700;800&family=Noto+Sans+KR:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #ffffff;
+      /* AI 파스텔 배경 완전 제거 -> 순수 화이트 */
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HWP 표 폭(약 150~160mm)에 최적화된 컴팩트 너비 */
+    .process-bar-wrap {
+      width: 100%;
+      max-width: 720px;
+      /* 기존 890px에서 720px로 축소 */
+      background: #ffffff;
+    }
+
+    .stepper-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 28px;
+      /* 초슬림 28px */
+    }
+
+    .step-box {
+      flex: 1;
+      height: 100%;
+      background: #ffffff;
+      /* 파스텔 제거 -> 순백색 */
+      border: 1.2px solid #0f172a;
+      /* 선명한 먹색 잉크 라인 */
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .step-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 1px 4px;
+      border-radius: 2px;
+      line-height: 1.1;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.4px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    /* 화살표 구분자 */
+    .arrow-sep {
+      width: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #0f172a;
+      flex-shrink: 0;
+    }
+
+    .arrow-sep svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    /* 3번 강조: 오렌지 톤 */
+    .step-box.highlight {
+      background: #ea580c;
+      border-color: #c2410c;
+    }
+
+    .step-box.highlight .step-num {
+      background: #ffffff;
+      color: #ea580c;
+    }
+
+    .step-box.highlight .step-text {
+      color: #ffffff;
+    }
+
+    /* 안내 문구 (캡처 제외 영역) */
+    .guide-text {
+      margin-top: 18px;
+      font-size: 11.5px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .guide-text code {
+      font-family: 'Geist Mono', monospace;
+      background: #f1f5f9;
+      padding: 2px 5px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HWP 캡처 대상 영역 (너비 720px, 높이 28px) -->
+  <div class="process-bar-wrap">
+    <div class="stepper-row">
+      <!-- 1 -->
+      <div class="step-box">
+        <span class="step-num">1</span>
+        <span class="step-text">페인포인트 조사·기획</span>
+      </div>
+
+      <div class="arrow-sep">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+
+      <!-- 2 -->
+      <div class="step-box">
+        <span class="step-num">2</span>
+        <span class="step-text">1차 MVP 제작·시연</span>
+      </div>
+
+      <div class="arrow-sep">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+
+      <!-- 3 (현재 진행 단계) -->
+      <div class="step-box highlight">
+        <span class="step-num">3</span>
+        <span class="step-text">기획 상세화·기능 고도화</span>
+      </div>
+
+      <div class="arrow-sep">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+
+      <!-- 4 -->
+      <div class="step-box">
+        <span class="step-num">4</span>
+        <span class="step-text">타깃 유저 베타 테스트</span>
+      </div>
+
+      <div class="arrow-sep">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+
+      <!-- 5 -->
+      <div class="step-box">
+        <span class="step-num">5</span>
+        <span class="step-text">B2C 아레나 정식 런칭</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-text">
+    너비 <strong>720px</strong> / 높이 <strong>28px</strong> / 배경 순백색(<code>#ffffff</code>) / 먹색 잉크
+    라인(<code>#0f172a</code>)<br>
+    <code>Win + Shift + S</code> 로 위 바 영역만 캡처하여 한글(HWP) 문서에 '글자처럼 취급'으로 삽입하시면 됩니다.
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오답 복습 던전 에너지 루프 (컴팩트 리포트용)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    @page {
+      size: 82mm 43mm;
+      margin: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .report-frame {
+      width: 82mm;
+      height: 43mm;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .report-frame {
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="report-frame">
+    <svg viewBox="0 0 328 172" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.5" markerHeight="3.5"
+          orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.5" markerHeight="3.5"
+          orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#15803d" />
+        </marker>
+      </defs>
+
+      <!-- ========================================== -->
+      <!-- 최상단: 복습 완료 시 배틀 복귀 순환선 루프 (y: 6 ~ 24) -->
+      <!-- ========================================== -->
+      <path d="M 284 24 V 11 H 44 V 22" stroke="#15803d" stroke-width="1.0" stroke-dasharray="3 2" marker-end="url(#arrow-green)" fill="none" />
+      <rect x="104" y="4" width="120" height="15" rx="2" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="164" y="15" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="7.5" font-weight="700" fill="#15803d">
+        복습 완료 시 배틀 복귀
+      </text>
+
+      <!-- ========================================== -->
+      <!-- 가로 4단계 파이프라인 (x: 8, 88, 168, 248 / w: 72, h: 114) -->
+      <!-- ========================================== -->
+
+      <!-- [1단계] 퀴즈 배틀 -->
+      <rect x="8" y="24" width="72" height="114" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="14" y="29" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="44" y="40" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">1단계: 배틀</text>
+      <text x="44" y="56" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" font-weight="800" fill="#0f172a">1:1 실시간 대결</text>
+      <text x="12" y="73" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 기본 에너지 5개</text>
+      <text x="12" y="88" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#0f172a">• <tspan fill="#15803d" font-weight="700">대결당 1개 소모</tspan></text>
+      <text x="12" y="103" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 오답 실시간 누적</text>
+      <text x="12" y="118" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#475569">• 승패 및 점수 반영</text>
+
+      <!-- 1단계 -> 2단계 화살표 -->
+      <path d="M 80 81 H 88" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [2단계] 에너지 소진 (배틀 참여 제한) -->
+      <rect x="88" y="24" width="72" height="114" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="94" y="29" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="124" y="40" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">2단계: 방전</text>
+      <text x="124" y="56" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" font-weight="800" fill="#0f172a">에너지 소진</text>
+      <text x="92" y="73" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 보유 에너지 소진</text>
+      <text x="92" y="88" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#0f172a">• <tspan fill="#15803d" font-weight="700">배틀 참여 제한</tspan></text>
+      <text x="92" y="103" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 복습 없는 대결 차단</text>
+      <text x="92" y="118" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#15803d" font-weight="700">• 오답 복습 필수</text>
+
+      <!-- 2단계 -> 3단계 화살표 -->
+      <path d="M 160 81 H 168" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [3단계] 오답 집중 복습 -->
+      <rect x="168" y="24" width="72" height="114" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="174" y="29" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="204" y="40" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">3단계: 복습</text>
+      <text x="204" y="56" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" font-weight="800" fill="#0f172a">오답 집중 복습</text>
+      <text x="172" y="75" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 오답 AI 해설 확인</text>
+      <text x="172" y="93" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#0f172a">• <tspan fill="#15803d" font-weight="700">변형 문제 풀이</tspan></text>
+      <text x="172" y="111" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#475569">• 취약 개념 복습 완료</text>
+
+      <!-- 3단계 -> 4단계 화살표 -->
+      <path d="M 240 81 H 248" stroke="#0f172a" stroke-width="1.0" marker-end="url(#arrow)" />
+
+      <!-- [4단계] 충전 & 복귀 -->
+      <rect x="248" y="24" width="72" height="114" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <rect x="254" y="29" width="60" height="15" rx="1.5" fill="#ffffff" stroke="#15803d" stroke-width="0.8" />
+      <text x="284" y="40" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8" font-weight="800" fill="#15803d">4단계: 충전</text>
+      <text x="284" y="56" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="9" font-weight="800" fill="#0f172a">충전 및 복귀</text>
+      <text x="252" y="73" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#334155">• 오답 복습 완료</text>
+      <text x="252" y="88" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#0f172a">• <tspan fill="#15803d" font-weight="700">에너지 +1 충전</tspan></text>
+      <text x="252" y="103" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#0f172a">• <tspan fill="#15803d" font-weight="700">배틀 제한 즉시 해제</tspan></text>
+      <text x="252" y="118" font-family="'Noto Sans KR', sans-serif" font-size="7" fill="#475569">• 배틀 재진입 가능</text>
+
+      <!-- ========================================== -->
+      <!-- 최하단 핵심 요약 배너 (순수 화이트 + 그린 강조) -->
+      <!-- ========================================== -->
+      <rect x="8" y="144" width="312" height="22" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="0.9" />
+      <text x="164" y="158" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-size="8.5" font-weight="800" fill="#0f172a">
+        <tspan fill="#15803d">배틀 진행</tspan> ➔ <tspan fill="#15803d">에너지 소진 시 배틀 제한</tspan> ➔ <tspan fill="#15803d">오답 변형 복습</tspan> ➔ <tspan fill="#15803d">에너지 충전 및 배틀 복귀</tspan>
+      </text>
+    </svg>
+  </div>
+
+</body>
+
+</html>

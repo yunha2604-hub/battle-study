@@ -10,12 +10,16 @@ import {
 } from "lucide-react";
 import { GeneratedMathQuestion, StudentAssessmentRow, DEFAULT_MATH_QUESTIONS } from "./TeacherDashboard";
 import EduHeader from "./EduHeader";
+import HandwritingSolution, {
+  HandwritingEntry, buildConvertedEntry, makeSampleHandwritingImage,
+  segmentsToText, entryHasUnresolvedFlag, SAMPLE_SOLUTION_IMAGE, SAMPLE_SOLUTION_TEXT
+} from "./HandwritingSolution";
 
 export interface AssessmentExamViewProps {
   questions?: GeneratedMathQuestion[];
   assessmentCode: string;
   onFinishExam: (
-    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number }[],
+    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number; handwritingImage?: string; confirmedAt?: string }[],
     totalScore: number
   ) => void;
   onExit: () => void;
@@ -37,6 +41,7 @@ export default function AssessmentExamView({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [narrativeSolutions, setNarrativeSolutions] = useState<Record<number, string>>({});
+  const [handwriting, setHandwriting] = useState<Record<number, HandwritingEntry>>({});
   const isStudentMode = mode === "STUDENT_EXAM";
   const [enteredPin, setEnteredPin] = useState<string>(assessmentCode || "MTH-7429");
   const [isPinGatePassed, setIsPinGatePassed] = useState<boolean>(!isStudentMode);
@@ -76,11 +81,20 @@ export default function AssessmentExamView({
   const handleAutoFillAnswers = () => {
     const autoFilled: Record<number, string> = {};
     const autoFilledNarrative: Record<number, string> = {};
+    const autoFilledHandwriting: Record<number, HandwritingEntry> = {};
 
     examQuestions.forEach((q, idx) => {
       if (q.type === "서술형 풀이" || !q.options || q.options.length === 0) {
         autoFilled[q.id] = q.correctAnswer;
-        autoFilledNarrative[q.id] = q.solution || "주어진 식을 완전제곱식으로 전개하여 해를 유도함.";
+        const usesRealSample = /^x\s*=\s*3/.test(q.correctAnswer.trim());
+        const sampleText = usesRealSample
+          ? SAMPLE_SOLUTION_TEXT
+          : (q.solution || "주어진 식을 완전제곱식으로 전개하여 해를 유도함.");
+        autoFilledNarrative[q.id] = sampleText;
+        autoFilledHandwriting[q.id] = buildConvertedEntry(
+          usesRealSample ? SAMPLE_SOLUTION_IMAGE : makeSampleHandwritingImage(sampleText),
+          sampleText, 1, true
+        );
       } else {
         // 80% 정답 시뮬레이션
         if (idx === examQuestions.length - 1 && q.options && q.options.length > 1) {
@@ -93,7 +107,25 @@ export default function AssessmentExamView({
     });
     setSelectedAnswers(autoFilled);
     setNarrativeSolutions(autoFilledNarrative);
+    setHandwriting(autoFilledHandwriting);
   };
+
+  const isNarrativeQ = (q: GeneratedMathQuestion) =>
+    q.type === "서술형 풀이" || !q.options || q.options.length === 0;
+
+  // 변환/확인이 끝나지 않은 서술형 필기 문항 (최종 제출 차단 사유)
+  const handwritingBlockers = examQuestions
+    .map((q, idx) => ({ q, idx, entry: handwriting[q.id] }))
+    .filter(({ q, entry }) => {
+      if (!isNarrativeQ(q) || !entry) return false;
+      if (entry.status === "writing" && entry.image) return true; // 필기했지만 변환하지 않음
+      return entryHasUnresolvedFlag(entry);
+    })
+    .map(({ idx, entry }) =>
+      entry && entry.status === "writing"
+        ? `문항 ${idx + 1}: 필기를 아직 텍스트로 변환하지 않았습니다.`
+        : `문항 ${idx + 1}: 변환 결과의 확인 필요 글자를 확인하거나 다시 써 주세요.`
+    );
 
   // Request Submit (Opens confirmation modal first with warning)
   const handleRequestSubmit = () => {
@@ -102,12 +134,17 @@ export default function AssessmentExamView({
 
   // Final Submit execution after confirmation
   const handleExecuteFinalSubmit = () => {
+    if (handwritingBlockers.length > 0) return;
     setShowConfirmModal(false);
 
+    const confirmedAt = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     let earnedScore = 0;
     const details = examQuestions.map((q, idx) => {
       const studentAns = selectedAnswers[q.id] || "";
-      const studentSol = narrativeSolutions[q.id] || "";
+      const hwEntry = handwriting[q.id];
+      const studentSol = hwEntry && hwEntry.status === "converted"
+        ? segmentsToText(hwEntry.segments)
+        : (narrativeSolutions[q.id] || "");
       const isNarrative = q.type === "서술형 풀이" || !q.options || q.options.length === 0;
 
       let isCorrect = false;
@@ -142,7 +179,9 @@ export default function AssessmentExamView({
         question: q,
         studentAnswer: formattedAnswer,
         isCorrect,
-        pointsEarned: points
+        pointsEarned: points,
+        handwritingImage: hwEntry && hwEntry.status === "converted" ? hwEntry.image : undefined,
+        confirmedAt: hwEntry && hwEntry.status === "converted" ? confirmedAt : undefined
       };
     });
 
@@ -156,7 +195,7 @@ export default function AssessmentExamView({
   // Answered Count calculation (Multiple choice or Narrative)
   const isQuestionAnswered = (q: GeneratedMathQuestion) => {
     if (q.type === "서술형 풀이" || !q.options || q.options.length === 0) {
-      return !!selectedAnswers[q.id]?.trim() || !!narrativeSolutions[q.id]?.trim();
+      return !!selectedAnswers[q.id]?.trim() || handwriting[q.id]?.status === "converted";
     }
     return !!selectedAnswers[q.id];
   };
@@ -382,28 +421,28 @@ export default function AssessmentExamView({
             {/* 2번 요구사항: 객관식 vs 서술형 풀이과정 & 답안 입력 구분 렌더링 */}
             {currentQ.type === "서술형 풀이" || !currentQ.options || currentQ.options.length === 0 ? (
               <div className="space-y-4 mb-6">
-                {/* 1. 단계별 풀이과정 작성란 */}
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-1.5 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                {/* 1. 단계별 풀이과정 필기 (손글씨 -> 디지털 텍스트 변환) */}
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                      <span>📐</span>
-                      <span>서술형 단계별 풀이과정 작성</span>
+                    <label className="text-xs font-black text-slate-800">
+                      서술형 단계별 풀이과정 필기
                     </label>
                     <span className="text-[10px] text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-black">
                       부분배점 평가 영역
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-medium">
-                    주어진 조건에 맞춘 식의 유도 및 전개 과정을 논리적으로 단계별로 서술하세요.
+                    펜, 터치, 마우스로 풀이 과정을 직접 쓰고 [필기 제출]을 누르면 디지털 텍스트로 변환됩니다.
                   </p>
-                  <textarea
-                    rows={4}
-                    value={narrativeSolutions[currentQ.id] || ""}
-                    onChange={(e) => {
-                      setNarrativeSolutions(prev => ({ ...prev, [currentQ.id]: e.target.value }));
-                    }}
-                    placeholder="예시: x² - 6x + 9 = (x - 3)² = 0 으로 완전제곱식으로 인수분해되므로..."
-                    className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs md:text-sm font-medium text-slate-900 focus:outline-none focus:border-indigo-500 transition-colors"
+                  <HandwritingSolution
+                    key={currentQ.id}
+                    entry={handwriting[currentQ.id]}
+                    presetText={
+                      /^x\s*=\s*3/.test(currentQ.correctAnswer.trim())
+                        ? SAMPLE_SOLUTION_TEXT
+                        : (currentQ.solution || "주어진 식을 완전제곱식으로 전개하여 해를 유도함.")
+                    }
+                    onChange={(entry) => setHandwriting((prev) => ({ ...prev, [currentQ.id]: entry }))}
                   />
                 </div>
 
@@ -656,6 +695,16 @@ export default function AssessmentExamView({
                     <strong className="text-indigo-600">{answeredCount}</strong> / {examQuestions.length}문항
                   </span>
                 </div>
+                {handwritingBlockers.length > 0 && (
+                  <div className="pt-1 border-t border-slate-200 space-y-0.5">
+                    {handwritingBlockers.map((m) => (
+                      <p key={m} className="text-[11px] text-red-600 font-bold">* {m}</p>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[11px] text-slate-600 pt-1 border-t border-slate-200">
+                  서술형 풀이는 변환된 디지털 텍스트로 제출되며, 제출 후에는 수정할 수 없습니다.
+                </p>
                 {answeredCount < examQuestions.length && (
                   <p className="text-[11px] text-red-600 font-bold pt-1 border-t border-slate-200">
                     * 아직 작성하지 않은 문항이 있습니다. 정말로 제출하시겠습니까?
@@ -674,7 +723,8 @@ export default function AssessmentExamView({
                 <button
                   type="button"
                   onClick={handleExecuteFinalSubmit}
-                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs transition-colors cursor-pointer shadow-md flex items-center justify-center gap-1.5"
+                  disabled={handwritingBlockers.length > 0}
+                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-xs transition-colors cursor-pointer shadow-md flex items-center justify-center gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>최종 제출하기</span>

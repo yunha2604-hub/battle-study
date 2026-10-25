@@ -77,7 +77,7 @@ interface BattleStudyContextType {
   handleStartAssessmentMatch: (isStrict: boolean) => void;
   handleFinishMatch: (userHp: number, oppHp: number, log: AnswerLogItem[]) => void;
   handleFinishAssessmentTest: (
-    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number }[],
+    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number; handwritingImage?: string; confirmedAt?: string }[],
     totalScore: number
   ) => void;
   handleReturnToLobby: (newTier: string, newLp: number) => void;
@@ -283,7 +283,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
   };
 
   const handleFinishAssessmentTest = (
-    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number }[],
+    answersLog: { qNum: number; question: GeneratedMathQuestion; studentAnswer: string; isCorrect: boolean; pointsEarned: number; handwritingImage?: string; confirmedAt?: string }[],
     totalScore: number
   ) => {
     const studentName = "김민수";
@@ -310,7 +310,9 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
           correctAnswer: item.question.correctAnswer,
           pointsEarned: item.pointsEarned,
           maxPoints: item.question.points,
-          aiAssessment: item.isCorrect ? "정답 (+만점)" : "오답 (풀이 재검토)"
+          aiAssessment: item.isCorrect ? "정답 (+만점)" : "오답 (풀이 재검토)",
+          handwritingImage: item.handwritingImage,
+          confirmedAt: item.confirmedAt
         }))
       };
 
