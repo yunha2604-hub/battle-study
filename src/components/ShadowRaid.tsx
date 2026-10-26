@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Swords, CheckCircle, XCircle, Clock, 
   Skull, RotateCcw, AlertTriangle,
-  FileText, ChevronRight, Eye, PenTool, Lock
+  FileText, ChevronRight, Eye, PenTool
 } from "lucide-react";
 
 export interface TwinQuestion {
@@ -440,12 +440,11 @@ export default function ShadowRaid({ setEnergy }: ShadowRaidProps) {
                     </button>
                     <button
                       type="button"
-                      disabled={!retryDone}
                       onClick={() => handleStartTwins(quest)}
-                      title={retryDone ? "유사문제 3개에 도전합니다" : "원본 재도전을 먼저 완료하세요"}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 disabled:shadow-none disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/20 cursor-pointer transition-all"
+                      title="유사문제 3개에 도전합니다"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/20 cursor-pointer transition-all"
                     >
-                      {retryDone ? <Swords className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                      <Swords className="w-3.5 h-3.5" />
                       <span>유사문제</span>
                     </button>
                   </div>
