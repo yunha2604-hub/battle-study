@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { LogIn, User, ChevronDown, LogOut, BarChart2, ShieldCheck, Trophy } from "lucide-react";
+import { LogIn, User, ChevronDown, LogOut, BarChart2, ShieldCheck, Trophy, Zap } from "lucide-react";
 import { ArenaLogo, EduLogo } from "./BrandLogo";
 import { useBattleStudy } from "@/context/BattleStudyContext";
 
@@ -189,9 +189,10 @@ export default function GlobalHeader({
       {/* User Status Bar */}
       <div className="flex items-center gap-3 shrink-0">
         {/* Lightning Energy Badge */}
-        <div className={`flex items-center px-3 py-1.5 rounded-xl border text-xs font-bold ${
+        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${
           isLight ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-amber-500/10 border-amber-500/20 text-amber-300"
         }`}>
+          <Zap className={`w-3.5 h-3.5 shrink-0 ${isLight ? "text-amber-500 fill-amber-500" : "text-yellow-400 fill-yellow-400"}`} />
           <span>에너지 {energy} / 5</span>
         </div>
 
