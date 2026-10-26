@@ -60,6 +60,34 @@ const SUBJECT_QUESTIONS: Record<"국어" | "영어" | "수학", Question[]> = {
       answerIndex: 1,
       timeLimit: 10,
       explanation: "'meticulous'는 '세심한', '꼼꼼한'이라는 뜻입니다. 따라서 'extremely precise'(매우 꼼꼼하고 정확한)가 가장 가까운 의미의 유의어입니다."
+    },
+    {
+      id: 4,
+      category: "영어 문법 (Grammar)",
+      question: "Q. 다음 빈칸에 들어갈 알맞은 표현을 고르시오.\n'If I (  ) harder, I would have passed the exam.'",
+      options: [
+        "studied",
+        "had studied",
+        "would study",
+        "have studied"
+      ],
+      answerIndex: 1,
+      timeLimit: 15,
+      explanation: "과거 사실의 반대를 가정하는 가정법 과거완료는 'If + 주어 + had p.p., 주어 + would have p.p.' 형태입니다. 따라서 빈칸에는 'had studied'가 알맞습니다."
+    },
+    {
+      id: 5,
+      category: "영어 단어 (Vocab)",
+      question: "Q. 다음 중 'reluctant'의 유의어로 가장 알맞은 것을 고르시오.\n'He was reluctant to admit his mistake.'",
+      options: [
+        "eager (열망하는)",
+        "unwilling (꺼리는)",
+        "certain (확신하는)",
+        "generous (관대한)"
+      ],
+      answerIndex: 1,
+      timeLimit: 10,
+      explanation: "'reluctant'는 '마음 내키지 않는', '꺼리는'이라는 뜻입니다. 따라서 'unwilling'이 가장 가까운 유의어입니다."
     }
   ],
   수학: [
@@ -90,6 +118,48 @@ const SUBJECT_QUESTIONS: Record<"국어" | "영어" | "수학", Question[]> = {
       answerIndex: 3,
       timeLimit: 90,
       explanation: "인수분해를 하면 x²(x - 3) - (x - 3) = 0 => (x² - 1)(x - 3) = 0 => (x - 1)(x + 1)(x - 3) = 0 이 됩니다. 세 실근은 -1, 1, 3이며, 가장 큰 근(3)과 가장 작은 근(-1)의 차이는 3 - (-1) = 4 입니다."
+    },
+    {
+      id: 3,
+      category: "수학 이차방정식 (Quadratic)",
+      question: "Q. 이차방정식 x² - 5x + 6 = 0의 두 근의 합은 얼마인가?",
+      options: [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      answerIndex: 1,
+      timeLimit: 20,
+      explanation: "x² - 5x + 6 = (x - 2)(x - 3) = 0 이므로 두 근은 2, 3이고 합은 5입니다. 근과 계수의 관계로도 두 근의 합은 -(-5)/1 = 5입니다."
+    },
+    {
+      id: 4,
+      category: "수학 이차함수 (Quadratic Function)",
+      question: "Q. 이차함수 y = x² - 4x + 3의 꼭짓점의 좌표는?",
+      options: [
+        "(2, -1)",
+        "(-2, 1)",
+        "(4, 3)",
+        "(1, 0)"
+      ],
+      answerIndex: 0,
+      timeLimit: 20,
+      explanation: "y = x² - 4x + 3 = (x - 2)² - 1 로 변형되므로 꼭짓점의 좌표는 (2, -1)입니다."
+    },
+    {
+      id: 5,
+      category: "수학 삼각비 응용 (Trigonometry)",
+      question: "Q. 빗변의 길이가 10인 직각삼각형에서 한 예각의 크기가 30°일 때, 그 각의 대변의 길이는?",
+      options: [
+        "5",
+        "5√3",
+        "10",
+        "5√2"
+      ],
+      answerIndex: 0,
+      timeLimit: 20,
+      explanation: "대변의 길이 = 빗변 × sin 30° = 10 × 1/2 = 5 입니다."
     }
   ],
   국어: [
@@ -120,6 +190,48 @@ const SUBJECT_QUESTIONS: Record<"국어" | "영어" | "수학", Question[]> = {
       answerIndex: 1,
       timeLimit: 15,
       explanation: "'진달래꽃'은 민요시인 김소월의 대표작입니다. '서시'는 윤동주, '님의 침묵'은 한용운, '광야'는 이육사의 작품입니다."
+    },
+    {
+      id: 3,
+      category: "국어 띄어쓰기 (Spacing)",
+      question: "Q. 다음 중 띄어쓰기가 올바른 것은?",
+      options: [
+        "할수 있다",
+        "할 수있다",
+        "할 수 있다",
+        "할수있다"
+      ],
+      answerIndex: 2,
+      timeLimit: 10,
+      explanation: "'수'는 의존 명사이므로 앞말과 띄어 쓰고, '있다'도 별개의 단어이므로 띄어 써야 합니다. 따라서 '할 수 있다'가 올바른 표기입니다."
+    },
+    {
+      id: 4,
+      category: "국어 표준어 (Standard Language)",
+      question: "Q. 다음 중 표준어 표기가 올바른 것은?\n'오늘이 (  )이니?'",
+      options: [
+        "몇일",
+        "며칠",
+        "몇칠",
+        "며츨"
+      ],
+      answerIndex: 1,
+      timeLimit: 10,
+      explanation: "'며칠'이 표준어입니다. '몇 일'로 쓰거나 '몇일'로 붙여 쓰는 것은 올바르지 않습니다."
+    },
+    {
+      id: 5,
+      category: "한국 문학 (Literature)",
+      question: "Q. 소설 '메밀꽃 필 무렵'의 작가는 누구인가?",
+      options: [
+        "김유정",
+        "이효석",
+        "황순원",
+        "김동리"
+      ],
+      answerIndex: 1,
+      timeLimit: 15,
+      explanation: "'메밀꽃 필 무렵'은 이효석의 대표 단편소설입니다. '동백꽃'은 김유정, '소나기'는 황순원, '무녀도'는 김동리의 작품입니다."
     }
   ]
 };
@@ -172,6 +284,10 @@ export default function BattleArena({
   // Game mechanics states
   const [opponentFinished, setOpponentFinished] = useState(false);
   const [isCriticalHit, setIsCriticalHit] = useState(false);
+  // Combo: consecutive correct answers (regular battle only)
+  const [combo, setCombo] = useState(0);
+  const [showComboPopup, setShowComboPopup] = useState(false);
+  const comboEnabled = !isStrictAssessment && !isTeamBattle;
 
   // Animation states
   const [opponentShake, setOpponentShake] = useState(false);
@@ -203,7 +319,18 @@ export default function BattleArena({
 
     // Speed Critical check
     const isCritical = isCorrect && (timeTaken <= timeLimit * 0.3);
-    const damageDealt = isCorrect ? (isCritical ? 68 : 34) : 0;
+
+    // Combo: +1 per correct answer, reset on wrong/timeout
+    const newCombo = comboEnabled ? (isCorrect ? combo + 1 : 0) : 0;
+    // 1: x1.0 / 2: x1.25 / 3+: x1.5 (not multiplied with critical; the larger one applies)
+    const comboMultiplier = newCombo >= 3 ? 1.5 : newCombo === 2 ? 1.25 : 1;
+    const critMultiplier = isCritical ? 2 : 1;
+    const damageDealt = isCorrect ? Math.round(34 * Math.max(critMultiplier, comboMultiplier)) : 0;
+
+    if (comboEnabled) {
+      setCombo(newCombo);
+      if (newCombo >= 2) setShowComboPopup(true);
+    }
 
     if (isCorrect && isCritical && !isStrictAssessment && !isTeamBattle) {
       setIsCriticalHit(true);
@@ -291,6 +418,7 @@ export default function BattleArena({
           setTimeLeft(nextQ.timeLimit);
           setOpponentFinished(false);
           setIsCriticalHit(false);
+          setShowComboPopup(false);
         }
       } else {
         // Arena end transition
@@ -524,6 +652,36 @@ export default function BattleArena({
         )}
       </AnimatePresence>
 
+      {/* Combo Pop-up Indicator (2+ consecutive correct) */}
+      <AnimatePresence>
+        {showComboPopup && combo >= 2 && comboEnabled && (
+          <motion.div
+            key={`combo-${combo}`}
+            initial={{ opacity: 0, scale: 0.4, y: 40 }}
+            animate={{ opacity: 1, scale: [1, 1.5, 1.25], y: 0, rotate: [-4, 3, 0] }}
+            exit={{ opacity: 0, y: -80 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 flex flex-col items-center justify-center pointer-events-none"
+          >
+            <div
+              className={`flex items-center gap-2 font-black text-3xl md:text-5xl px-7 py-3 rounded-full border tracking-widest uppercase ${
+                combo >= 4
+                  ? "bg-red-500/25 text-red-300 border-red-400/60 shadow-[0_0_50px_rgba(239,68,68,0.5)]"
+                  : combo === 3
+                    ? "bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-400/50 shadow-[0_0_40px_rgba(217,70,239,0.45)]"
+                    : "bg-cyan-500/20 text-cyan-300 border-cyan-400/50 shadow-[0_0_30px_rgba(6,182,212,0.4)]"
+              }`}
+            >
+              <Zap className="w-7 h-7 md:w-9 md:h-9 fill-current" />
+              COMBO x{combo}
+            </div>
+            <span className="text-slate-200 font-bold text-xs mt-2 uppercase tracking-widest drop-shadow">
+              {combo}연속 정답! 데미지 x{combo >= 3 ? "1.5" : "1.25"}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Animated Sword Slash Overlay when opponent is hit */}
       <AnimatePresence>
         {showSlash && !isStrictAssessment && (
@@ -630,7 +788,19 @@ export default function BattleArena({
 
               <div className="w-full space-y-1">
                 <div className="flex justify-between items-center text-[10px] md:text-xs">
-                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-amber-400"}`}>HP</span>
+                  <span className={`font-extrabold ${isStrictAssessment ? "text-slate-500" : "text-amber-400"}`}>
+                    HP
+                    {comboEnabled && combo >= 2 && (
+                      <motion.span
+                        key={combo}
+                        initial={{ scale: 1.8 }}
+                        animate={{ scale: 1 }}
+                        className="ml-2 px-1.5 py-0.5 rounded bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 inline-block"
+                      >
+                        COMBO x{combo}
+                      </motion.span>
+                    )}
+                  </span>
                   <span className={`font-mono font-black ${isStrictAssessment ? "text-slate-700" : "text-slate-300"}`}>{Math.max(0, userHp)} / 100</span>
                 </div>
                 <div className={`h-3 w-full rounded-full border overflow-hidden relative ${

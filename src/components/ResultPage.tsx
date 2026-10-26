@@ -44,7 +44,16 @@ export default function ResultPage({
   // Rank calculations
   const originalTier = userProfile.tier;
   const originalLp = userProfile.lp;
-  const lpChange = isVictory ? 20 : -15;
+  // Max combo = longest run of consecutive correct answers (regular battle only)
+  const maxCombo = isStrictAssessment ? 0 : answersLog.reduce(
+    (acc, a) => {
+      const cur = a.isCorrect ? acc.cur + 1 : 0;
+      return { cur, max: Math.max(acc.max, cur) };
+    },
+    { cur: 0, max: 0 }
+  ).max;
+  const comboBonus = maxCombo >= 2 ? Math.min(3, maxCombo) : 0;
+  const lpChange = (isVictory ? 20 : -15) + comboBonus;
   
   const [displayedLp, setDisplayedLp] = useState(originalLp);
   const [displayedTier, setDisplayedTier] = useState(originalTier);
@@ -244,6 +253,8 @@ export default function ResultPage({
                 <span>최종 HP: <strong className="text-white">{Math.max(0, userFinalHp)}%</strong></span>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                 <span>상대 최종 HP: <strong className="text-white">{Math.max(0, opponentFinalHp)}%</strong></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <span>최대 콤보: <strong className="text-cyan-300">{maxCombo >= 2 ? `x${maxCombo}` : "-"}</strong></span>
               </>
             )}
           </div>
@@ -264,7 +275,12 @@ export default function ResultPage({
             <span className={`text-sm font-black flex items-center gap-1 ${
               isVictory ? "text-cyan-400" : "text-red-400"
             }`}>
-              {isVictory ? `+${lpChange} LP` : `${lpChange} LP`}
+              {lpChange > 0 ? `+${lpChange} LP` : `${lpChange} LP`}
+              {comboBonus > 0 && (
+                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-500/15 border border-cyan-400/30 rounded px-1.5 py-0.5">
+                  콤보 보너스 +{comboBonus}
+                </span>
+              )}
             </span>
           </div>
 

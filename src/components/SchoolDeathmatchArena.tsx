@@ -179,7 +179,7 @@ export default function SchoolDeathmatchArena({
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [currentSet]);
+  }, [currentSet, isMatchStarted]);
 
   // Set 2 Countdown Timer
   useEffect(() => {
@@ -195,7 +195,7 @@ export default function SchoolDeathmatchArena({
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [currentSet]);
+  }, [currentSet, isMatchStarted]);
 
   // Background Teammate Combat Simulator
   useEffect(() => {
@@ -230,7 +230,7 @@ export default function SchoolDeathmatchArena({
     }, currentSet === 1 ? 4000 : 7000);
 
     return () => clearInterval(interval);
-  }, [currentSet]);
+  }, [currentSet, isMatchStarted]);
 
   // Set 1 Answer Selection
   const handleSet1Answer = (option: string) => {
