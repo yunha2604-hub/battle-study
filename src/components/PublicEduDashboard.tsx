@@ -196,7 +196,7 @@ export default function PublicEduDashboard({
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
-        <p>청계중학교 3학년 수학과 전용 공교육 평가 솔루션 • 배틀스터디 에듀</p>
+        <p>공교육 평가 솔루션 • 배틀스터디 에듀</p>
       </footer>
 
       {/* 5, 6, 7, 8번 요구사항: 수행평가 현황 팝업 (모달) */}

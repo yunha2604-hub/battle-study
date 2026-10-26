@@ -578,7 +578,7 @@ export default function LandingPage({
 
                   {/* Demo Information Notice */}
                   <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-300 text-[11px] leading-relaxed">
-                    💡 <strong>데모 시연 안내</strong>: 청계중학교 3학년 수학과 전용 교사용 계정으로 자동 세팅되어 있습니다. 바로 입장하시면 AI 수행평가 출제 및 2단계 채점 대시보드를 확인하실 수 있습니다.
+                    💡 <strong>데모 시연 안내</strong>: 시연용 교사 계정으로 자동 세팅되어 있습니다. 바로 입장하시면 AI 수행평가 출제 및 2단계 채점 대시보드를 확인하실 수 있습니다.
                   </div>
 
                   {/* Action Buttons */}
