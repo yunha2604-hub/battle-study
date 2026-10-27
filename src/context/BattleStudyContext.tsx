@@ -181,7 +181,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     };
 
     setOpponent(firstOpponent);
-    setSelectedSubject("영어");
+    setSelectedSubject("수학");
     setIsStrictAssessment(false);
     setIsTeamBattle(false);
     router.push("/battle");
@@ -262,7 +262,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
       lp: 45
     };
     setOpponent(customOpponent);
-    setSelectedSubject("영어");
+    setSelectedSubject("수학");
     setIsStrictAssessment(false);
     router.push("/battle");
   };
