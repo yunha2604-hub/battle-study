@@ -1,4 +1,6 @@
-# [배틀스터디 (Battle Study) - 실시간 퀴즈 배틀 & 수학 수행평가 관리](https://yunha2604-hub.github.io/battle-study/)
+# [배틀스터디 (Battle Study)](https://yunha2604-hub.github.io/battle-study/)
+
+### 실시간 퀴즈 배틀 & 수행평가 관리
 
 학교를 대표해 전국 학생들과 맞붙는 실시간 퀴즈 배틀 서비스입니다.
 
