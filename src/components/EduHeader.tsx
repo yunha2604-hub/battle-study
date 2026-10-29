@@ -28,17 +28,12 @@ export default function EduHeader({
           className="flex items-center gap-3 shrink-0 cursor-pointer group"
           title="배틀스터디 에듀 홈으로 이동"
         >
-          <EduLogo size="sm" showText={false} theme="light" />
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                공교육 모드
-              </span>
-              <span className="text-[11px] text-slate-500 font-semibold">{schoolName} 3학년 수학과</span>
-            </div>
-            <h1 className="text-sm md:text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
-              배틀스터디 에듀
-            </h1>
+          <EduLogo size="sm" theme="light" />
+          <div className="flex flex-col gap-1">
+            <span className="w-fit px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              공교육 모드
+            </span>
+            <span className="text-[11px] text-slate-500 font-semibold">{schoolName} 3학년 수학과</span>
           </div>
         </div>
 
