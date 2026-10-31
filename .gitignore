@@ -64,3 +64,15 @@ startup_mvp_report.md
 /docs/temp/
 recent_run.json
 
+
+# TTS (CosyVoice, models, reference audio)
+/tts/
+
+# Python Virtual Environments
+.venv/
+venv/
+__pycache__/
+
+# AI Agent Configs
+.agents/
+
