@@ -1,5 +1,8 @@
-:HL["/battle-study/_next/static/chunks/233p45nuh4m5b.css","style"]
-:HL["/battle-study/_next/static/chunks/24q9v_eb7xyg2.css","style"]
-:HL["/battle-study/_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-:HL["/battle-study/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"analytics","param":null,"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"lGQgSk6O_3r4VGtvzE3Id"}
+:HL["/battle-study/_next/static/chunks/3h8lfg02tnfxq.css","style"]
+:HL["/battle-study/_next/static/chunks/34x6t45l6ay37.css","style"]
+:HL["/battle-study/_next/static/media/07a39a8a4660cc7c-s.p.0r6juujl39pe6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/battle-study/_next/static/media/14b7f16f1ca52524-s.p.161-8jf3b5y85.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/battle-study/_next/static/media/605ce01b664af129-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+2:[["children",{"s":"__PAGE__","h":160}]]
+1:[["children",{"s":"analytics","h":96,"c":"$Q2"}]]
+0:{"b":"Io9G_eGN64AX6R5dLjcjt","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

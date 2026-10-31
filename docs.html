@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배틀스터디 시스템 다이어그램 및 문서 목록</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #ffffff;
+      color: #1e293b;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      line-height: 1.8;
+      padding: 40px 24px;
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+    ol {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    li {
+      font-size: 15px;
+      color: #334155;
+    }
+    a {
+      color: #0f172a;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+    a:hover {
+      color: #1f4e78;
+    }
+    .filename {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .showcase-box {
+      margin-top: 32px;
+      padding: 16px 18px;
+      border: 1.5px solid #0f172a;
+      border-radius: 4px;
+      background: #f8fafc;
+    }
+    .showcase-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .showcase-desc {
+      font-size: 13px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>배틀스터디 시스템 다이어그램 및 문서 목록</h1>
+    <p class="subtitle">공교육 에듀 트랙 및 학생 아레나 게이밍 트랙 아키텍처 다이어그램 일람</p>
+
+    <ol>
+      <li><a href="/battle-study/diagrams/system-architecture.html">주요 기능 구조도 및 투 트랙 아키텍처 <span class="filename">(system-architecture.html)</span></a></li>
+      <li><a href="/battle-study/diagrams/shadow-raid-loop.html">한눈에 보는 오답 복습 4단계 흐름 <span class="filename">(shadow-raid-loop.html)</span></a></li>
+      <li><a href="/battle-study/diagrams/assessment-lifecycle.html">한눈에 보는 수행평가 4단계 흐름 <span class="filename">(assessment-lifecycle.html)</span></a></li>
+      <li><a href="/battle-study/diagrams/arena-flowchart-standard.html">학생 아레나 인증 표준 순서도 <span class="filename">(arena-flowchart-standard.html)</span></a></li>
+      <li><a href="/battle-study/diagrams/edu-flowchart-standard.html">교사 에듀 인증 표준 순서도 <span class="filename">(edu-flowchart-standard.html)</span></a></li>
+      <li><a href="/battle-study/diagrams/bep-simulation-graphs.html">1단계(배틀 아레나) 손익분기점(BEP) 시뮬레이션 <span class="filename">(bep-simulation-graphs.html)</span></a></li>
+    </ol>
+
+    <div class="showcase-box">
+      <div class="showcase-title"><a href="/battle-study/show/">발표 자료 및 시뮬레이션 명세 바로가기 (/show)</a></div>
+      <p class="showcase-desc">중3 수학 서술형 8대 고정 감점 기준, 100문항 수치 제약 명세 및 프롬프트 뷰어</p>
+    </div>
+  </div>
+</body>
+</html>
