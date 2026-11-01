@@ -86,7 +86,7 @@ export default function AssessmentExamView({
     examQuestions.forEach((q, idx) => {
       if (q.type === "서술형 풀이" || !q.options || q.options.length === 0) {
         autoFilled[q.id] = q.correctAnswer;
-        const usesRealSample = /^x\s*=\s*3/.test(q.correctAnswer.trim());
+        const usesRealSample = true; // Use unified Middle School 3 quadratic sample
         const sampleText = usesRealSample
           ? SAMPLE_SOLUTION_TEXT
           : (q.solution || "주어진 식을 완전제곱식으로 전개하여 해를 유도함.");
@@ -438,7 +438,7 @@ export default function AssessmentExamView({
                     key={currentQ.id}
                     entry={handwriting[currentQ.id]}
                     presetText={
-                      /^x\s*=\s*3/.test(currentQ.correctAnswer.trim())
+                      true
                         ? SAMPLE_SOLUTION_TEXT
                         : (currentQ.solution || "주어진 식을 완전제곱식으로 전개하여 해를 유도함.")
                     }

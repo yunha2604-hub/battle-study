@@ -152,10 +152,10 @@ export const DEFAULT_MATH_QUESTIONS: GeneratedMathQuestion[] = [
   },
   {
     id: 3,
-    question: "[서술형] 이차식 x² - 6x + 9 = 0 의 해를 구하고, 완전제곱식을 이용한 풀이과정을 서술하시오.",
+    question: "[서술형] 이차방정식 2x² - 8x + 2 = 0 을 완전제곱식을 이용하여 (x - p)² = q 의 꼴로 나타내고, 그 해를 구하는 풀이과정을 단계별로 서술하시오.",
     type: "서술형 풀이",
-    correctAnswer: "x = 3 (중근)",
-    solution: "(x - 3)² = 0 으로 인수분해되므로 x = 3(중근)입니다. 전개식의 일차항 계수의 반의 제곱이 상수항과 일치함을 명시해야 합니다.",
+    correctAnswer: "(x - 2)² = 3, x = 2 ± √3",
+    solution: "2x² - 8x = -2 → x² - 4x = -1 → x² - 4x + 4 = -1 + 4 → (x - 2)² = 3. 따라서 x - 2 = ±√3 이므로 x = 2 ± √3 입니다.",
     points: 35,
     difficulty: "상",
     standardCode: "9수02-01"
@@ -172,11 +172,11 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
     name: "김민수",
     submitted: true,
     submittedAt: "10:24",
-    aiScore: 95,
-    teacherScore: 95,
-    isConfirmed: true,
+    aiScore: 90,
+    teacherScore: null,
+    isConfirmed: false,
     isNeedsReview: false,
-    aiSummary: "객관식 2문항 만점(+65점). 3번 서술형 완전제곱식 유도 과정 논리적 완결성 우수(+30/35점).",
+    aiSummary: "객관식 2문항 만점(+65점). 3번 서술형 완전제곱식 유도(1~4행) 우수하나 5행 음의 제곱근(±) 누락으로 10점 감점 산출(부분점수 25/35점).",
     answers: [
       { 
         qNum: 1, 
@@ -204,20 +204,20 @@ export const INITIAL_STUDENTS: StudentAssessmentRow[] = [
       },
       { 
         qNum: 3, 
-        title: "이차식 서술형", 
-        studentAnswer: "(x - 3)² = 0 | x = 3", 
+        title: "이차방정식 완전제곱식 서술형", 
+        studentAnswer: "1행: 2x² - 8x = -2 | 2행: x² - 4x = -1 | 3행: x² - 4x + 4 = -1 + 4 | 4행: (x - 2)² = 3 | 5행: x - 2 = √3 | 6행: x = 2 + √3", 
         handwritingImage: SAMPLE_SOLUTION_IMAGE,
-        confirmedAt: "10:41:52",
-        correctAnswer: "x=3 (중근)", 
-        pointsEarned: 30, 
+        confirmedAt: "10:24:15",
+        correctAnswer: "2x² - 8x = -2 → x² - 4x = -1 → (x - 2)² = 3 → x - 2 = ±√3. 따라서 해는 x = 2 ± √3", 
+        pointsEarned: 25, 
         maxPoints: 35, 
-        aiAssessment: "부분점수 부여: 중근 도출은 완벽하나 계수 관계 설명 1줄 누락",
-        deductionCriteria: "완전제곱식 계수 관계(b/2)² = c 유도 서술 누락 (-5점)",
-        errorLine: "답안 1행: 인수분해 공식 성립 이유 설명 생략",
-        aiReviewOpinion: "완전제곱식 변형과 중근 표기는 완벽하나 일차항 계수와의 관계 서술이 누락되어 5점 감점 산출."
+        aiAssessment: "부분점수: 완전제곱식 유도는 정확하나 음의 제곱근(±) 누락으로 감점",
+        deductionCriteria: "제곱근 성질 적용 시 음의 제곱근(±) 누락 (-10점)",
+        errorLine: "답안 5행: 'x - 2 = √3'에서 ± 부호 누락으로 단일근 도출",
+        aiReviewOpinion: "완전제곱식 꼴((x - 2)² = 3) 유도 과정(1~4행)은 수학적 전개가 매우 논리적이고 정확합니다. 그러나 5행에서 제곱근을 구할 때 음의 제곱근(±)을 누락하여 6행에서 하나의 근만 도출되었습니다. 완전제곱식 변형 배점(25점)을 인정하고, 제곱근 부호 누락(-10점)을 감점하여 부분점수 25점 부여를 제안합니다."
       }
     ],
-    teacherFeedback: "풀이 단계별 전개 과정이 매우 우수하여 AI 1차 채점 점수를 그대로 확정함."
+    teacherFeedback: ""
   },
   {
     id: "std-2",
@@ -2242,7 +2242,7 @@ export default function TeacherDashboard({
                               <div className="font-mono text-slate-900 bg-white p-2.5 rounded border border-slate-200 break-all leading-relaxed space-y-1">
                                 {ans.studentAnswer.includes("|") ? (
                                   ans.studentAnswer.split("|").map((line, idx) => {
-                                    const isErrorLine = hasAiDeduction && (line.includes("3행") || line.includes("3 ± 4") || (ans.errorLine && ans.errorLine.includes(line.trim().slice(0, 5))));
+                                    const isErrorLine = hasAiDeduction && (line.includes("5행") || line.includes("6행") || line.includes("x - 2 = √3") || line.includes("x = 2 + √3") || line.includes("3행") || line.includes("3 ± 4") || (ans.errorLine && ans.errorLine.includes(line.trim().slice(0, 5))));
 
                                     return (
                                       <div 

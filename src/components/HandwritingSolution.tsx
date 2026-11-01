@@ -34,33 +34,29 @@ export const entryHasUnresolvedFlag = (entry?: HandwritingEntry) =>
   entry.segments.some((s) => s.flagged);
 
 // 사용자가 제공한 실제 손글씨 예시 이미지 ((x-3)^2 = 0, x = 3). 정적 배포 시 basePath를 반영한다.
-export const SAMPLE_SOLUTION_IMAGE = `${
-  process.env.NODE_ENV === "development" ? "" : "/battle-study"
-}/handwriting/sample-solution.png`;
-export const SAMPLE_SOLUTION_TEXT = "(x - 3)² = 0\nx = 3";
+export const SAMPLE_SOLUTION_TEXT = "2x² - 8x = -2\nx² - 4x = -1\nx² - 4x + 4 = -1 + 4\n(x - 2)² = 3\nx - 2 = √3\nx = 2 + √3";
 
 /** Wraps text into SVG lines that look like a handwritten solution (used for samples/seeds). */
 export function makeSampleHandwritingImage(text: string): string {
-  const rawLines = text.split("|").flatMap((part) => {
-    const trimmed = part.trim();
-    const out: string[] = [];
-    for (let i = 0; i < trimmed.length; i += 30) out.push(trimmed.slice(i, i + 30));
-    return out.length ? out : [""];
-  });
-  const lines = rawLines.slice(0, 5);
-  const height = 40 + lines.length * 44;
+  const rawLines = text.includes("\n")
+    ? text.split("\n").map((l) => l.trim()).filter(Boolean)
+    : text.split("|").map((l) => l.trim()).filter(Boolean);
+  const lines = rawLines.slice(0, 8);
+  const height = 36 + lines.length * 36;
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const body = lines
     .map(
       (l, i) =>
-        `<text x="${18 + (i % 2) * 4}" y="${44 + i * 44}" transform="rotate(${i % 2 ? -0.6 : 0.5} 20 ${
-          44 + i * 44
-        })" font-family="'Nanum Pen Script','Segoe Print','Comic Sans MS',cursive" font-size="27" fill="#1e293b">${esc(l)}</text>`
+        `<text x="${22 + (i % 2) * 4}" y="${34 + i * 36}" transform="rotate(${i % 2 ? -0.4 : 0.4} 24 ${
+          34 + i * 36
+        })" font-family="'Nanum Pen Script','Segoe Print','Comic Sans MS',cursive" font-size="23" font-weight="600" fill="#1e293b">${esc(l)}</text>`
     )
     .join("");
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="${height}" viewBox="0 0 640 ${height}"><rect width="640" height="${height}" fill="#ffffff"/>${body}</svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
+
+export const SAMPLE_SOLUTION_IMAGE = makeSampleHandwritingImage(SAMPLE_SOLUTION_TEXT);
 
 /** Builds a converted entry from a preset text (mock OCR result). */
 export function buildConvertedEntry(
