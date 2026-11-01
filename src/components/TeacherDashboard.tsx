@@ -2242,7 +2242,7 @@ export default function TeacherDashboard({
                               <div className="font-mono text-slate-900 bg-white p-2.5 rounded border border-slate-200 break-all leading-relaxed space-y-1">
                                 {ans.studentAnswer.includes("|") ? (
                                   ans.studentAnswer.split("|").map((line, idx) => {
-                                    const isErrorLine = hasAiDeduction && (line.includes("5행") || line.includes("6행") || line.includes("x - 2 = √3") || line.includes("x = 2 + √3") || line.includes("3행") || line.includes("3 ± 4") || (ans.errorLine && ans.errorLine.includes(line.trim().slice(0, 5))));
+                                    const isErrorLine = hasAiDeduction && (line.includes("5행") || line.includes("6행") || line.includes("x - 2 = √3") || line.includes("x = 2 + √3") || line.includes("3 ± 4") || (ans.errorLine && ans.errorLine.includes(line.trim().slice(0, 5))));
 
                                     return (
                                       <div 
