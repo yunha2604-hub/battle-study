@@ -58,7 +58,10 @@ function BaseLogo({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/logo/emblem.png`}
+        src={`${
+          process.env.NEXT_PUBLIC_BASE_PATH ||
+          (process.env.NODE_ENV === "development" ? "" : "/battle-study")
+        }/logo/emblem.png`}
         alt=""
         draggable={false}
         style={{ height: emblemH, width: "auto" }}
