@@ -257,12 +257,16 @@ interface BattleArenaProps {
   isStrictAssessment?: boolean;
   isTeamBattle?: boolean;
   customQuestions?: Question[];
+  isFirstMatch?: boolean;
+  energy?: number;
 }
 
 export default function BattleArena({ 
   userProfile, opponent, subject, onFinishMatch, 
   isStrictAssessment = false, isTeamBattle = false,
-  customQuestions
+  customQuestions,
+  isFirstMatch = false,
+  energy = 3
 }: BattleArenaProps) {
   const router = useRouter();
   const subjectQuestions = customQuestions && customQuestions.length > 0 
@@ -570,10 +574,10 @@ export default function BattleArena({
               <div className="flex items-center gap-2.5 pt-2">
                 <button
                   type="button"
-                  onClick={() => router.push("/lobby")}
+                  onClick={() => router.push(isFirstMatch ? "/" : "/lobby")}
                   className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors cursor-pointer"
                 >
-                  ← 로비로 돌아가기
+                  {isFirstMatch ? "← 홈으로 돌아가기" : "← 로비로 돌아가기"}
                 </button>
                 <button
                   type="button"
@@ -590,7 +594,7 @@ export default function BattleArena({
       </AnimatePresence>
 
       {/* Global Header */}
-      <GlobalHeader activeTab="BATTLE" theme={isStrictAssessment ? "light" : "dark"} />
+      <GlobalHeader activeTab="BATTLE" energy={energy} theme={isStrictAssessment ? "light" : "dark"} />
       {/* Anti-cheat warning banner */}
       {isStrictAssessment && (
         <div className="w-full bg-red-600 text-white py-2.5 px-4 text-xs md:text-sm font-black text-center relative z-50 flex items-center justify-center gap-2 animate-pulse shadow-md border-b border-red-700 uppercase tracking-wide">

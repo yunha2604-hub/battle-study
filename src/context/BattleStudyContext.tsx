@@ -137,6 +137,7 @@ export function BattleStudyProvider({ children }: { children: React.ReactNode })
     setOpponent(DEFAULT_OPPONENT);
     setSelectedSubject(subject);
     setEnergy((prev) => Math.max(0, prev - 1));
+    setIsFirstMatch(false);
     setIsStrictAssessment(false);
     setIsTeamBattle(false);
     router.push("/battle");

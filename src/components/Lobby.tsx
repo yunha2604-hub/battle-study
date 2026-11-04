@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -106,6 +106,7 @@ export default function Lobby({
 }: LobbyProps) {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
+  const isMatchTriggeredRef = useRef(false);
   const [matchingStep, setMatchingStep] = useState(0);
   const [matchTimer, setMatchTimer] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState<"국어" | "영어" | "수학" | null>(null);
@@ -171,6 +172,7 @@ export default function Lobby({
 
   const handleStartFindMatch = () => {
     if (selectedSubject && energy > 0) {
+      isMatchTriggeredRef.current = false;
       setMatchTimer(0);
       setMatchingStep(0);
       setIsMatching(true);
@@ -181,8 +183,11 @@ export default function Lobby({
   useEffect(() => {
     let timerInterval: NodeJS.Timeout;
     let statusInterval: NodeJS.Timeout;
+    let matchTimeout: NodeJS.Timeout;
 
     if (isMatching) {
+      isMatchTriggeredRef.current = false;
+
       // Increment seconds
       timerInterval = setInterval(() => {
         setMatchTimer((prev) => prev + 1);
@@ -195,13 +200,16 @@ export default function Lobby({
           if (prev >= 3) {
             clearInterval(statusInterval);
             clearInterval(timerInterval);
-            // Trigger match search finished
-            setTimeout(() => {
-              setIsMatching(false);
-              if (selectedSubject) {
-                onStartMatch(getOpponent(), selectedSubject);
-              }
-            }, 1000);
+            // React StrictMode 이중 실행 방지: 단 1회만 트리거
+            if (!isMatchTriggeredRef.current) {
+              isMatchTriggeredRef.current = true;
+              matchTimeout = setTimeout(() => {
+                setIsMatching(false);
+                if (selectedSubject) {
+                  onStartMatch(getOpponent(), selectedSubject);
+                }
+              }, 1000);
+            }
             return 4;
           }
           return prev + 1;
@@ -212,6 +220,7 @@ export default function Lobby({
     return () => {
       clearInterval(timerInterval);
       clearInterval(statusInterval);
+      clearTimeout(matchTimeout);
     };
   }, [isMatching]);
 

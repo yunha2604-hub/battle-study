@@ -12,7 +12,9 @@ export default function BattleRoutePage() {
     handleFinishMatch,
     isStrictAssessment,
     isTeamBattle,
-    customBattleQuestions
+    customBattleQuestions,
+    isFirstMatch,
+    energy
   } = useBattleStudy();
 
   useEffect(() => {
@@ -46,6 +48,8 @@ export default function BattleRoutePage() {
       isStrictAssessment={isStrictAssessment}
       isTeamBattle={isTeamBattle}
       customQuestions={isStrictAssessment ? customBattleQuestions : undefined}
+      isFirstMatch={isFirstMatch}
+      energy={energy}
     />
   );
 }
